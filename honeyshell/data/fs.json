@@ -1,0 +1,76 @@
+{
+  "type": "dir",
+  "name": "/",
+  "children": [
+    {
+      "type": "dir",
+      "name": "bin",
+      "children": [
+        { "type": "file", "name": "sh", "perm": "0755", "size": 129704 },
+        { "type": "file", "name": "cat", "perm": "0755", "size": 43416 },
+        { "type": "file", "name": "ls", "perm": "0755", "size": 133792 }
+      ]
+    },
+    {
+      "type": "dir",
+      "name": "etc",
+      "children": [
+        {
+          "type": "file",
+          "name": "passwd",
+          "perm": "0644",
+          "contents": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nsvc:x:1000:1000:svc:/home/svc:/bin/bash\n"
+        },
+        {
+          "type": "file",
+          "name": "hostname",
+          "perm": "0644",
+          "contents": "svr04\n"
+        },
+        {
+          "type": "file",
+          "name": "os-release",
+          "perm": "0644",
+          "contents": "PRETTY_NAME=\"Debian GNU/Linux 11 (bullseye)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"11\"\n"
+        }
+      ]
+    },
+    {
+      "type": "dir",
+      "name": "home",
+      "children": [
+        {
+          "type": "dir",
+          "name": "svc",
+          "uid": 1000,
+          "gid": 1000,
+          "perm": "0755",
+          "children": [
+            {
+              "type": "file",
+              "name": ".bashrc",
+              "uid": 1000,
+              "gid": 1000,
+              "contents": "export PS1='\\u@\\h:\\w\\$ '\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "dir",
+      "name": "root",
+      "uid": 0,
+      "gid": 0,
+      "perm": "0700",
+      "children": []
+    },
+    {
+      "type": "dir",
+      "name": "tmp",
+      "perm": "1777",
+      "children": []
+    },
+    { "type": "link", "name": "sbin", "target": "/bin" }
+  ]
+}

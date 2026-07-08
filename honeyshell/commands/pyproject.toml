@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "honeyshell"
+version = "0.0.1"
+description = "An asyncssh/asyncio SSH shell honeypot core (Cowrie-inspired)."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+# asyncssh is only needed once the transport module lands; keep the core
+# install light for now so `pip install -e .` doesn't pull in cryptography.
+transport = ["asyncssh>=2.14"]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["honeyshell*"]
+
+[tool.setuptools.package-data]
+honeyshell = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
