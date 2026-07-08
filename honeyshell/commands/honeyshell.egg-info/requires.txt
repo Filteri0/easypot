@@ -1,0 +1,6 @@
+
+[dev]
+pytest>=7
+
+[transport]
+asyncssh>=2.14

@@ -26,6 +26,8 @@ class ShellContext:
     environ: dict[str, str] = field(default_factory=dict)
     username: str = "root"
     hostname: str = "svr04"
+    #: Set by the `exit`/`logout` builtin to ask the session loop to end.
+    should_exit: bool = False
 
     @property
     def home(self) -> str:

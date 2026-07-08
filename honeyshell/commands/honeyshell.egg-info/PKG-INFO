@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: honeyshell
+Version: 0.0.1
+Summary: An asyncssh/asyncio SSH shell honeypot core (Cowrie-inspired).
+Requires-Python: >=3.10
+Provides-Extra: transport
+Requires-Dist: asyncssh>=2.14; extra == "transport"
+Provides-Extra: dev
+Requires-Dist: pytest>=7; extra == "dev"

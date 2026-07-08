@@ -84,6 +84,19 @@ class Cat(Command):
         return rc
 
 
+@register("exit", "logout")
+class Exit(Command):
+    async def run(self) -> int:
+        self.ctx.should_exit = True
+        if self.args:
+            try:
+                return int(self.args[0]) & 0xFF
+            except ValueError:
+                self.errline(f"{self.prog}: {self.args[0]}: numeric argument required")
+                return 2
+        return 0
+
+
 @register("ls", "/bin/ls")
 class Ls(Command):
     async def run(self) -> int:
