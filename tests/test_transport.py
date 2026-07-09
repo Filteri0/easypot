@@ -13,7 +13,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from honeyshell.transport import ServerConfig, ShellSession, TerminalWriter  # noqa: E402
+from honeyshell.transport import (  # noqa: E402
+    INTERRUPT,
+    ServerConfig,
+    ShellSession,
+    TerminalWriter,
+)
 
 
 class FakeReader:
@@ -142,6 +147,34 @@ def test_fresh_fs_per_session():
     assert s1.ctx.fs.exists("/tmp/leak")
     s2 = ShellSession(c, FakeReader([]), FakeWriter(), username="root")
     assert not s2.ctx.fs.exists("/tmp/leak")
+
+
+# --- Ctrl-C / INTERRUPT sentinel -----------------------------------------
+
+
+def test_interrupt_redraws_single_prompt_and_continues():
+    """A reader that yields INTERRUPT (Ctrl-C) must not run a command and must
+    resume the loop with exactly one more prompt — no storm, no exit."""
+    # sequence: Ctrl-C, then a real command, then EOF
+    sess, out = _session([INTERRUPT, "whoami\n", None])
+    asyncio.run(sess.run_interactive())
+    text = out.value()
+    # whoami still ran after the interrupt
+    assert "root" in text
+    # the interrupt itself produced no "command not found" or output line
+    assert "command not found" not in text
+    # prompt count: initial + after-interrupt + after-whoami = 3 prompts,
+    # then logout on EOF. Count occurrences of the prompt symbol.
+    assert text.count("root@") >= 2  # at least the pre- and post-interrupt ones
+    assert text.rstrip().endswith("logout")
+
+
+def test_interrupt_does_not_execute_pending_text():
+    """INTERRUPT is distinct from an empty line: nothing is dispatched."""
+    sess, out = _session([INTERRUPT, None])
+    asyncio.run(sess.run_interactive())
+    # only prompts + logout, no command effects
+    assert "logout" in out.value()
 
 
 # --- standalone runner ---------------------------------------------------

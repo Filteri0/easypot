@@ -18,6 +18,7 @@ is left as a later refinement.
 
 from __future__ import annotations
 
+from honeyshell.backends.fs_applier import apply_fs_ops
 from honeyshell.backends.resolver import ChainResolver
 from honeyshell.commands.base import Command
 
@@ -62,6 +63,27 @@ class LLMCommand(Command):
             text = resolution.output
             self.write(text if text.endswith("\n") else text + "\n")
 
+        # --- C_i -> VirtualFS -------------------------------------------------
+        # Apply the structured state change to the real (emulated) tree so what
+        # the attacker sees next (`ls`, `cat`) matches what the model narrated.
+        # This is the core of "C_i 回寫 VFS": the VFS stays the single source of
+        # truth; the model's memory is reconciled to it below. Never raises.
+        report = apply_fs_ops(
+            self.ctx.fs, self.ctx.cwd, resolution.fs_ops,
+            uid=self.ctx.uid, gid=self.ctx.uid,
+        )
+
+        # Reconcile memory with what ACTUALLY happened, not what the model
+        # claimed. When ops applied, the SR note and impact come from the
+        # applier (reliable); otherwise fall back to the model's prose C_i and
+        # its self-scored F_i (the non-structural path, e.g. "started nginx").
+        if report.changed:
+            state_note = report.notes()
+            impact = report.impact
+        else:
+            state_note = resolution.state_change
+            impact = resolution.impact
+
         # Fold this turn into session memory (SR/H/FL), then apply decay +
         # pruning so the running prompt stays within budget. A cached response
         # is still recorded — it's part of the conversation the attacker sees.
@@ -69,8 +91,8 @@ class LLMCommand(Command):
             memory.record(
                 " ".join(self.argv),
                 resolution.output,
-                resolution.state_change,
-                resolution.impact,
+                state_note,
+                impact,
             )
             pruner = getattr(self.ctx, "pruner", None)
             if pruner is not None:

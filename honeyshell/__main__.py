@@ -35,15 +35,19 @@ def main() -> None:
     ap.add_argument("--motd", default="")
     ap.add_argument("--llm", dest="llm_enable", action="store_true",
                     help="answer unknown commands with a local Ollama model")
-    ap.add_argument("--llm-model", default="qwen2.5:7b",
-                    help="Ollama model name (default: qwen2.5:7b)")
+    ap.add_argument("--llm-model", default="qwen2.5:14b",
+                    help="Ollama model name (default: qwen2.5:14b)")
     ap.add_argument("--llm-url", dest="llm_base_url",
                     default="http://localhost:11434",
                     help="Ollama base URL (default: http://localhost:11434)")
+    ap.add_argument("--log-level", default="INFO",
+                    help="logging level: DEBUG/INFO/WARNING (default: INFO). "
+                         "DEBUG shows each LLM answer's impact and fs_ops count.")
     args = ap.parse_args()
 
     logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s"
+        level=getattr(logging, args.log_level.upper(), logging.INFO),
+        format="%(asctime)s %(levelname)s %(message)s",
     )
 
     kwargs = dict(

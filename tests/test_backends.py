@@ -83,11 +83,23 @@ def test_extract_json_garbage_returns_none():
 
 
 def test_parse_result_normalises():
+    # parse_result now returns a 4-tuple (A, C, F, fs_ops); fs_ops defaults [].
     assert parse_result({"output": "root", "state_change": "none",
-                         "impact": "3"}) == ("root", "", 3)
+                         "impact": "3"}) == ("root", "", 3, [])
     # out-of-range impact clamps; missing keys default
-    assert parse_result({"impact": 99}) == ("", "", 4)
-    assert parse_result(None) == ("", "", 0)
+    assert parse_result({"impact": 99}) == ("", "", 4, [])
+    assert parse_result(None) == ("", "", 0, [])
+
+
+def test_parse_result_extracts_fs_ops():
+    ops = [{"op": "mkdir", "path": "/tmp/x"}]
+    a, c, f, got = parse_result(
+        {"output": "", "state_change": "made dir", "impact": 1, "fs_ops": ops}
+    )
+    assert (a, c, f) == ("", "made dir", 1)
+    assert got == ops
+    # a non-list fs_ops is coerced to []
+    assert parse_result({"fs_ops": "nope"})[3] == []
 
 
 # --- prompt builder ------------------------------------------------------
@@ -101,6 +113,29 @@ def test_prompt_builder_shapes_messages():
     # last message carries the actual command + cwd
     assert msgs[-1]["role"] == "user"
     assert "uname -a" in msgs[-1]["content"] and "/root" in msgs[-1]["content"]
+
+
+def test_system_prompt_instructs_play_along_not_judge():
+    """C: the persona must tell the model NOT to judge command existence and to
+    succeed on unknown/attacker tools — the fix for the not-found failure."""
+    sys_msg = PromptBuilder(_cfg()).build(["x"], "/root")[0]["content"].lower()
+    assert "not a judge" in sys_msg
+    assert "command not found" in sys_msg  # in the "never answer with" rule
+    assert "when unsure" in sys_msg  # succeed-by-default guidance
+
+
+def test_fewshot_includes_unknown_tool_success_examples():
+    """A: the exemplars must demonstrate an unknown downloader/installer
+    SUCCEEDING with fs_ops, and all 6 pairs must reach the message list."""
+    msgs = PromptBuilder(_cfg()).build(["x"], "/root")
+    joined = " ".join(m["content"] for m in msgs)
+    # the two 'play along' anchors are present
+    assert "fetch-payload" in joined
+    assert "install-miner" in joined
+    # they carry fs_ops (simulated success writes to the tree)
+    assert "write_file" in joined
+    # 6 few-shot pairs (12 msgs) + system + final user = 14 messages
+    assert len(msgs) == 14
 
 
 # --- cache ---------------------------------------------------------------
@@ -198,6 +233,59 @@ def test_interpreter_llm_down_falls_back_to_not_found():
     assert code == 127 and "command not found" in err
 
 
+# --- B safeguard: LLM emulating "command not found" -> interpreter fallback --
+
+def test_looks_like_command_not_found_positives():
+    from honeyshell.backends import looks_like_command_not_found as lk
+    assert lk("bash: foo: command not found", [])
+    assert lk("foo: command not found", [])
+    assert lk("sh: 1: foo: not found", [])
+    assert lk("-bash: baz: command not found", [])
+    assert lk("  frobnicate: command not found  ", [])  # whitespace tolerated
+
+
+def test_looks_like_command_not_found_negatives():
+    from honeyshell.backends import looks_like_command_not_found as lk
+    # any fs_ops present -> it's a real simulated action, never a giveup
+    assert not lk("foo: command not found", [{"op": "touch", "path": "x"}])
+    # empty output -> not a not-found line
+    assert not lk("", [])
+    # "not found" mid-text (e.g. grep/search output) must NOT match (end-anchor)
+    assert not lk("Searching... pattern not found in 3 files, then continuing",
+                  [])
+    # long output that merely ends oddly is capped out
+    assert not lk("x" * 200 + "command not found", [])
+
+
+def test_resolver_defers_emulated_not_found_to_interpreter():
+    """When the model imitates a not-found error with no fs_ops, the resolver
+    returns None so the interpreter prints its OWN canonical
+    'bash: <cmd>: command not found' — not the model's ad-hoc string."""
+    llm = FakeLLM('{"output": "fetch-payload: command not found", '
+                  '"state_change": "none", "fs_ops": [], "impact": 0}')
+    r = ChainResolver(client=llm, config=_cfg())
+    code, out, err, ctx = _run_line("fetch-payload", r)
+    assert code == 127
+    # the interpreter's canonical form, with the bash: prefix
+    assert "bash: fetch-payload: command not found" in err
+    # the model's own string is not what the attacker sees
+    assert out == ""
+
+
+def test_resolver_keeps_simulated_success_with_fs_ops():
+    """A simulated success carrying fs_ops must pass through untouched even if
+    its output somehow mentions 'not found' — fs_ops presence guards it."""
+    llm = FakeLLM('{"output": "downloaded; signature not found", '
+                  '"state_change": "wrote /tmp/x", '
+                  '"fs_ops": [{"op": "write_file", "path": "/tmp/x", '
+                  '"content": "data"}], "impact": 3}')
+    r = ChainResolver(client=llm, config=_cfg())
+    code, out, err, ctx = _run_line("fetch-payload -o /tmp/x", r)
+    assert code == 0
+    assert "downloaded" in out
+    assert ctx.fs.is_file("/tmp/x")  # fs_op applied, not deferred
+
+
 def test_llm_command_records_state_log():
     # LLM state_change/impact now land in ctx.memory (SR/H/FL), the memory
     # milestone's home for this data. mkdir/uname are builtins, so use a
@@ -215,6 +303,85 @@ def test_llm_command_records_state_log():
     assert len(ctx.memory) == 1
     assert ctx.memory.sr_notes() == ["installed toolkit"]
     assert ctx.memory.fl[0] == 1.0 * MemorySettings().weaken_factor  # decayed
+
+
+# --- C_i -> VFS write-back (HANDOFF "最大整合風險") -----------------------
+
+def test_llm_fs_op_creates_file_visible_to_ls():
+    """The core consistency guarantee: an LLM that narrates creating a file
+    actually mutates the VFS, so a follow-up `ls`/`cat` sees it."""
+    llm = FakeLLM(
+        '{"output": "", "state_change": "created payload", '
+        '"fs_ops": [{"op": "write_file", "path": "/tmp/payload.sh", '
+        '"content": "echo pwned\\n"}], "impact": 2}'
+    )
+    r = ChainResolver(client=llm, config=_cfg())
+    ctx = _ctx()
+    # the sample fs has /tmp; run an unknown command so it routes to the LLM
+    _run_line("drop-payload", r, ctx=ctx)
+    assert ctx.fs.is_file("/tmp/payload.sh")
+    assert ctx.fs.readtext("/tmp/payload.sh") == "echo pwned\n"
+
+
+def test_llm_fs_op_impact_is_derived_not_trusted():
+    """When ops apply, SR note + impact come from the applier, overriding the
+    model's own (here deliberately wrong) impact/state_change."""
+    from honeyshell.core.config import MemorySettings
+    from honeyshell.memory import Pruner, SessionMemory
+
+    llm = FakeLLM(
+        '{"output": "", "state_change": "totally harmless", '
+        '"fs_ops": [{"op": "rm", "path": "/tmp"}], "impact": 0}'
+    )
+    r = ChainResolver(client=llm, config=_cfg())
+    ctx = _ctx()
+    ctx.memory = SessionMemory()
+    ctx.pruner = Pruner(MemorySettings())
+    _run_line("nuke", r, ctx=ctx)
+    assert not ctx.fs.exists("/tmp")  # actually removed
+    # FL records derived impact 4 (rm), decayed once by w — not the model's 0.
+    assert ctx.memory.fl[0] == 4.0 * MemorySettings().weaken_factor
+    # SR note reflects what the applier did, not the model's fib.
+    assert "removed" in ctx.memory.sr_notes()[0]
+
+
+def test_llm_prose_state_change_used_when_no_fs_ops():
+    """Non-structural changes (e.g. 'started a service') keep the prose C_i and
+    the model's self-scored impact — the fallback path stays intact."""
+    from honeyshell.core.config import MemorySettings
+    from honeyshell.memory import Pruner, SessionMemory
+
+    llm = FakeLLM(
+        '{"output": "", "state_change": "started nginx", '
+        '"fs_ops": [], "impact": 3}'
+    )
+    r = ChainResolver(client=llm, config=_cfg())
+    ctx = _ctx()
+    ctx.memory = SessionMemory()
+    ctx.pruner = Pruner(MemorySettings())
+    _run_line("svc-up", r, ctx=ctx)
+    assert ctx.memory.sr_notes() == ["started nginx"]
+    assert ctx.memory.fl[0] == 3.0 * MemorySettings().weaken_factor
+
+
+def test_cached_fs_op_reapplies_on_replay():
+    """A cached create (impact 1 <= cache_max_impact) must still mutate the VFS
+    on its second run in a fresh session — cache carries fs_ops."""
+    llm = FakeLLM(
+        '{"output": "", "state_change": "made dir", '
+        '"fs_ops": [{"op": "mkdir", "path": "/tmp/cached"}], "impact": 1}'
+    )
+    r = ChainResolver(client=llm, config=_cfg())  # shared cache
+
+    ctx1 = _ctx()
+    _run_line("mkcache", r, ctx=ctx1)
+    assert ctx1.fs.is_dir("/tmp/cached") and llm.calls == 1
+
+    # second session: same command hits cache (no LLM call) but VFS still changes
+    ctx2 = _ctx()
+    _run_line("mkcache", r, ctx=ctx2)
+    assert ctx2.fs.is_dir("/tmp/cached")
+    assert llm.calls == 1  # served from cache, model not re-queried
 
 
 def test_no_miss_handler_keeps_bash_behaviour():

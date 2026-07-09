@@ -22,6 +22,11 @@ from honeyshell.backends.client import (
     OllamaClient,
     extract_json,
 )
+from honeyshell.backends.fs_applier import (
+    ApplyReport,
+    apply_fs_ops,
+    normalise_fs_ops,
+)
 from honeyshell.backends.llm_command import (
     LLMCommand,
     make_llm_command_factory,
@@ -29,6 +34,7 @@ from honeyshell.backends.llm_command import (
 from honeyshell.backends.prompt_builder import (
     TABLE1_RUBRIC,
     PromptBuilder,
+    looks_like_command_not_found,
     parse_result,
 )
 from honeyshell.backends.resolver import ChainResolver, Resolution
@@ -42,10 +48,14 @@ __all__ = [
     "PromptBuilder",
     "TABLE1_RUBRIC",
     "parse_result",
+    "looks_like_command_not_found",
     "ResponseCache",
     "CacheEntry",
     "ChainResolver",
     "Resolution",
     "LLMCommand",
     "make_llm_command_factory",
+    "apply_fs_ops",
+    "normalise_fs_ops",
+    "ApplyReport",
 ]

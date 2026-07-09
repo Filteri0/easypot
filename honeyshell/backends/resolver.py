@@ -22,6 +22,7 @@ from __future__ import annotations
 import logging
 import time
 from dataclasses import dataclass, field
+from typing import Any
 
 from honeyshell.backends.cache import CacheEntry, ResponseCache
 from honeyshell.backends.client import (
@@ -29,7 +30,11 @@ from honeyshell.backends.client import (
     LLMUnavailable,
     extract_json,
 )
-from honeyshell.backends.prompt_builder import PromptBuilder, parse_result
+from honeyshell.backends.prompt_builder import (
+    PromptBuilder,
+    looks_like_command_not_found,
+    parse_result,
+)
 from honeyshell.core.config import HoneypotConfig
 from honeyshell.core.event_bus import EventBus
 from honeyshell.core.events import LLMEvent
@@ -41,12 +46,20 @@ _logger = logging.getLogger("honeyshell.backends.resolver")
 
 @dataclass
 class Resolution:
-    """The resolved response for one command."""
+    """The resolved response for one command.
+
+    ``fs_ops`` is the structured C_i (list of filesystem-op dicts); the
+    LLMCommand applies it to the VirtualFS so the tree matches the narrated
+    output. Present on both live and cached resolutions so replay stays
+    consistent. ``state_change`` remains the prose fallback for anything the
+    model couldn't express structurally.
+    """
 
     output: str
     state_change: str
     impact: int
     cached: bool = False
+    fs_ops: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -87,7 +100,7 @@ class ChainResolver:
         if hit is not None:
             self._emit(session_id, self.config.llm.model, 0, 0, 0.0, cached=True)
             return Resolution(hit.output, hit.state_change, hit.impact,
-                              cached=True)
+                              cached=True, fs_ops=list(hit.fs_ops))
 
         messages = self.builder.build(
             argv, cwd, username=username, sr=sr, history=history
@@ -102,20 +115,35 @@ class ChainResolver:
             )
             return None
 
-        output, state, impact = parse_result(extract_json(result.content))
+        output, state, impact, fs_ops = parse_result(extract_json(result.content))
         _logger.debug(
-            "LLM answered %r: impact=%d, %d chars, %.0fms",
-            command, impact, len(output), result.latency_ms,
+            "LLM answered %r: impact=%d, %d chars, %d fs_ops, %.0fms",
+            command, impact, len(output), len(fs_ops), result.latency_ms,
         )
         self._emit(
             session_id, result.model, result.prompt_tokens,
             result.response_tokens, result.latency_ms, cached=False,
         )
 
+        # B safeguard: if the model gave up and imitated "command not found"
+        # (no fs_ops, output is just a not-found line), don't surface its ad-hoc
+        # string. Return None so the interpreter emits its own canonical
+        # `bash: <cmd>: command not found` — one consistent error, and nothing
+        # junk gets cached. A genuine simulated success (has fs_ops, or real
+        # output) is never caught by this — see looks_like_command_not_found.
+        if looks_like_command_not_found(output, fs_ops):
+            _logger.debug(
+                "LLM emulated not-found for %r; deferring to interpreter "
+                "fallback", command,
+            )
+            return None
+
+        # Cache low-impact commands *including* their fs_ops, so a replay
+        # re-applies the same tree mutation (see CacheEntry.fs_ops).
         if impact <= self.cache_max_impact:
             self.cache.put(command, cwd,
-                           CacheEntry(output, state, impact))
-        return Resolution(output, state, impact, cached=False)
+                           CacheEntry(output, state, impact, tuple(fs_ops)))
+        return Resolution(output, state, impact, cached=False, fs_ops=fs_ops)
 
     def _emit(
         self,

@@ -51,8 +51,10 @@ class Principles:
     inject_time: bool = True
     # 輸出格式（論文 §3.3.1）：要求 LLM 以 JSON 回 (A_i, C_i, F_i)。
     require_json_output: bool = True
-    # few-shot 範例數（論文建議 4–5）。
-    few_shot_examples: int = 4
+    # few-shot 範例數（論文建議 4–5；此處用 6 對以涵蓋「未知命令模擬成功」的
+    # downloader / installer 範例——它們是 command-not-found 修正的關鍵錨點，
+    # 詳見 backends/prompt_builder.py 的 _FEWSHOT 註解）。
+    few_shot_examples: int = 6
     # 額外自由文字原則（逐條）。
     extra_rules: list[str] = field(default_factory=list)
 
@@ -86,7 +88,7 @@ class SystemProfile:
 class LLMSettings:
     """LLM 推論參數（論文 §3.3.3；本版僅立位，backends 那輪使用）。"""
 
-    model: str = "gpt-4o"
+    model: str = "qwen2.5:14b"
     temperature: float = 0.1
     top_p: float = 0.95
     frequency_penalty: float = 0.0

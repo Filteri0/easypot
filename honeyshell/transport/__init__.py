@@ -6,10 +6,10 @@ core can be used (and tested) even when asyncssh is not installed.
 """
 
 from honeyshell.transport.config import ServerConfig
-from honeyshell.transport.session import ShellSession
+from honeyshell.transport.session import INTERRUPT, ShellSession
 from honeyshell.transport.terminal import TerminalWriter
 
-__all__ = ["ServerConfig", "ShellSession", "TerminalWriter"]
+__all__ = ["ServerConfig", "ShellSession", "TerminalWriter", "INTERRUPT"]
 
 
 def __getattr__(name: str):

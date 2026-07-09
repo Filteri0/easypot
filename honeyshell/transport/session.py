@@ -18,6 +18,32 @@ from honeyshell.fs import load_json
 from honeyshell.shell import Interpreter
 from honeyshell.transport.config import ServerConfig
 
+__all__ = ["ShellSession", "INTERRUPT"]
+
+
+class _Interrupt:
+    """Sentinel a reader returns for Ctrl-C (SIGINT) instead of a line.
+
+    Distinct from ``""`` (a real empty line — the user pressed Enter) and
+    ``None`` (EOF / Ctrl-D). The interactive loop treats it as "abandon the
+    current input and show a fresh prompt", matching bash: Ctrl-C prints ``^C``,
+    drops the half-typed line, and redraws ONE new prompt — it does not run
+    anything and does not stack extra prompts.
+
+    Transport-agnostic: the asyncssh reader in ``ssh_server`` maps
+    ``BreakReceived`` onto this; in-memory test readers simply never emit it,
+    so unit tests are unaffected.
+    """
+
+    __slots__ = ()
+
+    def __repr__(self) -> str:  # pragma: no cover - debug aid
+        return "INTERRUPT"
+
+
+#: Module-level singleton sentinel (compare with ``is``).
+INTERRUPT = _Interrupt()
+
 
 class ShellSession:
     def __init__(
@@ -129,6 +155,11 @@ class ShellSession:
             if line is None:  # EOF (Ctrl-D)
                 self.stdout.write("logout\n")
                 break
+            if line is INTERRUPT:  # Ctrl-C: abandon this line, redraw prompt.
+                # The reader already emitted "^C\n"; we just loop so exactly one
+                # fresh prompt is drawn. No command runs. (Fixes the prompt
+                # storm from treating BreakReceived as an empty line.)
+                continue
             line = line.rstrip("\r\n")
             # A PTY client runs in canonical mode: it echoes typed input and
             # emits the newline itself, so the server must NOT echo or add a

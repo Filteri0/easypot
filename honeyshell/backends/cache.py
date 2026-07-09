@@ -21,6 +21,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 __all__ = ["ResponseCache", "CacheEntry"]
 
@@ -30,6 +31,13 @@ class CacheEntry:
     output: str
     state_change: str
     impact: int
+    # Structured C_i. Stored so a cache *hit* re-applies the same VFS mutation
+    # the live call would have (e.g. a cached "mkdir /tmp/x" still creates the
+    # dir on replay). Without this, a low-impact create/touch — which IS cached
+    # (impact 1 <= cache_max_impact) — would desync the tree on its second run.
+    # Tuple (not list) so the frozen dataclass stays hashable-friendly; the
+    # applier accepts any sequence of dicts.
+    fs_ops: tuple[dict[str, Any], ...] = ()
 
 
 @dataclass
@@ -58,7 +66,7 @@ class ResponseCache:
     def save(self, path: str | Path) -> None:
         obj = {
             k: {"output": e.output, "state_change": e.state_change,
-                "impact": e.impact}
+                "impact": e.impact, "fs_ops": list(e.fs_ops)}
             for k, e in self._data.items()
         }
         Path(path).write_text(json.dumps(obj, ensure_ascii=False),
@@ -71,8 +79,11 @@ class ResponseCache:
             return cls()
         obj = json.loads(p.read_text(encoding="utf-8"))
         data = {
-            k: CacheEntry(v.get("output", ""), v.get("state_change", ""),
-                          int(v.get("impact", 0)))
+            k: CacheEntry(
+                v.get("output", ""), v.get("state_change", ""),
+                int(v.get("impact", 0)),
+                tuple(v.get("fs_ops", []) or []),
+            )
             for k, v in obj.items()
         }
         return cls(_data=data)

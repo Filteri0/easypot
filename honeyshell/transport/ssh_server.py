@@ -13,7 +13,7 @@ import os
 import asyncssh
 
 from honeyshell.transport.config import ServerConfig
-from honeyshell.transport.session import ShellSession
+from honeyshell.transport.session import INTERRUPT, ShellSession
 from honeyshell.transport.terminal import TerminalWriter
 
 __all__ = ["HoneypotSSHServer", "handle_client", "start_server"]
@@ -44,16 +44,27 @@ class HoneypotSSHServer(asyncssh.SSHServer):
 
 
 class _ProcessReader:
-    """Adapts an asyncssh SSHReader to our ``async readline() -> str | None``."""
+    """Adapts an asyncssh SSHReader to our ``async readline() -> str | None``.
+
+    Two Ctrl-C paths exist and are handled separately:
+
+    * The common one — the client sends the ``\\x03`` character — is intercepted
+      by the line-editor key handler in ``_try_register_tab_completion`` (prints
+      ``^C``, clears the buffer, redraws the prompt) and never reaches here.
+    * A client that instead sends an SSH *break signal* raises
+      ``BreakReceived`` on ``readline``. As a fallback we surface the
+      :data:`INTERRUPT` sentinel so the interactive loop abandons the current
+      input and redraws exactly one fresh prompt (no storm, session stays up).
+    """
 
     def __init__(self, stdin: asyncssh.SSHReader) -> None:
         self._stdin = stdin
 
-    async def readline(self) -> str | None:
+    async def readline(self):
         try:
             line = await self._stdin.readline()
         except asyncssh.BreakReceived:
-            return "\n"  # treat Ctrl-C as an empty line, keep the session alive
+            return INTERRUPT
         if line == "":  # EOF
             return None
         return line
@@ -94,7 +105,6 @@ async def handle_client(
         session_id = f"{peer[0]}:{peer[1]}" if isinstance(peer, tuple) else None
         miss_handler = make_llm_command_factory(resolver, session_id=session_id)
 
-    reader = _ProcessReader(process.stdin)
     stdout = TerminalWriter(process.stdout, crlf=has_pty)
     # On a PTY, a real shell writes stdout and stderr to the same terminal, so
     # ordering is naturally correct. asyncssh exposes them as separate channels
@@ -102,6 +112,7 @@ async def handle_client(
     # the *next* prompt). Merge stderr into stdout for interactive sessions;
     # keep them split for exec mode where a caller may capture them separately.
     stderr = stdout if has_pty else TerminalWriter(process.stderr, crlf=has_pty)
+    reader = _ProcessReader(process.stdin)
     session = ShellSession(
         config,
         reader,
@@ -113,6 +124,15 @@ async def handle_client(
         miss_handler=miss_handler,
         memory_settings=memory_settings,
     )
+
+    # Tab-completion: register a handler on the line editor (PTY only). The
+    # editor is asyncssh's SSHLineEditorChannel wrapper on process.channel when
+    # a pty was requested. Completing command names (from the registry) and
+    # paths (from this session's VFS) removes an easy honeypot tell — a real
+    # shell completes, a dead one doesn't. Best-effort: any failure to hook the
+    # editor is swallowed so the session still works without completion.
+    if has_pty:
+        _try_register_tab_completion(process, session)
 
     status = 0
     try:
@@ -131,6 +151,70 @@ async def handle_client(
             process.exit(status or 0)
         except Exception:  # noqa: BLE001
             pass
+
+
+def _try_register_tab_completion(
+    process: asyncssh.SSHServerProcess, session: ShellSession
+) -> None:
+    """Hook Tab (completion) and Ctrl-C (line reset) on the asyncssh editor.
+
+    asyncssh wraps a pty channel in ``SSHLineEditorChannel``, exposing
+    ``register_key(key, handler)`` where the handler gets ``(line, pos)`` and
+    returns ``(new_line, new_pos)`` (or ``True``/``False``). We delegate Tab's
+    completion decision to the transport-agnostic ``completion.complete`` so it
+    stays unit-testable; we only bridge asyncssh <-> that function here.
+
+    **Ctrl-C**: by default asyncssh binds ``\\x03`` to a "send break" action that
+    signals the session but leaves the half-typed line in the editor buffer —
+    so the next input concatenates onto the junk ("partial" + "whoami"). We
+    override ``\\x03`` to instead print ``^C`` and reset the editor line to empty
+    (returning ``('', 0)``), then redraw the shell prompt. This matches bash and
+    fixes both the buffer-carryover bug and the earlier prompt storm.
+
+    Best-effort: if the editor isn't present (older asyncssh, no pty, missing
+    ``register_key``) we silently skip — line-editing niceties must never be a
+    correctness requirement.
+    """
+    from honeyshell.commands import registry
+    from honeyshell.transport import completion
+
+    channel = getattr(process, "channel", None)
+    register = getattr(channel, "register_key", None)
+    if register is None:
+        return
+
+    def _command_names() -> list[str]:
+        # registry maps both bare names and full paths (e.g. "ls" and
+        # "/bin/ls"); for command completion offer only the bare basenames so
+        # Tab yields "ls", not "/bin/ls".
+        return sorted({k for k in registry.all_commands() if "/" not in k})
+
+    def _tab_handler(line: str, pos: int):
+        try:
+            return completion.complete(
+                line, pos,
+                command_names=_command_names(),
+                fs=session.ctx.fs,
+                cwd=session.ctx.cwd,
+            )
+        except Exception:  # noqa: BLE001 - a completion bug must not kill input
+            return line, pos
+
+    def _ctrlc_handler(line: str, pos: int):
+        # Print "^C", drop the current line, and redraw the prompt — bash-like.
+        # Writing straight to stdout is safe: the editor is between keystrokes.
+        try:
+            process.stdout.write("^C\r\n")
+            process.stdout.write(session.prompt())
+        except Exception:  # noqa: BLE001
+            pass
+        return "", 0  # editor clears its buffer and repositions the cursor
+
+    try:
+        register("\t", _tab_handler)
+        register("\x03", _ctrlc_handler)
+    except Exception:  # noqa: BLE001 - editor not ready / unsupported: skip
+        pass
 
 
 def _load_or_make_host_key(path: str | None):
