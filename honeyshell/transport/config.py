@@ -10,6 +10,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
 
+from honeyshell.core.config import SystemProfile
+
 _DEFAULT_FS = Path(__file__).resolve().parent.parent / "data" / "fs.json"
 
 # Login attempt logger: (username, password, peer, accepted) -> None
@@ -50,6 +52,18 @@ class ServerConfig:
     llm_enable: bool = False
     llm_model: str = "qwen2.5:7b"
     llm_base_url: str = "http://localhost:11434"
+
+    #: The emulated machine profile. Single source of truth for both the shell
+    #: session (uname/hostname builtins read it) and the LLM resolver (folds it
+    #: into the system prompt), so their advertised system stays consistent.
+    #: Defaults are filled in post-init to keep hostname aligned with above.
+    system: "SystemProfile | None" = None
+
+    def __post_init__(self) -> None:
+        if self.system is None:
+            self.system = SystemProfile(hostname=self.hostname)
+        elif not self.system.hostname:
+            self.system.hostname = self.hostname
 
     def accept(self, username: str, password: str) -> bool:
         if self.accept_all:

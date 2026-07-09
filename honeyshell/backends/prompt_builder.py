@@ -78,15 +78,18 @@ class PromptBuilder:
         argv: list[str],
         cwd: str,
         *,
+        username: str = "root",
         sr: list[str] | None = None,
         history: list[tuple[str, str]] | None = None,
         now: str | None = None,
     ) -> list[dict[str, str]]:
         """Assemble the message list for one interaction.
 
-        ``sr`` is the System State Register (prior state-change notes) and
-        ``history`` is the interaction history [(cmd, output), ...]; both are
-        optional and empty in the current milestone.
+        ``username`` is the logged-in identity; it's surfaced to the model so
+        it doesn't invent permission errors (a common failure where a local
+        model sees a non-``/root`` cwd and guesses "Permission denied"). ``sr``
+        is the System State Register and ``history`` the interaction history;
+        both are optional and empty in the current milestone.
         """
         messages: list[dict[str, str]] = [
             {"role": "system", "content": self._system_prompt(now)}
@@ -103,9 +106,17 @@ class PromptBuilder:
                                         f'"state_change": "", "impact": 0}}'})
 
         command = " ".join(argv)
+        is_root = username == "root"
+        priv = ("You are the root user (uid=0): you have full permissions, so "
+                "commands succeed unless the target genuinely doesn't exist."
+                if is_root else
+                f"You are user '{username}' (non-root).")
         messages.append({
             "role": "user",
-            "content": f"COMMAND: {command}\nCWD: {cwd}",
+            "content": (
+                f"USER: {username}\n{priv}\n"
+                f"COMMAND: {command}\nCWD: {cwd}"
+            ),
         })
         return messages
 

@@ -31,6 +31,7 @@ __all__ = [
     "Principles",
     "SystemProfile",
     "LLMSettings",
+    "MemorySettings",
     "HoneypotConfig",
 ]
 
@@ -95,6 +96,24 @@ class LLMSettings:
 
 
 @dataclass
+class MemorySettings:
+    """多輪記憶與 Memory Pruning 參數（論文 §3.2.2）。
+
+    weaken_factor w：時間衰減，每輪把各筆 impact 乘以 w。論文推導出的合理
+    範圍 (0.623, 1]，使三步前的高權限命令權重仍大於新命令；預設 0.8。
+
+    max_prompt_chars：prompt 長度上限的字元近似（本地模型無統一 tokenizer，
+    以字元數估算，約 4 字元/token）。超過時觸發裁剪，移除 impact 最小的歷史
+    項。預設 8000 字元 ≈ 2000 token，對齊論文 §4.6 的平均 prompt 規模。
+    """
+
+    weaken_factor: float = 0.8
+    max_prompt_chars: int = 8000
+    #: 至少保留最近 N 筆歷史，避免裁剪把當前上下文清空。
+    min_keep: int = 2
+
+
+@dataclass
 class HoneypotConfig:
     """頂層設定聚合。
 
@@ -105,6 +124,7 @@ class HoneypotConfig:
     principles: Principles = field(default_factory=Principles)
     system: SystemProfile = field(default_factory=SystemProfile)
     llm: LLMSettings = field(default_factory=LLMSettings)
+    memory: MemorySettings = field(default_factory=MemorySettings)
 
     # ---- 序列化 ----
 
@@ -124,6 +144,7 @@ class HoneypotConfig:
             principles=_build(Principles, data.get("principles")),
             system=_build(SystemProfile, data.get("system")),
             llm=_build(LLMSettings, data.get("llm")),
+            memory=_build(MemorySettings, data.get("memory")),
         )
 
     @classmethod

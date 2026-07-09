@@ -31,6 +31,7 @@ class ShellSession:
         is_tty: bool = False,
         term_width: int = 80,
         miss_handler=None,
+        memory_settings=None,
     ) -> None:
         self.config = config
         self.reader = reader
@@ -65,7 +66,16 @@ class ShellSession:
             hostname=config.hostname,
             is_tty=is_tty,
             term_width=term_width,
+            system=config.system,
         )
+        # Attach per-session dynamic memory when the LLM backend is active. Done
+        # here (not in ShellContext defaults) so a non-LLM session stays lean
+        # and memory imports don't load unless needed.
+        if miss_handler is not None:
+            from honeyshell.core.config import MemorySettings
+            from honeyshell.memory import Pruner, SessionMemory
+            self.ctx.memory = SessionMemory()
+            self.ctx.pruner = Pruner(memory_settings or MemorySettings())
         self.interp = Interpreter(
             self.ctx, self.stdout, self.stderr, miss_handler=miss_handler
         )

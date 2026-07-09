@@ -19,6 +19,7 @@ or live) so the audit bus can track cost/latency (paper §4.6).
 
 from __future__ import annotations
 
+import logging
 import time
 from dataclasses import dataclass, field
 
@@ -34,6 +35,8 @@ from honeyshell.core.event_bus import EventBus
 from honeyshell.core.events import LLMEvent
 
 __all__ = ["Resolution", "ChainResolver"]
+
+_logger = logging.getLogger("honeyshell.backends.resolver")
 
 
 @dataclass
@@ -72,6 +75,7 @@ class ChainResolver:
         argv: list[str],
         cwd: str,
         *,
+        username: str = "root",
         session_id: str | None = None,
         sr: list[str] | None = None,
         history: list[tuple[str, str]] | None = None,
@@ -85,13 +89,24 @@ class ChainResolver:
             return Resolution(hit.output, hit.state_change, hit.impact,
                               cached=True)
 
-        messages = self.builder.build(argv, cwd, sr=sr, history=history)
+        messages = self.builder.build(
+            argv, cwd, username=username, sr=sr, history=history
+        )
+        _logger.debug("querying LLM for %r (cwd=%s)", command, cwd)
         try:
             result = await self.client.chat(messages)
-        except LLMUnavailable:
+        except LLMUnavailable as exc:
+            _logger.warning(
+                "LLM unavailable for %r; falling back to command-not-found: %s",
+                command, exc,
+            )
             return None
 
         output, state, impact = parse_result(extract_json(result.content))
+        _logger.debug(
+            "LLM answered %r: impact=%d, %d chars, %.0fms",
+            command, impact, len(output), result.latency_ms,
+        )
         self._emit(
             session_id, result.model, result.prompt_tokens,
             result.response_tokens, result.latency_ms, cached=False,

@@ -63,6 +63,7 @@ async def handle_client(
     config: ServerConfig,
     process: asyncssh.SSHServerProcess,
     resolver=None,
+    memory_settings=None,
 ) -> None:
     """Entry point for each shell/exec request.
 
@@ -110,6 +111,7 @@ async def handle_client(
         is_tty=has_pty,
         term_width=term_width,
         miss_handler=miss_handler,
+        memory_settings=memory_settings,
     )
 
     status = 0
@@ -151,21 +153,67 @@ async def start_server(config: ServerConfig) -> asyncssh.SSHAcceptor:
     # commands hit cache instead of re-querying the model. Backends are imported
     # lazily so a non-LLM deployment never needs httpx installed.
     resolver = None
+    memory_settings = None
     if config.llm_enable:
         from honeyshell.backends import ChainResolver, OllamaClient
         from honeyshell.core.config import HoneypotConfig
 
         hp = HoneypotConfig()
-        hp.system.hostname = config.hostname
+        # Share the server's single SystemProfile so the model's advertised
+        # machine matches what the uname/hostname builtins report.
+        if config.system is not None:
+            hp.system = config.system
         hp.llm.model = config.llm_model
+        memory_settings = hp.memory
         client = OllamaClient(model=config.llm_model, base_url=config.llm_base_url)
         resolver = ChainResolver(client=client, config=hp)
+
+        # Startup self-check so misconfiguration is visible immediately rather
+        # than silently degrading every unknown command to "command not found".
+        import logging as _logging
+        _log = _logging.getLogger("honeyshell")
+
+        # Distinguish "httpx missing" from "server down" — they need different
+        # fixes and both otherwise present as a silent fallback.
+        httpx_ok = True
+        try:
+            import httpx  # noqa: F401
+        except ImportError:
+            httpx_ok = False
+
+        if not httpx_ok:
+            _log.warning(
+                "LLM enabled but httpx is NOT installed in this venv. "
+                "Run: pip install httpx  (unknown commands will fall back to "
+                "'command not found' until then)."
+            )
+        else:
+            try:
+                ok = await client.is_available()
+            except Exception as exc:  # noqa: BLE001
+                ok = False
+                _log.warning("LLM self-check raised: %s", exc)
+            if ok:
+                _log.info(
+                    "LLM backend ready: model=%s url=%s", config.llm_model,
+                    config.llm_base_url,
+                )
+            else:
+                _log.warning(
+                    "LLM enabled but Ollama NOT reachable at %s. Unknown "
+                    "commands fall back to 'command not found'. Check: "
+                    "`ollama serve` running and `ollama pull %s`.",
+                    config.llm_base_url, config.llm_model,
+                )
 
     return await asyncssh.create_server(
         lambda: HoneypotSSHServer(config),
         config.host,
         config.port,
         server_host_keys=[host_key],
-        process_factory=functools.partial(handle_client, config, resolver=resolver),
+        process_factory=functools.partial(
+            handle_client, config, resolver=resolver,
+            memory_settings=memory_settings,
+        ),
         server_version=config.server_version,
     )

@@ -15,8 +15,13 @@ than as child processes.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Optional
 
+from honeyshell.core.config import SystemProfile
 from honeyshell.fs import VirtualFS
+
+if TYPE_CHECKING:
+    from honeyshell.memory import Pruner, SessionMemory
 
 
 @dataclass
@@ -35,6 +40,22 @@ class ShellContext:
     #: Terminal width in columns; only meaningful when ``is_tty`` is True.
     #: Injected by the session from the PTY window size (falls back to 80).
     term_width: int = 80
+    #: The emulated machine profile (kernel, arch, CPU, ...). Read by system
+    #: commands like ``uname``/``hostname`` so their output matches the honeypot
+    #: config. Optional: when None, those commands fall back to sane defaults.
+    system: Optional[SystemProfile] = None
+    #: Per-session dynamic memory (SR/H/FL) for the LLM backend. Attached by the
+    #: session; the LLM command records interactions here and the prompt builder
+    #: reads SR/H back out. None when the LLM backend is disabled.
+    memory: Optional["SessionMemory"] = None
+    #: Memory pruner (Weaken-Factor decay + eviction). Attached alongside
+    #: ``memory``; the LLM command calls ``pruner.step(memory)`` each turn.
+    pruner: Optional["Pruner"] = None
+
+    @property
+    def uid(self) -> int:
+        """Effective uid: 0 for root, else a conventional non-root uid."""
+        return 0 if self.username == "root" else 1000
 
     @property
     def home(self) -> str:

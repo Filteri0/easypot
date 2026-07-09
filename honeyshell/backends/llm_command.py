@@ -37,12 +37,16 @@ class LLMCommand(Command):
     session_id: str | None = None
 
     async def run(self) -> int:
-        # SR/H are empty this milestone; memory/ will supply them from ctx.
-        sr = getattr(self.ctx, "sr_notes", None)
-        history = getattr(self.ctx, "history", None)
+        memory = getattr(self.ctx, "memory", None)
+        # Supply prior SR/H from session memory so multi-turn attacks stay
+        # consistent (empty on the first turn or when memory is disabled).
+        sr = memory.sr_notes() if memory is not None else None
+        history = memory.as_history() if memory is not None else None
+
         resolution = await self.resolver.resolve(
             self.argv,
             self.ctx.cwd,
+            username=self.ctx.username,
             session_id=self.session_id,
             sr=sr,
             history=history,
@@ -58,18 +62,19 @@ class LLMCommand(Command):
             text = resolution.output
             self.write(text if text.endswith("\n") else text + "\n")
 
-        # Record the state change / impact for the memory milestone. Stored on
-        # the context as a lightweight running log; pruning comes later.
-        log = getattr(self.ctx, "llm_state_log", None)
-        if log is None:
-            log = []
-            setattr(self.ctx, "llm_state_log", log)
-        log.append({
-            "command": " ".join(self.argv),
-            "state_change": resolution.state_change,
-            "impact": resolution.impact,
-            "cached": resolution.cached,
-        })
+        # Fold this turn into session memory (SR/H/FL), then apply decay +
+        # pruning so the running prompt stays within budget. A cached response
+        # is still recorded — it's part of the conversation the attacker sees.
+        if memory is not None:
+            memory.record(
+                " ".join(self.argv),
+                resolution.output,
+                resolution.state_change,
+                resolution.impact,
+            )
+            pruner = getattr(self.ctx, "pruner", None)
+            if pruner is not None:
+                pruner.step(memory)
         return 0
 
 

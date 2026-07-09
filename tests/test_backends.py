@@ -172,12 +172,14 @@ def _run_line(line, resolver, ctx=None):
 
 
 def test_interpreter_miss_routes_to_llm():
-    llm = FakeLLM('{"output": "Linux svr04 5.10", "state_change": "none", '
+    # Use a command that is NOT a builtin so it reaches the LLM. (uname/mkdir
+    # are now emulated builtins and correctly bypass the model.)
+    llm = FakeLLM('{"output": "frob complete", "state_change": "none", '
                   '"impact": 0}')
     r = ChainResolver(client=llm, config=_cfg())
-    code, out, err, ctx = _run_line("uname -a", r)
+    code, out, err, ctx = _run_line("frobnicate --now", r)
     assert code == 0
-    assert out == "Linux svr04 5.10\n"
+    assert out == "frob complete\n"
     assert err == ""
     assert llm.calls == 1
 
@@ -197,13 +199,22 @@ def test_interpreter_llm_down_falls_back_to_not_found():
 
 
 def test_llm_command_records_state_log():
-    llm = FakeLLM('{"output": "", "state_change": "created /tmp/x", '
+    # LLM state_change/impact now land in ctx.memory (SR/H/FL), the memory
+    # milestone's home for this data. mkdir/uname are builtins, so use a
+    # non-builtin command that goes through the LLM.
+    from honeyshell.core.config import MemorySettings
+    from honeyshell.memory import Pruner, SessionMemory
+
+    llm = FakeLLM('{"output": "", "state_change": "installed toolkit", '
                   '"impact": 1}')
     r = ChainResolver(client=llm, config=_cfg())
-    _, _, _, ctx = _run_line("mkdir /tmp/x", r)
-    log = getattr(ctx, "llm_state_log", [])
-    assert len(log) == 1 and log[0]["state_change"] == "created /tmp/x"
-    assert log[0]["impact"] == 1
+    ctx = _ctx()
+    ctx.memory = SessionMemory()
+    ctx.pruner = Pruner(MemorySettings())
+    _run_line("install-toolkit", r, ctx=ctx)
+    assert len(ctx.memory) == 1
+    assert ctx.memory.sr_notes() == ["installed toolkit"]
+    assert ctx.memory.fl[0] == 1.0 * MemorySettings().weaken_factor  # decayed
 
 
 def test_no_miss_handler_keeps_bash_behaviour():
