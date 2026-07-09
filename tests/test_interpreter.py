@@ -14,16 +14,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from honeyshell.commands import ShellContext, StringWriter  # noqa: E402
-from honeyshell.fs import load_json  # noqa: E402
+from honeyshell.fs.build_sample_fs import build as build_sample_fs  # noqa: E402
 from honeyshell.shell import Interpreter, expand_token  # noqa: E402
-
-_DATA = Path(__file__).resolve().parents[1] / "honeyshell" / "data" / "fs.json"
 
 
 def _ctx(cwd="/", **env):
     environ = {"HOME": "/root", "USER": "root", "PATH": "/usr/bin:/bin"}
     environ.update(env)
-    return ShellContext(fs=load_json(_DATA), cwd=cwd, environ=environ, username="root")
+    return ShellContext(
+        fs=build_sample_fs(hostname="svr04"), cwd=cwd, environ=environ,
+        username="root",
+    )
 
 
 def _sh(ctx=None):

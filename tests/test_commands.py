@@ -23,13 +23,11 @@ from honeyshell.commands import (  # noqa: E402
     register,
     resolve,
 )
-from honeyshell.fs import load_json  # noqa: E402
-
-_DATA = Path(__file__).resolve().parents[1] / "honeyshell" / "data" / "fs.json"
+from honeyshell.fs.build_sample_fs import build as build_sample_fs  # noqa: E402
 
 
 def _ctx(cwd: str = "/") -> ShellContext:
-    return ShellContext(fs=load_json(_DATA), cwd=cwd, username="root")
+    return ShellContext(fs=build_sample_fs(hostname="svr04"), cwd=cwd, username="root")
 
 
 def _run(cls, argv, ctx=None, stdin_text=""):

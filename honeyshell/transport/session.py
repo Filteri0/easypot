@@ -28,12 +28,16 @@ class ShellSession:
         stderr: Writable | None = None,
         *,
         username: str | None = None,
+        is_tty: bool = False,
+        term_width: int = 80,
+        miss_handler=None,
     ) -> None:
         self.config = config
         self.reader = reader
         self.stdout = stdout
         self.stderr = stderr or stdout
         self.username = username or config.default_user
+
 
         environ = dict(config.base_environ)
         home = "/root" if self.username == "root" else f"/home/{self.username}"
@@ -45,14 +49,48 @@ class ShellSession:
                 "HOSTNAME": config.hostname,
             }
         )
+        fs = load_json(config.fs_path)
+        # Honeypots accept arbitrary usernames, but the base filesystem only
+        # ships a handful of home directories. If the login's home is missing,
+        # materialise it (owned by the user) so `ls`/`cd ..` behave like a real
+        # box — a real Linux would either have the home or fall back to /, and
+        # an absent home is an easy honeypot tell. This mirrors how Cowrie
+        # provisions a home for the session's user.
+        self._ensure_home(fs, home)
         self.ctx = ShellContext(
-            fs=load_json(config.fs_path),
+            fs=fs,
             cwd=home,
             environ=environ,
             username=self.username,
             hostname=config.hostname,
+            is_tty=is_tty,
+            term_width=term_width,
         )
-        self.interp = Interpreter(self.ctx, self.stdout, self.stderr)
+        self.interp = Interpreter(
+            self.ctx, self.stdout, self.stderr, miss_handler=miss_handler
+        )
+
+    @staticmethod
+    def _ensure_home(fs, home: str) -> None:
+        """Create ``home`` in the VFS if absent, owned by a non-root uid.
+
+        Non-root homes are created with uid/gid 1000 via ``mkdir`` (parent
+        dirs materialised first with ``makedirs``); root's home (/root) is
+        expected to exist in the base tree already. Failures are swallowed: a
+        missing home must never crash the session. This mirrors how Cowrie
+        provisions a home for the session's user so an absent directory can't
+        be used to fingerprint the honeypot.
+        """
+        if not home or fs.exists(home):
+            return
+        parent = home.rsplit("/", 1)[0] or "/"
+        try:
+            if not fs.exists(parent):
+                fs.makedirs(parent, perm=0o755)
+            uid = 0 if home == "/root" else 1000
+            fs.mkdir(home, uid=uid, gid=uid, perm=0o755)
+        except Exception:  # noqa: BLE001 — never let provisioning break login
+            pass
 
     # -- prompt --
 
@@ -82,6 +120,9 @@ class ShellSession:
                 self.stdout.write("logout\n")
                 break
             line = line.rstrip("\r\n")
+            # A PTY client runs in canonical mode: it echoes typed input and
+            # emits the newline itself, so the server must NOT echo or add a
+            # newline (doing so double-prints the line). We just run it.
             await self.interp.execute(line)
             if self.ctx.should_exit:
                 self.stdout.write("logout\n")

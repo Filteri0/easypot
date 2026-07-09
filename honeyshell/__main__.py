@@ -33,6 +33,13 @@ def main() -> None:
     ap.add_argument("--fs", dest="fs_path", default=None)
     ap.add_argument("--host-key", dest="host_key_path", default=None)
     ap.add_argument("--motd", default="")
+    ap.add_argument("--llm", dest="llm_enable", action="store_true",
+                    help="answer unknown commands with a local Ollama model")
+    ap.add_argument("--llm-model", default="qwen2.5:7b",
+                    help="Ollama model name (default: qwen2.5:7b)")
+    ap.add_argument("--llm-url", dest="llm_base_url",
+                    default="http://localhost:11434",
+                    help="Ollama base URL (default: http://localhost:11434)")
     args = ap.parse_args()
 
     logging.basicConfig(
@@ -46,6 +53,9 @@ def main() -> None:
         host_key_path=args.host_key_path,
         motd=args.motd,
         login_logger=_log_login,
+        llm_enable=args.llm_enable,
+        llm_model=args.llm_model,
+        llm_base_url=args.llm_base_url,
     )
     if args.fs_path:
         kwargs["fs_path"] = args.fs_path

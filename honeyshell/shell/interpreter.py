@@ -51,11 +51,20 @@ class Interpreter:
         ctx: ShellContext,
         stdout: Writable,
         stderr: Writable | None = None,
+        *,
+        miss_handler=None,
     ) -> None:
         self.ctx = ctx
         self.stdout = stdout
         self.stderr = stderr or stdout
         self.last_status = 0
+        #: Optional factory called when the registry can't resolve a command:
+        #: ``miss_handler(ctx, argv, stdin, stdout, stderr) -> Command``. This
+        #: is the LLM seam — the transport injects a factory built by
+        #: ``backends.make_llm_command_factory``. When None (default, and in
+        #: unit tests) the interpreter keeps the plain bash "command not found"
+        #: behaviour, so nothing else changes.
+        self.miss_handler = miss_handler
         registry.discover()  # idempotent; ensures builtins are registered
 
     # -- public entry --
@@ -181,8 +190,17 @@ class Interpreter:
         token = argv[0]
         cls = registry.resolve(token)
         if cls is None:
-            # >>> LLM backend seam: on a miss, hand `argv` to the LLM resolver
-            #     instead of failing. For now, behave like bash.
+            if self.miss_handler is not None:
+                # LLM seam: hand the command to the injected backend factory.
+                cmd = self.miss_handler(
+                    self.ctx, argv, stdin, stdout, self.stderr
+                )
+                try:
+                    code = await cmd.run()
+                except Exception:  # noqa: BLE001 — a backend error must not crash
+                    self.stderr.write(f"bash: {token}: command not found\n")
+                    return 127
+                return code if isinstance(code, int) else 0
             self.stderr.write(f"bash: {token}: command not found\n")
             return 127
 

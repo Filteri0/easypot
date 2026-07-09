@@ -28,6 +28,13 @@ class ShellContext:
     hostname: str = "svr04"
     #: Set by the `exit`/`logout` builtin to ask the session loop to end.
     should_exit: bool = False
+    #: True when the session is attached to a PTY. Commands like ``ls`` use
+    #: this to decide between human-facing column layout (tty) and one
+    #: entry per line (pipes / exec), matching how GNU coreutils behave.
+    is_tty: bool = False
+    #: Terminal width in columns; only meaningful when ``is_tty`` is True.
+    #: Injected by the session from the PTY window size (falls back to 80).
+    term_width: int = 80
 
     @property
     def home(self) -> str:

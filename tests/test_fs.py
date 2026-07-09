@@ -31,12 +31,14 @@ from honeyshell.fs import (  # noqa: E402
 )
 from honeyshell.fs.filesystem import FSNode  # noqa: E402
 from honeyshell.fs.import_cowrie import convert_pickle  # noqa: E402
-
-_DATA = Path(__file__).resolve().parents[1] / "honeyshell" / "data" / "fs.json"
+from honeyshell.fs.build_sample_fs import build as build_sample_fs  # noqa: E402
 
 
 def _sample_fs() -> VirtualFS:
-    return load_json(_DATA)
+    # Build the fixture in-memory with a fixed hostname so tests never depend
+    # on whatever data/fs.json a deployment may have regenerated (e.g. with a
+    # custom --hostname). The on-disk fs.json is a deployment artifact.
+    return build_sample_fs(hostname="svr04")
 
 
 # --- path normalisation --------------------------------------------------

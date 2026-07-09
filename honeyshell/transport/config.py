@@ -43,6 +43,14 @@ class ServerConfig:
 
     base_environ: dict[str, str] = field(default_factory=_default_environ)
 
+    # LLM backend (paper §3): when enabled, registry-missed commands are
+    # answered by a local Ollama model instead of "command not found". Kept
+    # off by default so the honeypot runs standalone without a model; the
+    # transport builds the resolver only when this is True.
+    llm_enable: bool = False
+    llm_model: str = "qwen2.5:7b"
+    llm_base_url: str = "http://localhost:11434"
+
     def accept(self, username: str, password: str) -> bool:
         if self.accept_all:
             return True

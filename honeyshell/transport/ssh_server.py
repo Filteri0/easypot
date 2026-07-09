@@ -59,15 +59,58 @@ class _ProcessReader:
         return line
 
 
-async def handle_client(config: ServerConfig, process: asyncssh.SSHServerProcess) -> None:
-    """Entry point for each shell/exec request."""
+async def handle_client(
+    config: ServerConfig,
+    process: asyncssh.SSHServerProcess,
+    resolver=None,
+) -> None:
+    """Entry point for each shell/exec request.
+
+    ``resolver`` is a shared :class:`~honeyshell.backends.ChainResolver` built
+    once at bootstrap when ``config.llm_enable`` is set; here we wrap it in a
+    per-connection factory (carrying this session's id) that the interpreter
+    calls on a registry miss.
+    """
     username = process.get_extra_info("username") or config.default_user
     has_pty = process.get_terminal_type() is not None
 
+    # Terminal width from the PTY window (cols, rows, ...); default 80 when
+    # unavailable. Used by `ls` for column layout.
+    term_width = 80
+    if has_pty:
+        try:
+            size = process.get_terminal_size()
+            if size and size[0]:
+                term_width = size[0]
+        except Exception:  # noqa: BLE001
+            pass
+
+    # Per-connection LLM factory (None when the backend is disabled).
+    miss_handler = None
+    if resolver is not None:
+        from honeyshell.backends import make_llm_command_factory
+        peer = process.get_extra_info("peername")
+        session_id = f"{peer[0]}:{peer[1]}" if isinstance(peer, tuple) else None
+        miss_handler = make_llm_command_factory(resolver, session_id=session_id)
+
     reader = _ProcessReader(process.stdin)
     stdout = TerminalWriter(process.stdout, crlf=has_pty)
-    stderr = TerminalWriter(process.stderr, crlf=has_pty)
-    session = ShellSession(config, reader, stdout, stderr, username=username)
+    # On a PTY, a real shell writes stdout and stderr to the same terminal, so
+    # ordering is naturally correct. asyncssh exposes them as separate channels
+    # and the client may interleave them out of order (errors appearing after
+    # the *next* prompt). Merge stderr into stdout for interactive sessions;
+    # keep them split for exec mode where a caller may capture them separately.
+    stderr = stdout if has_pty else TerminalWriter(process.stderr, crlf=has_pty)
+    session = ShellSession(
+        config,
+        reader,
+        stdout,
+        stderr,
+        username=username,
+        is_tty=has_pty,
+        term_width=term_width,
+        miss_handler=miss_handler,
+    )
 
     status = 0
     try:
@@ -102,11 +145,27 @@ def _load_or_make_host_key(path: str | None):
 async def start_server(config: ServerConfig) -> asyncssh.SSHAcceptor:
     """Create and start the SSH server. Returns the asyncssh acceptor."""
     host_key = _load_or_make_host_key(config.host_key_path)
+
+    # Build one shared LLM resolver at bootstrap when enabled. Sharing means the
+    # response cache (paper §3.4) is warm across connections — repeated attacker
+    # commands hit cache instead of re-querying the model. Backends are imported
+    # lazily so a non-LLM deployment never needs httpx installed.
+    resolver = None
+    if config.llm_enable:
+        from honeyshell.backends import ChainResolver, OllamaClient
+        from honeyshell.core.config import HoneypotConfig
+
+        hp = HoneypotConfig()
+        hp.system.hostname = config.hostname
+        hp.llm.model = config.llm_model
+        client = OllamaClient(model=config.llm_model, base_url=config.llm_base_url)
+        resolver = ChainResolver(client=client, config=hp)
+
     return await asyncssh.create_server(
         lambda: HoneypotSSHServer(config),
         config.host,
         config.port,
         server_host_keys=[host_key],
-        process_factory=functools.partial(handle_client, config),
+        process_factory=functools.partial(handle_client, config, resolver=resolver),
         server_version=config.server_version,
     )
