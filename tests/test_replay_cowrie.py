@@ -20,8 +20,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from honeyshell.replay_cowrie import (  # noqa: E402
     FIXTURE_CSV,
     ReplaySession,
+    Target,
     parse_cowrie_input,
     replay,
+    replay_multi,
+    split_targets,
 )
 
 try:
@@ -100,6 +103,62 @@ def test_parse_empty_text():
 
 
 # --------------------------------------------------------------------------- #
+# 多 target 分流層（split_targets 純函式，不碰網路）
+# --------------------------------------------------------------------------- #
+
+def _mk_sessions(n: int) -> list[ReplaySession]:
+    return [ReplaySession(session_id=f"s{i}", commands=[f"cmd{i}"])
+            for i in range(n)]
+
+
+def test_split_round_robin_two_targets():
+    sessions = _mk_sessions(6)
+    buckets = split_targets(sessions, 2)
+    assert len(buckets) == 2
+    # round-robin：偶數 index → bucket0，奇數 → bucket1
+    assert [s.session_id for s in buckets[0]] == ["s0", "s2", "s4"]
+    assert [s.session_id for s in buckets[1]] == ["s1", "s3", "s5"]
+
+
+def test_split_keeps_sessions_atomic():
+    """關鍵：分流不切分單一 session 的命令——整條攻擊鏈落同一 bucket。"""
+    sessions = [
+        ReplaySession(session_id="chain",
+                      commands=["wget x", "chmod +x x", "./x"]),
+        ReplaySession(session_id="other", commands=["ls"]),
+    ]
+    buckets = split_targets(sessions, 2)
+    # "chain" 整條在 bucket0，命令沒被拆散
+    assert buckets[0][0].session_id == "chain"
+    assert buckets[0][0].commands == ["wget x", "chmod +x x", "./x"]
+    assert buckets[1][0].session_id == "other"
+
+
+def test_split_roughly_even():
+    sessions = _mk_sessions(101)
+    buckets = split_targets(sessions, 2)
+    # 101 → 51 / 50，差不超過 1
+    assert abs(len(buckets[0]) - len(buckets[1])) <= 1
+    # 不漏不重：總數守恆
+    assert sum(len(b) for b in buckets) == 101
+
+
+def test_split_single_target_no_split():
+    sessions = _mk_sessions(5)
+    buckets = split_targets(sessions, 1)
+    assert len(buckets) == 1
+    assert len(buckets[0]) == 5
+
+
+def test_target_parse():
+    t = Target.parse("10.0.0.5:2201")
+    assert t.host == "10.0.0.5" and t.port == 2201
+    # 缺 port 補 2222
+    t2 = Target.parse("host1")
+    assert t2.host == "host1" and t2.port == 2222
+
+
+# --------------------------------------------------------------------------- #
 # 整合層：真 in-process server + replay
 # --------------------------------------------------------------------------- #
 
@@ -170,6 +229,51 @@ def test_replay_config_accepts_any_password():
     from honeyshell.transport import ServerConfig
     cfg = ServerConfig(host="127.0.0.1", port=0)
     assert cfg.accept("anyone", "whatever") in (True, False)  # 不炸即可
+
+
+async def _integration_multi(path_a: str, path_b: str) -> tuple[int, int]:
+    """起兩台真 server（各自 audit），replay_multi round-robin 分流，
+    驗證兩台各自收到約一半 session（模擬 docker host1/host2）。"""
+    from honeyshell.transport import ServerConfig, start_server
+
+    srv_a = await start_server(ServerConfig(
+        host="127.0.0.1", port=0, hostname="host1", audit_jsonl_path=path_a))
+    srv_b = await start_server(ServerConfig(
+        host="127.0.0.1", port=0, hostname="host2", audit_jsonl_path=path_b))
+    port_a = srv_a.sockets[0].getsockname()[1]
+    port_b = srv_b.sockets[0].getsockname()[1]
+
+    # 造 4 個 session，round-robin → 每台 2 個
+    sessions = [
+        ReplaySession(session_id=f"s{i}", commands=["whoami", "uname"])
+        for i in range(4)
+    ]
+    targets = [
+        Target(host="127.0.0.1", port=port_a, label="host1"),
+        Target(host="127.0.0.1", port=port_b, label="host2"),
+    ]
+    results = await replay_multi(
+        sessions, targets, username="root", password="x",
+        delay=0.0, read_timeout=2.0,
+    )
+    await asyncio.sleep(0.2)
+    srv_a.close()
+    srv_b.close()
+    return results.get("host1", 0), results.get("host2", 0)
+
+
+def test_replay_multi_splits_across_two_servers():
+    if not _HAS_ASYNCSSH:
+        print("SKIP integration: asyncssh 未安裝")
+        return
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        pa = os.path.join(d, "host1.jsonl")
+        pb = os.path.join(d, "host2.jsonl")
+        done_a, done_b = _run(_integration_multi(pa, pb))
+    # 4 session round-robin → 每台各 2 條成功
+    assert done_a == 2
+    assert done_b == 2
 
 
 # --------------------------------------------------------------------------- #

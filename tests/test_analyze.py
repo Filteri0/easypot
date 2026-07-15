@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from honeyshell.analyze import (  # noqa: E402
     analyze,
+    is_interactive_noise,
     load_events,
     render_console,
     render_markdown,
@@ -188,6 +189,108 @@ def test_renderers_contain_key_numbers():
     md = render_markdown(r)
     assert "60.00%" in md
     assert "40.00%" in md
+
+
+# --------------------------------------------------------------------------- #
+# 資料集互動噪音過濾（HANDOFF §19.3 replay 坑）
+# --------------------------------------------------------------------------- #
+
+def test_noise_predicate_filters_passwd_prompts():
+    # passwd/su 互動提示（resolved_name=None）應被判為噪音
+    assert is_interactive_noise("New password:", None)
+    assert is_interactive_noise("Retype new password:", None)
+    assert is_interactive_noise("Enter new UNIX password:", None)
+    assert is_interactive_noise("Changing password for root", None)   # 前綴
+    assert is_interactive_noise("Changing password for admin", None)  # 前綴
+    assert is_interactive_noise("BAD PASSWORD: it is too short", None)  # 前綴
+    assert is_interactive_noise("  New password:  ", None)  # 前後空白容忍
+
+
+def test_noise_predicate_never_kills_real_commands():
+    """最關鍵：真命令即使 resolved_name=None（未實作而 miss）也絕不被誤殺。
+
+    chpasswd / awk 是真實工具、真實覆蓋缺口，必須計入 miss。
+    """
+    assert not is_interactive_noise("chpasswd", None)
+    assert not is_interactive_noise("awk {print $2 ,$3, $4, $5, $6, $7}", None)
+    assert not is_interactive_noise("awk {print $4,$5,$6,$7,$8,$9;}", None)
+    assert not is_interactive_noise("history -c", None)
+    # passwd/su 命令「本身」是真命令，不是提示輸出
+    assert not is_interactive_noise("passwd", None)
+    assert not is_interactive_noise("passwd root", None)
+    assert not is_interactive_noise("su - root", None)
+    # 被 registry 命中的一律非噪音（即使 raw 剛好像提示，也是真命令觸發）
+    assert not is_interactive_noise("New password:", "echo")
+
+
+def test_noise_excluded_from_miss_rate():
+    """噪音排除在 miss 統計外，miss_rate 不被灌高；真 miss 仍保留。"""
+    lines = [
+        # 2 個真規則命中
+        _line(type="command", session_id="s1", timestamp=1.0,
+              raw="whoami", resolved_name="whoami", hit=True),
+        _line(type="command", session_id="s1", timestamp=2.0,
+              raw="uname", resolved_name="uname", hit=True),
+        # 1 個真 miss（chpasswd 未實作）——要留
+        _line(type="command", session_id="s1", timestamp=3.0,
+              raw="chpasswd", resolved_name=None, hit=False),
+        # 3 個互動噪音——要濾掉
+        _line(type="command", session_id="s1", timestamp=4.0,
+              raw="New password:", resolved_name=None, hit=False),
+        _line(type="command", session_id="s1", timestamp=5.0,
+              raw="Retype new password:", resolved_name=None, hit=False),
+        _line(type="command", session_id="s1", timestamp=6.0,
+              raw="Changing password for root", resolved_name=None, hit=False),
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    # 濾掉 3 噪音後：total=3（whoami/uname/chpasswd），hit=2，miss=1
+    assert r.llm.total_commands == 3
+    assert r.llm.rule_hits == 2
+    assert r.llm.llm_misses == 1
+    assert r.llm.interactive_noise == 3
+    # miss_rate = 1/3，不是被灌高的 4/6
+    assert abs(r.llm.miss_rate - (1 / 3)) < 1e-9
+    # chpasswd 仍在 top_misses（真覆蓋缺口沒被誤殺）
+    assert dict(r.llm.top_misses).get("chpasswd") == 1
+    # 噪音不該出現在 miss 榜
+    assert "New" not in dict(r.llm.top_misses)
+
+
+def test_noise_consistent_across_llm_and_intel():
+    """LlmEfficiency 與 IntelSummary 的 per-source miss 都要濾噪音，數字對得上。"""
+    lines = [
+        _line(type="command", session_id="s1", timestamp=1.0, raw="ls",
+              resolved_name="ls", hit=True, _source="hp-a"),
+        _line(type="command", session_id="s1", timestamp=2.0, raw="awk {x}",
+              resolved_name=None, hit=False, _source="hp-a"),   # 真 miss
+        _line(type="command", session_id="s1", timestamp=3.0,
+              raw="New password:", resolved_name=None, hit=False,
+              _source="hp-a"),                                   # 噪音
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    # 頭條 miss=1（awk），per-source miss 也應=1（不含噪音）
+    assert r.llm.llm_misses == 1
+    assert r.intel.per_source_misses.get("hp-a") == 1
+    # 噪音也不進 top_commands
+    assert "New" not in dict(r.intel.top_commands)
+
+
+def test_noise_count_surfaced_in_output():
+    lines = [
+        _line(type="command", session_id="s1", timestamp=1.0, raw="ls",
+              resolved_name="ls", hit=True),
+        _line(type="command", session_id="s1", timestamp=2.0,
+              raw="New password:", resolved_name=None, hit=False),
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    d = r.to_dict()
+    assert d["llm_efficiency"]["interactive_noise_filtered"] == 1
+    # console / md 都提到過濾（透明呈現，不藏）
+    assert "噪音" in render_console(r)
+    assert "噪音" in render_markdown(r)
 
 
 # --------------------------------------------------------------------------- #

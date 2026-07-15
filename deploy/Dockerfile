@@ -26,17 +26,22 @@ RUN mkdir -p /data/keys /data/audit && chown -R easypot:easypot /data /app
 USER easypot
 
 # Config comes from env (compose sets HONEYPOT_HOSTNAME, EASYPOT_AUDIT_JSONL,
-# etc.). Defaults here keep a bare `docker run` working.
+# EASYPOT_LLM*, etc.). Defaults here keep a bare `docker run` working — LLM off
+# by default so the image runs standalone without an Ollama reachable.
 ENV HONEYPOT_PORT=2222 \
-    HONEYPOT_HOSTNAME=svr04 \
+    HONEYPOT_HOSTNAME=host1 \
     EASYPOT_AUDIT_JSONL=/data/audit/events.jsonl \
-    HONEYPOT_HOST_KEY=/data/keys/ssh_host_rsa_key
+    HONEYPOT_HOST_KEY=/data/keys/ssh_host_rsa_key \
+    EASYPOT_LLM=0 \
+    EASYPOT_LLM_MODEL=qwen2.5:14b \
+    EASYPOT_LLM_URL=http://host.docker.internal:11434
 
 EXPOSE 2222
 
 # Shell form so the env vars expand. --host-key persists the key across restarts
-# (stable fingerprint); --audit-jsonl is also read from EASYPOT_AUDIT_JSONL, set
-# here explicitly for clarity.
+# (stable fingerprint). LLM enable/model/url are read from EASYPOT_LLM* env by
+# __main__ (no CLI flags needed here), so compose can toggle the model per
+# honeypot purely through environment.
 CMD python -m honeyshell \
       --host 0.0.0.0 \
       --port "$HONEYPOT_PORT" \

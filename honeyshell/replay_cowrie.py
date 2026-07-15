@@ -55,8 +55,11 @@ from typing import Iterable, Optional
 __all__ = [
     "ReplaySession",
     "parse_cowrie_input",
+    "split_targets",
+    "Target",
     "FIXTURE_CSV",
     "replay",
+    "replay_multi",
     "main",
 ]
 
@@ -254,6 +257,106 @@ async def replay(
 
 
 # --------------------------------------------------------------------------- #
+# 多 target 分流（B+C：docker 版把流量分散到 host1/host2）
+# --------------------------------------------------------------------------- #
+
+@dataclass
+class Target:
+    """一個 replay 目標蜜罐。``label`` 僅供進度輸出辨識（如 host1）。"""
+
+    host: str
+    port: int
+    label: str = ""
+
+    @classmethod
+    def parse(cls, spec: str) -> "Target":
+        """從 ``host:port`` 解析；缺 port 補 2222。label 預設取 host:port。"""
+        if ":" in spec:
+            host, port_s = spec.rsplit(":", 1)
+            port = int(port_s)
+        else:
+            host, port = spec, 2222
+        return cls(host=host, port=port, label=f"{host}:{port}")
+
+
+def split_targets(
+    sessions: list[ReplaySession],
+    n_targets: int,
+) -> list[list[ReplaySession]]:
+    """把 session 按 **round-robin** 分成 ``n_targets`` 組。
+
+    **關鍵：以 session 為原子單位分流，不切分單一 session 的命令。**
+    一個 Cowrie session = 一條完整攻擊鏈（登入→偵察→植入後門），必須整條落在
+    同一台蜜罐，否則攻擊鏈被拆散（host1 見 wget、host2 見 chmod）、VFS 狀態不連貫、
+    session 時間線失去意義。
+
+    用 round-robin（``session[i] → bucket[i % n]``）而非前半/後半，讓兩台流量
+    分布均勻，避免「前半剛好都是簡單偵察」造成 per-source miss rate 偏差——這樣
+    兩台的 miss rate 才可公正對比（驗證「同一設計、多台部署」的規模化論述）。
+
+    純函式，不碰網路，好單測。``n_targets<=1`` 時回傳單一組（等同不分流）。
+    """
+    n = max(1, n_targets)
+    buckets: list[list[ReplaySession]] = [[] for _ in range(n)]
+    for i, s in enumerate(sessions):
+        buckets[i % n].append(s)
+    return buckets
+
+
+async def replay_multi(
+    sessions: list[ReplaySession],
+    targets: list[Target],
+    *,
+    username: str = "root",
+    password: str = "admin",
+    delay: float = 0.05,
+    read_timeout: float = 3.0,
+    concurrency: int = 1,
+    on_progress=None,
+) -> dict[str, int]:
+    """把 session round-robin 分流到多個 target，各自並行 replay。
+
+    回傳 ``{target_label: done_count}``。單一 target 時退化為對 ``replay`` 的
+    一次呼叫（行為與舊版一致）。多 target 時各組獨立跑，彼此不共享 semaphore
+    ——每台各自 ``concurrency`` 條並行，貼近「N 台蜜罐同時承受流量」的真實情形。
+
+    ``on_progress(idx, session, exc, label)`` 比單 target 版多一個 ``label``
+    參數，讓呼叫端能標示每條打到哪台。
+    """
+    buckets = split_targets(sessions, len(targets))
+    results: dict[str, int] = {}
+
+    async def _run_bucket(target: Target, group: list[ReplaySession]) -> None:
+        sem = asyncio.Semaphore(max(1, concurrency))
+        done = 0
+
+        async def _guarded(idx: int, s: ReplaySession) -> None:
+            nonlocal done
+            async with sem:
+                try:
+                    await _replay_one(
+                        s, host=target.host, port=target.port,
+                        username=username, password=password,
+                        delay=delay, read_timeout=read_timeout,
+                    )
+                    done += 1
+                except Exception as exc:  # noqa: BLE001 — 單 session 失敗不拖垮
+                    if on_progress:
+                        on_progress(idx, s, exc, target.label)
+                    return
+                if on_progress:
+                    on_progress(idx, s, None, target.label)
+
+        await asyncio.gather(*(_guarded(i, s) for i, s in enumerate(group)))
+        results[target.label] = done
+
+    await asyncio.gather(
+        *(_run_bucket(t, g) for t, g in zip(targets, buckets))
+    )
+    return results
+
+
+# --------------------------------------------------------------------------- #
 # CLI
 # --------------------------------------------------------------------------- #
 
@@ -273,8 +376,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     src.add_argument("--fixture", action="store_true",
                      help="用內建合成 fixture（免真資料，驗證 pipeline）")
 
-    p.add_argument("--target", default="127.0.0.1:2222",
-                   help="蜜罐位址 host:port（預設 127.0.0.1:2222）")
+    p.add_argument("--target", action="append", metavar="HOST:PORT",
+                   help="蜜罐位址 host:port（預設 127.0.0.1:2222）。可重複給多個 "
+                        "--target，session 會 round-robin 分流到各台（B+C 用）。")
     p.add_argument("--user", default="root", help="登入帳號（蜜罐接受任意值）")
     p.add_argument("--password", default="admin", help="登入密碼（蜜罐接受任意值）")
     p.add_argument("--limit", type=int, default=None,
@@ -296,28 +400,36 @@ def main(argv: Optional[list[str]] = None) -> int:
     print(f"解析：{len(sessions)} 個 session、{total_cmds} 條命令"
           f"（略過 {skipped} 列）", file=sys.stderr)
 
+    # --target 用 append：不給任何 --target 時 args.target 為 None，補預設，
+    # 確保「不帶 --target」行為與舊版完全一致（單機 127.0.0.1:2222）。
+    target_specs = args.target or ["127.0.0.1:2222"]
+    targets = [Target.parse(t) for t in target_specs]
+
+    if len(targets) > 1:
+        buckets = split_targets(sessions, len(targets))
+        print("分流：" + "、".join(
+            f"{t.label}={len(b)} session"
+            for t, b in zip(targets, buckets)
+        ), file=sys.stderr)
+
     if args.dry_run:
         for s in sessions[:20]:
             print(f"  [{s.session_id}] {len(s.commands)} 命令："
                   f"{s.commands[0][:60] if s.commands else ''}…", file=sys.stderr)
         return 0
 
-    if ":" in args.target:
-        host, port_s = args.target.rsplit(":", 1)
-        port = int(port_s)
-    else:
-        host, port = args.target, 2222
-
-    def _progress(idx: int, s: ReplaySession, exc: Optional[Exception]) -> None:
+    def _progress(idx: int, s: ReplaySession, exc: Optional[Exception],
+                  label: str) -> None:
+        tag = f" →{label}" if len(targets) > 1 else ""
         if exc is not None:
-            print(f"  ✗ session {s.session_id}: {exc!r}", file=sys.stderr)
+            print(f"  ✗ session {s.session_id}{tag}: {exc!r}", file=sys.stderr)
         else:
-            print(f"  ✓ [{idx + 1}/{len(sessions)}] {s.session_id} "
-                  f"({len(s.commands)} 命令)", file=sys.stderr)
+            print(f"  ✓ {s.session_id} ({len(s.commands)} 命令){tag}",
+                  file=sys.stderr)
 
     try:
-        done = asyncio.run(replay(
-            sessions, host=host, port=port,
+        results = asyncio.run(replay_multi(
+            sessions, targets,
             username=args.user, password=args.password,
             delay=args.delay, read_timeout=args.read_timeout,
             concurrency=args.concurrency, on_progress=_progress,
@@ -326,7 +438,14 @@ def main(argv: Optional[list[str]] = None) -> int:
         print("中斷。", file=sys.stderr)
         return 130
 
-    print(f"完成：{done}/{len(sessions)} session replay 成功。", file=sys.stderr)
+    done = sum(results.values())
+    if len(targets) > 1:
+        detail = "、".join(f"{lbl} {n}" for lbl, n in sorted(results.items()))
+        print(f"完成：{done}/{len(sessions)} session replay 成功（{detail}）。",
+              file=sys.stderr)
+    else:
+        print(f"完成：{done}/{len(sessions)} session replay 成功。",
+              file=sys.stderr)
     return 0
 
 
