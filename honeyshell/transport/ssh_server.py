@@ -75,6 +75,8 @@ async def handle_client(
     process: asyncssh.SSHServerProcess,
     resolver=None,
     memory_settings=None,
+    content_client=None,
+    event_bus=None,
 ) -> None:
     """Entry point for each shell/exec request.
 
@@ -105,6 +107,14 @@ async def handle_client(
         session_id = f"{peer[0]}:{peer[1]}" if isinstance(peer, tuple) else None
         miss_handler = make_llm_command_factory(resolver, session_id=session_id)
 
+    # Per-connection content fetcher for curl/wget's stdout path (LLM-generated
+    # URL bodies). Built per connection so its URL cache is session-scoped
+    # (option A): the same URL is consistent within a session, not across them.
+    fetch_content = None
+    if content_client is not None:
+        from honeyshell.backends import ContentFetcher
+        fetch_content = ContentFetcher(client=content_client)
+
     stdout = TerminalWriter(process.stdout, crlf=has_pty)
     # On a PTY, a real shell writes stdout and stderr to the same terminal, so
     # ordering is naturally correct. asyncssh exposes them as separate channels
@@ -113,6 +123,46 @@ async def handle_client(
     # keep them split for exec mode where a caller may capture them separately.
     stderr = stdout if has_pty else TerminalWriter(process.stderr, crlf=has_pty)
     reader = _ProcessReader(process.stdin)
+
+    # Interactive credential prompt for sudo/su/passwd. Writes the prompt,
+    # reads one line from the live terminal, and — when hide=True and a line
+    # editor is present — disables echo so a typed password isn't shown, then
+    # restores it. Degrades safely if the editor can't toggle echo (older
+    # asyncssh / no pty): the prompt still works, just without hiding.
+    channel = getattr(process, "channel", None)
+
+    async def read_prompt(prompt: str, hide: bool = False):
+        stdout.write(prompt)
+        set_echo = getattr(channel, "set_echo", None)
+        toggled = False
+        if hide and callable(set_echo):
+            try:
+                set_echo(False)
+                toggled = True
+            except Exception:  # noqa: BLE001 — echo control unsupported: proceed
+                toggled = False
+        try:
+            line = await process.stdin.readline()
+        except asyncssh.BreakReceived:
+            line = ""
+        finally:
+            if toggled:
+                try:
+                    set_echo(True)
+                except Exception:  # noqa: BLE001
+                    pass
+        if hide:
+            # The client's echo was off (or we asked for it off), so the user's
+            # Enter didn't move the cursor down — emit the newline ourselves.
+            stdout.write("\n")
+        if line == "":
+            return None
+        return line.rstrip("\r\n")
+
+    peer = process.get_extra_info("peername")
+    src_ip = peer[0] if isinstance(peer, tuple) else None
+    src_port = peer[1] if isinstance(peer, tuple) and len(peer) > 1 else None
+
     session = ShellSession(
         config,
         reader,
@@ -123,6 +173,11 @@ async def handle_client(
         term_width=term_width,
         miss_handler=miss_handler,
         memory_settings=memory_settings,
+        fetch_content=fetch_content,
+        read_prompt=read_prompt,
+        event_bus=event_bus,
+        src_ip=src_ip,
+        src_port=src_port,
     )
 
     # Tab-completion: register a handler on the line editor (PTY only). The
@@ -238,6 +293,20 @@ async def start_server(config: ServerConfig) -> asyncssh.SSHAcceptor:
     # lazily so a non-LLM deployment never needs httpx installed.
     resolver = None
     memory_settings = None
+    content_client = None
+    # One audit bus per server, shared across connections. A LoggingSink is
+    # attached so events (currently credential captures from sudo/su/passwd)
+    # surface in the logs; richer sinks (JSONL/SIEM) can subscribe later without
+    # touching the emitters. This is the first real wiring of the event bus into
+    # transport — login/command events remain deferred.
+    from honeyshell.core.event_bus import EventBus, LoggingSink
+    event_bus = EventBus()
+    event_bus.subscribe(LoggingSink())
+    # Structured JSONL feed for the collector, when configured. Each honeypot
+    # writes to its own file on a shared volume; the collector tails them.
+    if config.audit_jsonl_path:
+        from honeyshell.core.event_bus import JSONLSink
+        event_bus.subscribe(JSONLSink(path=config.audit_jsonl_path))
     if config.llm_enable:
         from honeyshell.backends import ChainResolver, OllamaClient
         from honeyshell.core.config import HoneypotConfig
@@ -251,6 +320,14 @@ async def start_server(config: ServerConfig) -> asyncssh.SSHAcceptor:
         memory_settings = hp.memory
         client = OllamaClient(model=config.llm_model, base_url=config.llm_base_url)
         resolver = ChainResolver(client=client, config=hp)
+        # A second client with json_format OFF for the curl/wget content path:
+        # we want a raw script/HTML body, not the JSON the command-simulation
+        # path parses. Same model/URL; only the output constraint differs.
+        content_client = OllamaClient(
+            model=config.llm_model,
+            base_url=config.llm_base_url,
+            json_format=False,
+        )
 
         # Startup self-check so misconfiguration is visible immediately rather
         # than silently degrading every unknown command to "command not found".
@@ -298,6 +375,8 @@ async def start_server(config: ServerConfig) -> asyncssh.SSHAcceptor:
         process_factory=functools.partial(
             handle_client, config, resolver=resolver,
             memory_settings=memory_settings,
+            content_client=content_client,
+            event_bus=event_bus,
         ),
         server_version=config.server_version,
     )

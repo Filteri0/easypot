@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
+import os
 
 from honeyshell.transport import ServerConfig
 from honeyshell.transport import start_server  # lazy asyncssh import
@@ -43,6 +44,10 @@ def main() -> None:
     ap.add_argument("--log-level", default="INFO",
                     help="logging level: DEBUG/INFO/WARNING (default: INFO). "
                          "DEBUG shows each LLM answer's impact and fs_ops count.")
+    ap.add_argument("--audit-jsonl", dest="audit_jsonl_path", default=None,
+                    help="append structured audit events (commands, errors, "
+                         "credentials) as JSON lines to this file; the log "
+                         "collector tails it. Env: EASYPOT_AUDIT_JSONL.")
     args = ap.parse_args()
 
     logging.basicConfig(
@@ -63,6 +68,10 @@ def main() -> None:
     )
     if args.fs_path:
         kwargs["fs_path"] = args.fs_path
+    # Audit feed: CLI flag wins, else EASYPOT_AUDIT_JSONL env (handy in Docker).
+    audit_path = args.audit_jsonl_path or os.environ.get("EASYPOT_AUDIT_JSONL")
+    if audit_path:
+        kwargs["audit_jsonl_path"] = audit_path
     config = ServerConfig(**kwargs)
 
     try:

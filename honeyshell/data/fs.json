@@ -6,48 +6,48 @@
     {
       "type": "dir",
       "name": "bin",
-      "mtime": 1718150400.0,
+      "mtime": 1707757074.0,
       "children": [
         {
           "type": "file",
           "name": "ls",
           "perm": "0755",
-          "mtime": 1718150400.0,
+          "mtime": 1707690507.0,
           "size": 133792
         },
         {
           "type": "file",
           "name": "bash",
           "perm": "0755",
-          "mtime": 1718150400.0,
+          "mtime": 1707697710.0,
           "size": 1234376
         },
         {
           "type": "file",
           "name": "cat",
           "perm": "0755",
-          "mtime": 1718150400.0,
+          "mtime": 1707653428.0,
           "size": 35064
         },
         {
           "type": "file",
           "name": "sh",
           "perm": "0755",
-          "mtime": 1718150400.0,
+          "mtime": 1707724958.0,
           "size": 125688
         },
         {
           "type": "file",
           "name": "echo",
           "perm": "0755",
-          "mtime": 1718150400.0,
+          "mtime": 1707697707.0,
           "size": 35064
         },
         {
           "type": "file",
           "name": "pwd",
           "perm": "0755",
-          "mtime": 1718150400.0,
+          "mtime": 1707735457.0,
           "size": 35064
         }
       ]
@@ -55,59 +55,173 @@
     {
       "type": "dir",
       "name": "boot",
-      "mtime": 1718150400.0
+      "mtime": 1707525541.0
     },
     {
       "type": "dir",
       "name": "dev",
-      "mtime": 1718150400.0
+      "mtime": 1707562851.0
     },
     {
       "type": "dir",
       "name": "etc",
-      "mtime": 1718150400.0,
+      "mtime": 1707596237.0,
       "children": [
         {
           "type": "file",
           "name": "hostname",
-          "mtime": 1718150400.0,
+          "mtime": 1707886525.0,
           "size": 9,
           "contents": "happydog\n"
         },
         {
           "type": "file",
           "name": "os-release",
-          "mtime": 1718150400.0,
+          "mtime": 1707623587.0,
           "size": 180,
           "contents": "PRETTY_NAME=\"Debian GNU/Linux 11 (bullseye)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"11\"\nVERSION=\"11 (bullseye)\"\nVERSION_CODENAME=bullseye\nID=debian\nHOME_URL=\"https://www.debian.org/\"\n"
         },
         {
           "type": "file",
           "name": "passwd",
-          "mtime": 1718150400.0,
-          "size": 371,
-          "contents": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin\nsys:x:3:3:sys:/dev:/usr/sbin/nologin\nsync:x:4:65534:sync:/bin:/bin/sync\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin\nsshd:x:105:65534::/run/sshd:/usr/sbin/nologin\nphil:x:1000:1000:phil,,,:/home/phil:/bin/bash\nsvc:x:1001:1001::/home/svc:/bin/bash\n"
+          "mtime": 1707536280.0,
+          "size": 622,
+          "contents": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin\nsys:x:3:3:sys:/dev:/usr/sbin/nologin\nsync:x:4:65534:sync:/bin:/bin/sync\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin\nsshd:x:105:65534::/run/sshd:/usr/sbin/nologin\npostgres:x:1003:1003:PostgreSQL administrator,,,:/var/lib/postgresql:/bin/bash\nredis:x:1004:1004::/var/lib/redis:/usr/sbin/nologin\nphil:x:1000:1000:Phil Turner,,,:/home/phil:/bin/bash\nmchen:x:1002:1002:Mei Chen (DBA),,,:/home/mchen:/bin/bash\ndeploy:x:1005:1005:CI deploy,,,:/home/deploy:/bin/bash\nsvc:x:1001:1001::/home/svc:/bin/bash\n"
+        },
+        {
+          "type": "file",
+          "name": "shadow",
+          "gid": 42,
+          "perm": "0640",
+          "mtime": 1707819977.0,
+          "size": 688,
+          "contents": "root:$6$abcXYZ$REDACTED0000000000000000000000000000000000000000000000000000000000000000000000000000:19700:0:99999:7:::\ndaemon:*:19000:0:99999:7:::\nbin:*:19000:0:99999:7:::\nsys:*:19000:0:99999:7:::\nsshd:!:19000:0:99999:7:::\nwww-data:*:19000:0:99999:7:::\npostgres:!:19000:0:99999:7:::\nredis:!:19000:0:99999:7:::\nphil:$6$defQWE$EXAMPLE11111111111111111111111111111111111111111111111111111111111111111111111111111:19420:0:99999:7:::\nmchen:$6$ghiRTY$EXAMPLE222222222222222222222222222222222222222222222222222222222222222222222222222:19450:0:99999:7:::\ndeploy:$6$jklUIO$EXAMPLE333333333333333333333333333333333333333333333333333333333333333333333333:19460:0:99999:7:::\nsvc:!:19420:0:99999:7:::\n"
+        },
+        {
+          "type": "file",
+          "name": "group",
+          "mtime": 1707940964.0,
+          "size": 200,
+          "contents": "root:x:0:\ndaemon:x:1:\nbin:x:2:\nsys:x:3:\nadm:x:4:phil,mchen\ntty:x:5:\nsudo:x:27:phil,mchen\nwww-data:x:33:\nssh:x:112:\npostgres:x:1003:\nredis:x:1004:\nphil:x:1000:\nmchen:x:1002:\ndeploy:x:1005:\nsvc:x:1001:\n"
+        },
+        {
+          "type": "file",
+          "name": "hosts",
+          "mtime": 1707961379.0,
+          "size": 125,
+          "contents": "127.0.0.1\tlocalhost\n127.0.1.1\thappydog\n\n::1\tlocalhost ip6-localhost ip6-loopback\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n"
+        },
+        {
+          "type": "file",
+          "name": "resolv.conf",
+          "mtime": 1707796602.0,
+          "size": 121,
+          "contents": "# This file is managed by man:systemd-resolved(8). Do not edit.\nnameserver 8.8.8.8\nnameserver 1.1.1.1\nsearch localdomain\n"
+        },
+        {
+          "type": "file",
+          "name": "fstab",
+          "mtime": 1708023596.0,
+          "size": 223,
+          "contents": "# /etc/fstab: static file system information.\nUUID=e1a2b3c4-1111-2222-3333-abcdef000000 /     ext4 errors=remount-ro 0 1\nUUID=f9e8d7c6-4444-5555-6666-000000fedcba /boot ext4 defaults          0 2\n/swapfile none swap sw 0 0\n"
+        },
+        {
+          "type": "file",
+          "name": "machine-id",
+          "mtime": 1707995584.0,
+          "size": 33,
+          "contents": "3f2504e04f8941d39a0c0305e82c3301\n"
+        },
+        {
+          "type": "file",
+          "name": "crontab",
+          "mtime": 1707883717.0,
+          "size": 336,
+          "contents": "# /etc/crontab: system-wide crontab\nSHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\n\n17 *  * * *  root  cd / && run-parts --report /etc/cron.hourly\n25 6  * * *  root  test -x /usr/sbin/anacron || run-parts /etc/cron.daily\n30 2  * * *  postgres  /usr/local/bin/pg_backup.sh >> /var/log/pg_backup.log 2>&1\n"
+        },
+        {
+          "type": "dir",
+          "name": "ssh",
+          "mtime": 1707652133.0,
+          "children": [
+            {
+              "type": "file",
+              "name": "sshd_config",
+              "mtime": 1707638924.0,
+              "size": 221,
+              "contents": "Port 22\nPermitRootLogin yes\nPasswordAuthentication yes\nPubkeyAuthentication yes\nChallengeResponseAuthentication no\nUsePAM yes\nX11Forwarding yes\nPrintMotd no\nAcceptEnv LANG LC_*\nSubsystem sftp /usr/lib/openssh/sftp-server\n"
+            },
+            {
+              "type": "file",
+              "name": "ssh_host_rsa_key",
+              "perm": "0600",
+              "mtime": 1707561677.0,
+              "size": 2602
+            },
+            {
+              "type": "file",
+              "name": "ssh_host_rsa_key.pub",
+              "mtime": 1707581360.0,
+              "size": 40,
+              "contents": "ssh-rsa AAAAB3NzaC1yc2E...root@happydog\n"
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "postgresql",
+          "mtime": 1718103734.0,
+          "children": [
+            {
+              "type": "dir",
+              "name": "13",
+              "mtime": 1718122158.0,
+              "children": [
+                {
+                  "type": "dir",
+                  "name": "main",
+                  "mtime": 1718044671.0,
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "postgresql.conf",
+                      "mtime": 1717992609.0,
+                      "size": 471,
+                      "contents": "# -----------------------------\n# PostgreSQL configuration file\n# -----------------------------\ndata_directory = '/var/lib/postgresql/13/main'\nhba_file = '/etc/postgresql/13/main/pg_hba.conf'\nlisten_addresses = '*'\nport = 5432\nmax_connections = 200\nshared_buffers = 2GB\neffective_cache_size = 6GB\nwork_mem = 16MB\nmaintenance_work_mem = 512MB\nwal_level = replica\nlog_directory = '/var/log/postgresql'\nlog_min_duration_statement = 1000\nlog_line_prefix = '%m [%p] %q%u@%d '\n"
+                    },
+                    {
+                      "type": "file",
+                      "name": "pg_hba.conf",
+                      "mtime": 1718083352.0,
+                      "size": 268,
+                      "contents": "# TYPE  DATABASE  USER  ADDRESS         METHOD\nlocal   all       postgres              peer\nlocal   all       all                   md5\nhost    all       all   127.0.0.1/32    md5\nhost    all       all   10.0.0.0/8      md5\nhost    appdb     appuser 0.0.0.0/0     md5\n"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
     {
       "type": "dir",
       "name": "home",
-      "mtime": 1718150400.0,
+      "mtime": 1718129711.0,
       "children": [
         {
           "type": "dir",
           "name": "phil",
           "uid": 1000,
           "gid": 1000,
-          "mtime": 1718150400.0,
+          "mtime": 1718251779.0,
           "children": [
             {
               "type": "file",
               "name": ".bashrc",
               "uid": 1000,
               "gid": 1000,
-              "mtime": 1718150400.0,
+              "mtime": 1718186640.0,
               "size": 14,
               "contents": "# phil bashrc\n"
             },
@@ -116,9 +230,216 @@
               "name": ".profile",
               "uid": 1000,
               "gid": 1000,
-              "mtime": 1718150400.0,
+              "mtime": 1718341314.0,
               "size": 15,
               "contents": "# phil profile\n"
+            },
+            {
+              "type": "file",
+              "name": ".bash_history",
+              "uid": 1000,
+              "gid": 1000,
+              "perm": "0600",
+              "mtime": 1718244290.0,
+              "size": 175,
+              "contents": "cd webapp\ngit pull\npython3 -m venv venv\nsource venv/bin/activate\npip install -r requirements.txt\npython3 app.py\nvim config.yaml\ngit commit -am 'fix db config'\ngit push\nlogout\n"
+            },
+            {
+              "type": "dir",
+              "name": "webapp",
+              "uid": 1000,
+              "gid": 1000,
+              "mtime": 1718304524.0,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "app.py",
+                  "uid": 1000,
+                  "gid": 1000,
+                  "mtime": 1718211118.0,
+                  "size": 46,
+                  "contents": "from flask import Flask\napp = Flask(__name__)\n"
+                },
+                {
+                  "type": "file",
+                  "name": "config.yaml",
+                  "uid": 1000,
+                  "gid": 1000,
+                  "perm": "0600",
+                  "mtime": 1718353423.0,
+                  "size": 134,
+                  "contents": "db:\n  host: localhost\n  port: 5432\n  name: appdb\n  user: appuser\n  password: appDbPass_REDACTED\nredis:\n  host: localhost\n  port: 6379\n"
+                },
+                {
+                  "type": "file",
+                  "name": "requirements.txt",
+                  "uid": 1000,
+                  "gid": 1000,
+                  "mtime": 1718081729.0,
+                  "size": 42,
+                  "contents": "flask==2.0.1\npsycopg2==2.9.1\nredis==3.5.3\n"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "mchen",
+          "uid": 1002,
+          "gid": 1002,
+          "mtime": 1718342290.0,
+          "children": [
+            {
+              "type": "file",
+              "name": ".bashrc",
+              "uid": 1002,
+              "gid": 1002,
+              "mtime": 1718139825.0,
+              "size": 15,
+              "contents": "# mchen bashrc\n"
+            },
+            {
+              "type": "file",
+              "name": ".profile",
+              "uid": 1002,
+              "gid": 1002,
+              "mtime": 1718354988.0,
+              "size": 16,
+              "contents": "# mchen profile\n"
+            },
+            {
+              "type": "file",
+              "name": ".bash_history",
+              "uid": 1002,
+              "gid": 1002,
+              "perm": "0600",
+              "mtime": 1718264571.0,
+              "size": 330,
+              "contents": "cd ~\npsql -U postgres -h localhost\npg_dump -U postgres appdb > backup.sql\nls -lh backup.sql\ngzip backup.sql\nscp backup.sql.gz backup-srv:/backups/\npsql -U postgres -d appdb -c 'SELECT count(*) FROM users;'\nredis-cli -a REDACTED info\nredis-cli KEYS '*'\nvim ~/queries/slow.sql\npg_dumpall -U postgres > full.sql\ncat ~/.pgpass\nlogout\n"
+            },
+            {
+              "type": "file",
+              "name": ".psql_history",
+              "uid": 1002,
+              "gid": 1002,
+              "perm": "0600",
+              "mtime": 1718148703.0,
+              "size": 305,
+              "contents": "\\l\n\\c appdb\n\\dt\nSELECT count(*) FROM users;\nSELECT id, email, created_at FROM users ORDER BY id DESC LIMIT 20;\nSELECT * FROM orders WHERE status = 'paid' LIMIT 50;\n\\d users\n\\d payments\nSELECT card_last4, amount FROM payments LIMIT 10;\nUPDATE users SET is_admin = true WHERE email = 'mchen@corp.local';\n\\q\n"
+            },
+            {
+              "type": "file",
+              "name": ".pgpass",
+              "uid": 1002,
+              "gid": 1002,
+              "perm": "0600",
+              "mtime": 1718288965.0,
+              "size": 94,
+              "contents": "localhost:5432:appdb:postgres:S3cr3tPgPass_REDACTED\nlocalhost:6379:*:redis:R3disPass_REDACTED\n"
+            },
+            {
+              "type": "dir",
+              "name": ".ssh",
+              "uid": 1002,
+              "gid": 1002,
+              "perm": "0700",
+              "mtime": 1718184302.0,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "id_rsa",
+                  "uid": 1002,
+                  "gid": 1002,
+                  "perm": "0600",
+                  "mtime": 1718138848.0,
+                  "size": 2602
+                },
+                {
+                  "type": "file",
+                  "name": "id_rsa.pub",
+                  "uid": 1002,
+                  "gid": 1002,
+                  "mtime": 1718407758.0,
+                  "size": 45,
+                  "contents": "ssh-rsa AAAAB3NzaC1yc2EAAAA...mchen@happydog\n"
+                },
+                {
+                  "type": "file",
+                  "name": "known_hosts",
+                  "uid": 1002,
+                  "gid": 1002,
+                  "mtime": 1718232405.0,
+                  "size": 38,
+                  "contents": "backup-srv ssh-rsa AAAAB3NzaC1yc2E...\n"
+                },
+                {
+                  "type": "file",
+                  "name": "authorized_keys",
+                  "uid": 1002,
+                  "gid": 1002,
+                  "perm": "0600",
+                  "mtime": 1718079759.0,
+                  "size": 39,
+                  "contents": "ssh-rsa AAAAB3NzaC1yc2E...mchen@laptop\n"
+                }
+              ]
+            },
+            {
+              "type": "dir",
+              "name": "queries",
+              "uid": 1002,
+              "gid": 1002,
+              "mtime": 1718195326.0,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "slow.sql",
+                  "uid": 1002,
+                  "gid": 1002,
+                  "mtime": 1718156293.0,
+                  "size": 80,
+                  "contents": "-- queries to optimize\nSELECT * FROM orders o JOIN users u ON o.user_id = u.id;\n"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "deploy",
+          "uid": 1005,
+          "gid": 1005,
+          "mtime": 1718097583.0,
+          "children": [
+            {
+              "type": "file",
+              "name": ".bashrc",
+              "uid": 1005,
+              "gid": 1005,
+              "mtime": 1718128228.0,
+              "size": 16,
+              "contents": "# deploy bashrc\n"
+            },
+            {
+              "type": "file",
+              "name": ".bash_history",
+              "uid": 1005,
+              "gid": 1005,
+              "perm": "0600",
+              "mtime": 1718186532.0,
+              "size": 68,
+              "contents": "cd /opt/app\ngit pull\n./deploy.sh\nsystemctl restart appserver\nlogout\n"
+            },
+            {
+              "type": "file",
+              "name": "deploy.sh",
+              "uid": 1005,
+              "gid": 1005,
+              "perm": "0755",
+              "mtime": 1718409398.0,
+              "size": 67,
+              "contents": "#!/bin/bash\ncd /opt/app && git pull && systemctl restart appserver\n"
             }
           ]
         },
@@ -127,14 +448,14 @@
           "name": "svc",
           "uid": 1001,
           "gid": 1001,
-          "mtime": 1718150400.0,
+          "mtime": 1718228789.0,
           "children": [
             {
               "type": "file",
               "name": ".bashrc",
               "uid": 1001,
               "gid": 1001,
-              "mtime": 1718150400.0,
+              "mtime": 1718364790.0,
               "size": 13,
               "contents": "# svc bashrc\n"
             }
@@ -145,53 +466,81 @@
     {
       "type": "dir",
       "name": "lib",
-      "mtime": 1718150400.0
+      "mtime": 1707904115.0
     },
     {
       "type": "dir",
       "name": "lib64",
-      "mtime": 1718150400.0
+      "mtime": 1707778281.0
     },
     {
       "type": "dir",
       "name": "media",
-      "mtime": 1718150400.0
+      "mtime": 1707771892.0
     },
     {
       "type": "dir",
       "name": "mnt",
-      "mtime": 1718150400.0
+      "mtime": 1707595020.0
     },
     {
       "type": "dir",
       "name": "opt",
-      "mtime": 1718150400.0
+      "mtime": 1707949163.0,
+      "children": [
+        {
+          "type": "dir",
+          "name": "app",
+          "mtime": 1707821651.0
+        }
+      ]
     },
     {
       "type": "dir",
       "name": "proc",
-      "mtime": 1718150400.0,
+      "mtime": 1718127610.0,
       "children": [
         {
           "type": "file",
           "name": "cpuinfo",
-          "mtime": 1718150400.0,
+          "mtime": 1718114503.0,
           "size": 272,
           "contents": "processor\t: 0\nvendor_id\t: GenuineIntel\nmodel name\t: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz\ncpu MHz\t\t: 2400.000\ncache size\t: 35840 KB\nprocessor\t: 1\nvendor_id\t: GenuineIntel\nmodel name\t: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz\ncpu MHz\t\t: 2400.000\ncache size\t: 35840 KB\n"
         },
         {
           "type": "file",
           "name": "meminfo",
-          "mtime": 1718150400.0,
+          "mtime": 1718124192.0,
           "size": 196,
           "contents": "MemTotal:        8167848 kB\nMemFree:         5432100 kB\nMemAvailable:    6931200 kB\nBuffers:          123456 kB\nCached:          1345678 kB\nSwapTotal:       2097148 kB\nSwapFree:        2097148 kB\n"
         },
         {
           "type": "file",
           "name": "version",
-          "mtime": 1718150400.0,
+          "mtime": 1718116258.0,
           "size": 46,
           "contents": "Linux version 5.10.0-19-amd64 (debian-kernel)\n"
+        },
+        {
+          "type": "file",
+          "name": "uptime",
+          "mtime": 1718107724.0,
+          "size": 21,
+          "contents": "615254.71 4903211.02\n"
+        },
+        {
+          "type": "file",
+          "name": "loadavg",
+          "mtime": 1718071010.0,
+          "size": 26,
+          "contents": "0.08 0.03 0.01 1/214 8090\n"
+        },
+        {
+          "type": "file",
+          "name": "mounts",
+          "mtime": 1718078323.0,
+          "size": 505,
+          "contents": "sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0\nproc /proc proc rw,nosuid,nodev,noexec,relatime 0 0\nudev /dev devtmpfs rw,nosuid,relatime,size=4074512k,nr_inodes=1018628,mode=755 0 0\ndevpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0\ntmpfs /run tmpfs rw,nosuid,nodev,noexec,relatime,size=819200k,mode=755 0 0\n/dev/sda1 / ext4 rw,relatime,errors=remount-ro 0 0\ntmpfs /dev/shm tmpfs rw,nosuid,nodev 0 0\ntmpfs /run/lock tmpfs rw,nosuid,nodev,noexec,relatime,size=5120k 0 0\n"
         }
       ]
     },
@@ -199,60 +548,848 @@
       "type": "dir",
       "name": "root",
       "perm": "0700",
-      "mtime": 1718150400.0,
+      "mtime": 1717994695.0,
       "children": [
         {
           "type": "file",
           "name": ".bashrc",
-          "mtime": 1718150400.0,
+          "mtime": 1718346421.0,
           "size": 37,
           "contents": "# ~/.bashrc\nexport PS1='\\u@\\h:\\w\\$ '\n"
         },
         {
           "type": "file",
           "name": ".profile",
-          "mtime": 1718150400.0,
+          "mtime": 1718241607.0,
           "size": 13,
           "contents": "# ~/.profile\n"
+        },
+        {
+          "type": "file",
+          "name": ".bash_history",
+          "perm": "0600",
+          "mtime": 1718221667.0,
+          "size": 355,
+          "contents": "ls -la\ndf -h\nfree -m\napt update\nsystemctl status postgresql\nsystemctl status redis-server\nsu - postgres\ntail -f /var/log/postgresql/postgresql-13-main.log\nnetstat -tlnp\nss -tlnp\nvim /etc/postgresql/13/main/postgresql.conf\nsystemctl restart postgresql\ncat /var/log/auth.log | grep Failed\ncrontab -l\ndu -sh /var/lib/postgresql/*\nps aux | grep postgres\nexit\n"
+        },
+        {
+          "type": "file",
+          "name": ".pgpass",
+          "perm": "0600",
+          "mtime": 1718317828.0,
+          "size": 47,
+          "contents": "localhost:5432:*:postgres:PgAdminPass_REDACTED\n"
         }
       ]
     },
     {
       "type": "dir",
       "name": "run",
-      "mtime": 1718150400.0
+      "mtime": 1707911144.0
     },
     {
       "type": "link",
       "name": "sbin",
-      "mtime": 1718150400.0,
+      "mtime": 1707595294.0,
       "target": "/bin"
     },
     {
       "type": "dir",
       "name": "srv",
-      "mtime": 1718150400.0
+      "mtime": 1707658831.0
     },
     {
       "type": "dir",
       "name": "sys",
-      "mtime": 1718150400.0
+      "mtime": 1707551972.0
     },
     {
       "type": "dir",
       "name": "tmp",
       "perm": "1777",
-      "mtime": 1718150400.0
+      "mtime": 1707723597.0
     },
     {
       "type": "dir",
       "name": "usr",
-      "mtime": 1718150400.0
+      "mtime": 1707653535.0,
+      "children": [
+        {
+          "type": "dir",
+          "name": "bin",
+          "mtime": 1718670094.0,
+          "children": [
+            {
+              "type": "file",
+              "name": "python3",
+              "perm": "0755",
+              "mtime": 1718749668.0,
+              "size": 5479600
+            },
+            {
+              "type": "file",
+              "name": "python3.9",
+              "perm": "0755",
+              "mtime": 1718222880.0,
+              "size": 5479600
+            },
+            {
+              "type": "file",
+              "name": "perl",
+              "perm": "0755",
+              "mtime": 1718642301.0,
+              "size": 2093056
+            },
+            {
+              "type": "file",
+              "name": "gcc",
+              "perm": "0755",
+              "mtime": 1718256760.0,
+              "size": 1092352
+            },
+            {
+              "type": "file",
+              "name": "make",
+              "perm": "0755",
+              "mtime": 1718303503.0,
+              "size": 260072
+            },
+            {
+              "type": "file",
+              "name": "awk",
+              "perm": "0755",
+              "mtime": 1718120628.0,
+              "size": 662320
+            },
+            {
+              "type": "file",
+              "name": "gawk",
+              "perm": "0755",
+              "mtime": 1718799710.0,
+              "size": 662320
+            },
+            {
+              "type": "file",
+              "name": "vim",
+              "perm": "0755",
+              "mtime": 1718743008.0,
+              "size": 3040000
+            },
+            {
+              "type": "file",
+              "name": "vi",
+              "perm": "0755",
+              "mtime": 1718824695.0,
+              "size": 3040000
+            },
+            {
+              "type": "file",
+              "name": "nano",
+              "perm": "0755",
+              "mtime": 1718657132.0,
+              "size": 250000
+            },
+            {
+              "type": "file",
+              "name": "less",
+              "perm": "0755",
+              "mtime": 1718666610.0,
+              "size": 191472
+            },
+            {
+              "type": "file",
+              "name": "curl",
+              "perm": "0755",
+              "mtime": 1718770525.0,
+              "size": 254832
+            },
+            {
+              "type": "file",
+              "name": "wget",
+              "perm": "0755",
+              "mtime": 1718172873.0,
+              "size": 484416
+            },
+            {
+              "type": "file",
+              "name": "ssh",
+              "perm": "0755",
+              "mtime": 1718740374.0,
+              "size": 805208
+            },
+            {
+              "type": "file",
+              "name": "scp",
+              "perm": "0755",
+              "mtime": 1718768881.0,
+              "size": 145016
+            },
+            {
+              "type": "file",
+              "name": "sftp",
+              "perm": "0755",
+              "mtime": 1718829701.0,
+              "size": 205016
+            },
+            {
+              "type": "file",
+              "name": "nc",
+              "perm": "0755",
+              "mtime": 1718524976.0,
+              "size": 47320
+            },
+            {
+              "type": "file",
+              "name": "ncat",
+              "perm": "0755",
+              "mtime": 1718338413.0,
+              "size": 47320
+            },
+            {
+              "type": "file",
+              "name": "socat",
+              "perm": "0755",
+              "mtime": 1718256724.0,
+              "size": 375632
+            },
+            {
+              "type": "file",
+              "name": "rsync",
+              "perm": "0755",
+              "mtime": 1718030779.0,
+              "size": 700000
+            },
+            {
+              "type": "file",
+              "name": "telnet",
+              "perm": "0755",
+              "mtime": 1718667102.0,
+              "size": 68000
+            },
+            {
+              "type": "file",
+              "name": "ftp",
+              "perm": "0755",
+              "mtime": 1718054299.0,
+              "size": 130000
+            },
+            {
+              "type": "file",
+              "name": "tar",
+              "perm": "0755",
+              "mtime": 1718228482.0,
+              "size": 458008
+            },
+            {
+              "type": "file",
+              "name": "gzip",
+              "perm": "0755",
+              "mtime": 1718697901.0,
+              "size": 98048
+            },
+            {
+              "type": "file",
+              "name": "gunzip",
+              "perm": "0755",
+              "mtime": 1718451910.0,
+              "size": 2251
+            },
+            {
+              "type": "file",
+              "name": "bzip2",
+              "perm": "0755",
+              "mtime": 1718060269.0,
+              "size": 39536
+            },
+            {
+              "type": "file",
+              "name": "xz",
+              "perm": "0755",
+              "mtime": 1718282519.0,
+              "size": 92264
+            },
+            {
+              "type": "file",
+              "name": "zip",
+              "perm": "0755",
+              "mtime": 1718166000.0,
+              "size": 210000
+            },
+            {
+              "type": "file",
+              "name": "unzip",
+              "perm": "0755",
+              "mtime": 1718206287.0,
+              "size": 200000
+            },
+            {
+              "type": "file",
+              "name": "strace",
+              "perm": "0755",
+              "mtime": 1718157922.0,
+              "size": 1200000
+            },
+            {
+              "type": "file",
+              "name": "ltrace",
+              "perm": "0755",
+              "mtime": 1718269316.0,
+              "size": 180000
+            },
+            {
+              "type": "file",
+              "name": "gdb",
+              "perm": "0755",
+              "mtime": 1718073591.0,
+              "size": 9800000
+            },
+            {
+              "type": "file",
+              "name": "lsof",
+              "perm": "0755",
+              "mtime": 1718422145.0,
+              "size": 179000
+            },
+            {
+              "type": "file",
+              "name": "tcpdump",
+              "perm": "0755",
+              "mtime": 1718142594.0,
+              "size": 1155000
+            },
+            {
+              "type": "file",
+              "name": "htop",
+              "perm": "0755",
+              "mtime": 1718317848.0,
+              "size": 240000
+            },
+            {
+              "type": "file",
+              "name": "file",
+              "perm": "0755",
+              "mtime": 1718634110.0,
+              "size": 30000
+            },
+            {
+              "type": "file",
+              "name": "strings",
+              "perm": "0755",
+              "mtime": 1718274415.0,
+              "size": 40000
+            },
+            {
+              "type": "file",
+              "name": "openssl",
+              "perm": "0755",
+              "mtime": 1718766396.0,
+              "size": 962624
+            },
+            {
+              "type": "file",
+              "name": "md5sum",
+              "perm": "0755",
+              "mtime": 1718139453.0,
+              "size": 47000
+            },
+            {
+              "type": "file",
+              "name": "sha256sum",
+              "perm": "0755",
+              "mtime": 1718215553.0,
+              "size": 47000
+            },
+            {
+              "type": "file",
+              "name": "base64",
+              "perm": "0755",
+              "mtime": 1718629408.0,
+              "size": 39000
+            },
+            {
+              "type": "file",
+              "name": "git",
+              "perm": "0755",
+              "mtime": 1718651012.0,
+              "size": 3251320
+            },
+            {
+              "type": "file",
+              "name": "psql",
+              "perm": "0755",
+              "mtime": 1718712238.0,
+              "size": 700000
+            },
+            {
+              "type": "file",
+              "name": "pg_dump",
+              "perm": "0755",
+              "mtime": 1718528074.0,
+              "size": 620000
+            },
+            {
+              "type": "file",
+              "name": "pg_dumpall",
+              "perm": "0755",
+              "mtime": 1718590216.0,
+              "size": 90000
+            },
+            {
+              "type": "file",
+              "name": "redis-cli",
+              "perm": "0755",
+              "mtime": 1718219164.0,
+              "size": 5300000
+            },
+            {
+              "type": "file",
+              "name": "sqlite3",
+              "perm": "0755",
+              "mtime": 1718087587.0,
+              "size": 1400000
+            },
+            {
+              "type": "file",
+              "name": "apt",
+              "perm": "0755",
+              "mtime": 1718489347.0,
+              "size": 174000
+            },
+            {
+              "type": "file",
+              "name": "apt-get",
+              "perm": "0755",
+              "mtime": 1718135227.0,
+              "size": 174000
+            },
+            {
+              "type": "file",
+              "name": "apt-cache",
+              "perm": "0755",
+              "mtime": 1718783452.0,
+              "size": 174000
+            },
+            {
+              "type": "file",
+              "name": "dpkg",
+              "perm": "0755",
+              "mtime": 1718616336.0,
+              "size": 350000
+            },
+            {
+              "type": "file",
+              "name": "dpkg-query",
+              "perm": "0755",
+              "mtime": 1718651064.0,
+              "size": 90000
+            },
+            {
+              "type": "file",
+              "name": "sudo",
+              "perm": "0755",
+              "mtime": 1718006938.0,
+              "size": 232416
+            },
+            {
+              "type": "file",
+              "name": "screen",
+              "perm": "0755",
+              "mtime": 1718209423.0,
+              "size": 450000
+            },
+            {
+              "type": "file",
+              "name": "tmux",
+              "perm": "0755",
+              "mtime": 1718233400.0,
+              "size": 680000
+            },
+            {
+              "type": "file",
+              "name": "wall",
+              "perm": "0755",
+              "mtime": 1718563707.0,
+              "size": 35000
+            },
+            {
+              "type": "file",
+              "name": "crontab",
+              "perm": "0755",
+              "mtime": 1718322771.0,
+              "size": 43000
+            },
+            {
+              "type": "file",
+              "name": "find",
+              "perm": "0755",
+              "mtime": 1718276525.0,
+              "size": 320000
+            },
+            {
+              "type": "file",
+              "name": "xargs",
+              "perm": "0755",
+              "mtime": 1718831474.0,
+              "size": 60000
+            },
+            {
+              "type": "file",
+              "name": "dig",
+              "perm": "0755",
+              "mtime": 1718608642.0,
+              "size": 130000
+            },
+            {
+              "type": "file",
+              "name": "nslookup",
+              "perm": "0755",
+              "mtime": 1718235629.0,
+              "size": 140000
+            },
+            {
+              "type": "file",
+              "name": "host",
+              "perm": "0755",
+              "mtime": 1718364597.0,
+              "size": 130000
+            },
+            {
+              "type": "file",
+              "name": "python",
+              "perm": "0755",
+              "mtime": 1718702017.0,
+              "size": 5479600
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "sbin",
+          "mtime": 1718312002.0,
+          "children": [
+            {
+              "type": "file",
+              "name": "sshd",
+              "perm": "0755",
+              "mtime": 1718663952.0,
+              "size": 852024
+            },
+            {
+              "type": "file",
+              "name": "cron",
+              "perm": "0755",
+              "mtime": 1718762759.0,
+              "size": 60000
+            },
+            {
+              "type": "file",
+              "name": "rsyslogd",
+              "perm": "0755",
+              "mtime": 1718486682.0,
+              "size": 700000
+            },
+            {
+              "type": "file",
+              "name": "postgres",
+              "perm": "0755",
+              "mtime": 1718801211.0,
+              "size": 8200000
+            },
+            {
+              "type": "file",
+              "name": "redis-server",
+              "perm": "0755",
+              "mtime": 1718166887.0,
+              "size": 5300000
+            },
+            {
+              "type": "file",
+              "name": "service",
+              "perm": "0755",
+              "mtime": 1718599021.0,
+              "size": 8000
+            },
+            {
+              "type": "file",
+              "name": "useradd",
+              "perm": "0755",
+              "mtime": 1718161367.0,
+              "size": 150000
+            },
+            {
+              "type": "file",
+              "name": "usermod",
+              "perm": "0755",
+              "mtime": 1718169285.0,
+              "size": 150000
+            },
+            {
+              "type": "file",
+              "name": "groupadd",
+              "perm": "0755",
+              "mtime": 1718154667.0,
+              "size": 40000
+            },
+            {
+              "type": "file",
+              "name": "visudo",
+              "perm": "0755",
+              "mtime": 1718763730.0,
+              "size": 240000
+            },
+            {
+              "type": "file",
+              "name": "iptables",
+              "perm": "0755",
+              "mtime": 1718835084.0,
+              "size": 96000
+            },
+            {
+              "type": "file",
+              "name": "ss",
+              "perm": "0755",
+              "mtime": 1718427434.0,
+              "size": 130000
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "lib",
+          "mtime": 1707725839.0
+        },
+        {
+          "type": "dir",
+          "name": "share",
+          "mtime": 1707690009.0
+        },
+        {
+          "type": "dir",
+          "name": "local",
+          "mtime": 1707529973.0,
+          "children": [
+            {
+              "type": "dir",
+              "name": "bin",
+              "mtime": 1707720895.0
+            },
+            {
+              "type": "dir",
+              "name": "sbin",
+              "mtime": 1707889736.0
+            }
+          ]
+        }
+      ]
     },
     {
       "type": "dir",
       "name": "var",
-      "mtime": 1718150400.0
+      "mtime": 1707728926.0,
+      "children": [
+        {
+          "type": "dir",
+          "name": "lib",
+          "mtime": 1707663474.0,
+          "children": [
+            {
+              "type": "dir",
+              "name": "postgresql",
+              "uid": 1003,
+              "gid": 1003,
+              "mtime": 1718259079.0,
+              "children": [
+                {
+                  "type": "dir",
+                  "name": "13",
+                  "uid": 1003,
+                  "gid": 1003,
+                  "mtime": 1718188580.0,
+                  "children": [
+                    {
+                      "type": "dir",
+                      "name": "main",
+                      "uid": 1003,
+                      "gid": 1003,
+                      "perm": "0700",
+                      "mtime": 1718132849.0,
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "PG_VERSION",
+                          "uid": 1003,
+                          "gid": 1003,
+                          "mtime": 1718367232.0,
+                          "size": 3,
+                          "contents": "13\n"
+                        },
+                        {
+                          "type": "file",
+                          "name": "postmaster.pid",
+                          "uid": 1003,
+                          "gid": 1003,
+                          "mtime": 1718084755.0,
+                          "size": 68,
+                          "contents": "2481\n/var/lib/postgresql/13/main\n1718000000\n5432\n"
+                        },
+                        {
+                          "type": "dir",
+                          "name": "base",
+                          "uid": 1003,
+                          "gid": 1003,
+                          "mtime": 1718120184.0,
+                          "children": [
+                            {
+                              "type": "dir",
+                              "name": "16384",
+                              "uid": 1003,
+                              "gid": 1003,
+                              "mtime": 1718242739.0
+                            },
+                            {
+                              "type": "dir",
+                              "name": "16385",
+                              "uid": 1003,
+                              "gid": 1003,
+                              "mtime": 1718112173.0
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "dir",
+              "name": "redis",
+              "uid": 1004,
+              "gid": 1004,
+              "mtime": 1718072982.0,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "dump.rdb",
+                  "uid": 1004,
+                  "gid": 1004,
+                  "perm": "0660",
+                  "mtime": 1718256365.0,
+                  "size": 104857
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "backups",
+          "mtime": 1718213823.0,
+          "children": [
+            {
+              "type": "dir",
+              "name": "db",
+              "mtime": 1718084861.0,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "appdb-2024-06-10.sql.gz",
+                  "mtime": 1718167929.0,
+                  "size": 8451200
+                },
+                {
+                  "type": "file",
+                  "name": "appdb-2024-06-11.sql.gz",
+                  "mtime": 1718122121.0,
+                  "size": 8502144
+                },
+                {
+                  "type": "file",
+                  "name": "full-2024-06-11.sql.gz",
+                  "mtime": 1718143440.0,
+                  "size": 15204352
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "log",
+          "mtime": 1718273822.0,
+          "children": [
+            {
+              "type": "file",
+              "name": "auth.log",
+              "gid": 4,
+              "perm": "0640",
+              "mtime": 1718132991.0,
+              "size": 742,
+              "contents": "Jun 11 06:12:03 happydog sshd[2210]: Accepted password for mchen from 10.0.0.14 port 51344 ssh2\nJun 11 06:12:03 happydog sshd[2210]: pam_unix(sshd:session): session opened for user mchen(uid=1002) by (uid=0)\nJun 11 07:44:19 happydog sudo:    mchen : TTY=pts/0 ; PWD=/home/mchen ; USER=root ; COMMAND=/usr/bin/systemctl restart postgresql\nJun 11 08:02:55 happydog sshd[3120]: Failed password for root from 45.155.205.9 port 40122 ssh2\nJun 11 08:02:57 happydog sshd[3120]: Failed password for root from 45.155.205.9 port 40122 ssh2\nJun 11 08:03:01 happydog sshd[3120]: Disconnected from authenticating user root 45.155.205.9 port 40122 [preauth]\nJun 11 09:15:40 happydog sshd[3402]: Accepted publickey for deploy from 10.0.0.20 port 33512 ssh2\n"
+            },
+            {
+              "type": "file",
+              "name": "syslog",
+              "gid": 4,
+              "perm": "0640",
+              "mtime": 1718080056.0,
+              "size": 405,
+              "contents": "Jun 11 06:00:01 happydog CRON[1987]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)\nJun 11 06:25:12 happydog systemd[1]: Starting Daily apt upgrade...\nJun 11 08:30:02 happydog postgres[2490]: [12-1] LOG:  checkpoint starting: time\nJun 11 08:30:14 happydog postgres[2490]: [13-1] LOG:  checkpoint complete: wrote 812 buffers\nJun 11 09:00:00 happydog systemd[1]: Started Session 42 of user mchen.\n"
+            },
+            {
+              "type": "file",
+              "name": "dpkg.log",
+              "mtime": 1718137144.0,
+              "size": 218,
+              "contents": "2024-06-10 06:25:14 status installed postgresql-13:amd64 13.14-0+deb11u1\n2024-06-10 06:25:15 status installed redis-server:amd64 5:6.0.16-1+deb11u2\n2024-06-11 06:25:30 status installed libssl1.1:amd64 1.1.1n-0+deb11u5\n"
+            },
+            {
+              "type": "file",
+              "name": "wtmp",
+              "gid": 43,
+              "perm": "0664",
+              "mtime": 1718093949.0,
+              "size": 9216
+            },
+            {
+              "type": "file",
+              "name": "lastlog",
+              "gid": 43,
+              "perm": "0664",
+              "mtime": 1718152262.0,
+              "size": 292292
+            },
+            {
+              "type": "dir",
+              "name": "postgresql",
+              "mtime": 1718084922.0,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "postgresql-13-main.log",
+                  "gid": 1003,
+                  "perm": "0640",
+                  "mtime": 1718143603.0,
+                  "size": 458,
+                  "contents": "2024-06-11 08:30:02.114 UTC [2490] LOG:  database system is ready to accept connections\n2024-06-11 08:41:19.882 UTC [3055] postgres@appdb LOG:  duration: 1284.551 ms  statement: SELECT * FROM orders WHERE status = 'paid';\n2024-06-11 09:02:44.301 UTC [3120] appuser@appdb LOG:  connection authorized: user=appuser database=appdb\n2024-06-11 09:14:07.552 UTC [3120] appuser@appdb LOG:  duration: 2044.019 ms  statement: SELECT card_last4, amount FROM payments;\n"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "dir",
+          "name": "www",
+          "mtime": 1707733354.0,
+          "children": [
+            {
+              "type": "dir",
+              "name": "html",
+              "mtime": 1707673346.0
+            }
+          ]
+        }
+      ]
     }
   ]
 }

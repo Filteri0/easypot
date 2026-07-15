@@ -28,7 +28,9 @@ Simplifications (documented, revisit if fidelity demands)
 
 from __future__ import annotations
 
+import time as _time
 from dataclasses import dataclass, field
+from typing import Callable
 
 __all__ = [
     "FSError",
@@ -158,12 +160,63 @@ class FSStat:
 class VirtualFS:
     """A mutable, in-memory Unix-like filesystem."""
 
-    def __init__(self, root: FSNode | None = None) -> None:
+    def __init__(self, root: FSNode | None = None,
+                 clock: "Callable[[], float] | None" = None) -> None:
         if root is None:
             root = FSNode(name="/", ntype=DIR, perm=0o755)
         if root.ntype != DIR:
             raise FSError("root must be a directory")
         self.root = root
+        # Wall-clock used to stamp mtimes on runtime-created/modified nodes
+        # (mkdir/write/touch/symlink). Without this, new files default to
+        # mtime=0.0 -> "Jan  1  1970" in `ls -l`, an instant honeypot tell when
+        # an attacker does `echo x > f; ls -l`. Injectable so the honeypot can
+        # pass its emulated (time-shifted) clock and tests can pin it.
+        self._clock = clock or _time.time
+        #: The uid/gid stamped on runtime-created nodes when a caller doesn't
+        #: pass one explicitly. Set per-session to the login uid so
+        #: `echo x > f` / `mkdir d` / `touch t` are owned by the logged-in user,
+        #: not root. Defaults to 0 for bare/test contexts.
+        self.default_uid = 0
+        self.default_gid = 0
+
+    def set_owner(self, uid: int, gid: int | None = None) -> None:
+        """Set the default owner for subsequent runtime-created nodes."""
+        self.default_uid = uid
+        self.default_gid = uid if gid is None else gid
+
+    def _now(self) -> float:
+        return self._clock()
+
+    def shift_mtimes(self, anchor_now: float) -> None:
+        """Shift every node's mtime so the newest becomes ``anchor_now``.
+
+        The shipped tree is built around a fixed 2024 timeline (reproducible
+        fs.json). At load time we slide the whole tree forward so its most
+        recent file sits at 'now', keeping the *relative* layering (install <
+        packages < recent activity) intact while making absolute dates agree
+        with ``date``/``uptime``. Without this, `ls -l` shows 2024 but `date`
+        shows the real year — a giveaway. No-op if the tree is empty.
+        """
+        newest = self._max_mtime(self.root)
+        if newest <= 0:
+            return
+        delta = anchor_now - newest
+        self._apply_shift(self.root, delta)
+
+    def _max_mtime(self, node: "FSNode") -> float:
+        m = node.mtime
+        for child in node.children.values():
+            cm = self._max_mtime(child)
+            if cm > m:
+                m = cm
+        return m
+
+    def _apply_shift(self, node: "FSNode", delta: float) -> None:
+        if node.mtime > 0:
+            node.mtime += delta
+        for child in node.children.values():
+            self._apply_shift(child, delta)
 
     # -- path handling --
 
@@ -267,6 +320,34 @@ class VirtualFS:
             raise NotADirectory(self.normalize(path, cwd))
         return sorted(node.children)
 
+    def access(self, path: str, mode: str, uid: int, gid: int = -1,
+               cwd: str = "/", *, follow: bool = True) -> bool:
+        """Return whether ``uid`` may access ``path`` for ``mode`` (any of
+        'r','w','x'), using standard Unix owner/group/other permission bits.
+
+        This is *advisory*: the VFS mutation methods stay permissive (so
+        internal provisioning and tests aren't blocked); command implementations
+        call this to emulate ``Permission denied`` where a real shell would.
+        root (uid 0) bypasses all checks, matching real kernels. Missing path
+        -> False (caller reports no-such-file separately if needed).
+        """
+        if uid == 0:
+            return True
+        try:
+            node = self._lookup(path, cwd, follow=follow)
+        except FSError:
+            return False
+        perm = node.perm
+        if node.uid == uid:
+            shift = 6           # owner triad
+        elif gid >= 0 and node.gid == gid:
+            shift = 3           # group triad
+        else:
+            shift = 0           # other triad
+        bits = (perm >> shift) & 7
+        need = {"r": 4, "w": 2, "x": 1}
+        return all(bits & need[m] for m in mode)
+
     def scandir(self, path: str = ".", cwd: str = "/") -> list[FSStat]:
         node = self._lookup(path, cwd)
         if node.ntype != DIR:
@@ -311,14 +392,17 @@ class VirtualFS:
         path: str,
         cwd: str = "/",
         *,
-        uid: int = 0,
-        gid: int = 0,
+        uid: int | None = None,
+        gid: int | None = None,
         perm: int = 0o755,
     ) -> None:
         parent, name = self._parent_and_name(path, cwd)
         if name in parent.children:
             raise FileExists(self.normalize(path, cwd))
-        parent.children[name] = FSNode(name, DIR, uid, gid, perm)
+        u = self.default_uid if uid is None else uid
+        g = self.default_gid if gid is None else gid
+        parent.children[name] = FSNode(name, DIR, u, g, perm,
+                                       mtime=self._now())
 
     def makedirs(self, path: str, cwd: str = "/", perm: int = 0o755) -> None:
         comps = self._split(path, cwd)
@@ -326,7 +410,7 @@ class VirtualFS:
         for name in comps:
             nxt = node.children.get(name)
             if nxt is None:
-                nxt = FSNode(name, DIR, perm=perm)
+                nxt = FSNode(name, DIR, perm=perm, mtime=self._now())
                 node.children[name] = nxt
             elif nxt.ntype != DIR:
                 raise NotADirectory(name)
@@ -338,8 +422,8 @@ class VirtualFS:
         data: bytes | str,
         cwd: str = "/",
         *,
-        uid: int = 0,
-        gid: int = 0,
+        uid: int | None = None,
+        gid: int | None = None,
         perm: int = 0o644,
         create: bool = True,
     ) -> None:
@@ -352,23 +436,53 @@ class VirtualFS:
                 raise IsADirectory(self.normalize(path, cwd))
             existing.contents = data
             existing.size = len(data)
+            existing.mtime = self._now()  # writing a file bumps its mtime
             return
         if not create:
             raise NoSuchFile(self.normalize(path, cwd))
+        u = self.default_uid if uid is None else uid
+        g = self.default_gid if gid is None else gid
         parent.children[name] = FSNode(
-            name, FILE, uid, gid, perm, size=len(data), contents=data
+            name, FILE, u, g, perm, size=len(data), contents=data,
+            mtime=self._now(),
         )
 
     def touch(self, path: str, cwd: str = "/", *, perm: int = 0o644) -> None:
         parent, name = self._parent_and_name(path, cwd)
-        if name not in parent.children:
-            parent.children[name] = FSNode(name, FILE, perm=perm, size=0)
+        existing = parent.children.get(name)
+        if existing is None:
+            parent.children[name] = FSNode(name, FILE, self.default_uid,
+                                           self.default_gid, perm, size=0,
+                                           mtime=self._now())
+        else:
+            existing.mtime = self._now()  # touch bumps mtime of existing file
 
     def symlink(self, target: str, linkpath: str, cwd: str = "/") -> None:
         parent, name = self._parent_and_name(linkpath, cwd)
         if name in parent.children:
             raise FileExists(self.normalize(linkpath, cwd))
-        parent.children[name] = FSNode(name, LINK, perm=0o777, target=target)
+        parent.children[name] = FSNode(name, LINK, perm=0o777, target=target,
+                                       mtime=self._now())
+
+    def chmod(self, path: str, perm: int, cwd: str = "/") -> None:
+        """Set the permission bits on ``path``. Raises if it doesn't exist.
+
+        Mechanism only — the FS stores the mode; whether a caller is *allowed*
+        to chmod is policy the command layer applies (see chmod builtin).
+        """
+        node = self._lookup(path, cwd, follow=True)
+        node.perm = perm & 0o7777
+
+    def chown(
+        self, path: str, cwd: str = "/", *,
+        uid: int | None = None, gid: int | None = None,
+    ) -> None:
+        """Set owner uid and/or group gid on ``path``. Raises if absent."""
+        node = self._lookup(path, cwd, follow=True)
+        if uid is not None:
+            node.uid = uid
+        if gid is not None:
+            node.gid = gid
 
     def remove(self, path: str, cwd: str = "/", *, recursive: bool = False) -> None:
         parent, name = self._parent_and_name(path, cwd)

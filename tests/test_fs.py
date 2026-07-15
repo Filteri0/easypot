@@ -67,12 +67,33 @@ def test_exists_and_types():
     assert fs.exists("/etc/passwd")
     assert fs.is_file("/etc/passwd")
     assert fs.is_dir("/etc")
-    assert not fs.exists("/etc/shadow")
+    # /etc/shadow now ships in the DB-persona tree; use a truly-absent path.
+    assert not fs.exists("/etc/nonexistent-xyz")
 
 
 def test_listdir_sorted():
     fs = _sample_fs()
-    assert fs.listdir("/etc") == ["hostname", "os-release", "passwd"]
+    # /etc is now fully populated (DB-server persona); listdir stays sorted.
+    assert fs.listdir("/etc") == [
+        "crontab", "fstab", "group", "hostname", "hosts", "machine-id",
+        "os-release", "passwd", "postgresql", "resolv.conf", "shadow", "ssh",
+    ]
+
+
+def test_mtimes_are_spread_not_uniform():
+    # §3: nodes must not all share one mtime (the old fingerprint). Check a
+    # spread of representative paths yields several distinct timestamps, and
+    # that semantic layering holds (etc/passwd older than a user history).
+    fs = _sample_fs()
+    paths = [
+        "/etc/passwd", "/etc/os-release", "/bin/ls", "/usr/bin/git",
+        "/var/log/auth.log", "/home/mchen/.bash_history",
+        "/var/backups/db/full-2024-06-11.sql.gz",
+    ]
+    mtimes = {fs.stat(p).mtime for p in paths}
+    assert len(mtimes) >= 5  # clearly not a single uniform value
+    # base-system file predates recent user activity
+    assert fs.stat("/etc/passwd").mtime < fs.stat("/var/log/auth.log").mtime
 
 
 def test_listdir_on_file_errors():
@@ -305,5 +326,51 @@ def _run_standalone() -> int:
     return 1 if failed else 0
 
 
+def test_proc_pseudofiles_present():
+    """Attackers routinely `cat /proc/uptime` etc.; their absence is a tell."""
+    fs = _sample_fs()
+    for path in ("/proc/uptime", "/proc/loadavg", "/proc/mounts",
+                 "/proc/cpuinfo", "/proc/meminfo"):
+        assert fs.exists(path), path
+        assert fs.readtext(path).strip() != ""
+
+
+def test_debian_package_tools_present_yum_absent():
+    """which-consistency: this Debian host ships apt/apt-get/dpkg in /usr/bin
+    (so `which apt-get` resolves and matches LLM-generated apt output), but NOT
+    the RHEL package managers (yum/dnf are handled by the always-fail builtin).
+    """
+    fs = _sample_fs()
+    for tool in ("apt", "apt-get", "apt-cache", "dpkg"):
+        assert fs.is_file(f"/usr/bin/{tool}"), tool
+    for tool in ("yum", "dnf"):
+        assert not fs.exists(f"/usr/bin/{tool}"), tool
+
+
 if __name__ == "__main__":
     raise SystemExit(_run_standalone())
+
+
+def test_runtime_created_files_get_current_mtime():
+    """執行期新建的檔案/目錄不得是 mtime 0 (Jan 1 1970 指紋)。
+    注入固定 clock 驗證 mkdir/write_file/touch/symlink 都戳上它。"""
+    fs = _sample_fs()
+    fs._clock = lambda: 1720000000.0  # 2024-07-03, 固定可驗
+    fs.write_file("/tmp/new.txt", "hi")
+    fs.mkdir("/tmp/newdir")
+    fs.touch("/tmp/touched")
+    fs.symlink("/tmp/new.txt", "/tmp/link")
+    assert fs.stat("/tmp/new.txt").mtime == 1720000000.0
+    assert fs.stat("/tmp/newdir").mtime == 1720000000.0
+    assert fs.stat("/tmp/touched").mtime == 1720000000.0
+    assert fs.stat("/tmp/link").mtime == 1720000000.0
+
+
+def test_write_bumps_mtime_on_existing_file():
+    """覆寫既有檔要更新 mtime(真實系統行為;echo a>f; echo b>f 時間會變)。"""
+    fs = _sample_fs()
+    times = iter([1000.0, 2000.0])
+    fs._clock = lambda: next(times)
+    fs.write_file("/tmp/f", "a")   # 1000
+    fs.write_file("/tmp/f", "bb")  # 2000
+    assert fs.stat("/tmp/f").mtime == 2000.0

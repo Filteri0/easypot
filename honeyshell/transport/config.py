@@ -53,6 +53,13 @@ class ServerConfig:
     llm_model: str = "qwen2.5:7b"
     llm_base_url: str = "http://localhost:11434"
 
+    #: When set, structured audit events (CommandEvent/ErrorEvent/LoginEvent)
+    #: are appended as JSON lines to this path via a JSONLSink, in addition to
+    #: the human LoggingSink. This is the feed a log collector tails. Kept off
+    #: by default (bare/standalone runs stay quiet); the docker deployment
+    #: points every honeypot at a file on a shared volume.
+    audit_jsonl_path: "str | None" = None
+
     #: The emulated machine profile. Single source of truth for both the shell
     #: session (uname/hostname builtins read it) and the LLM resolver (folds it
     #: into the system prompt), so their advertised system stays consistent.

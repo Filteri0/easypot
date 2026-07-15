@@ -66,6 +66,13 @@ class ParseError(Exception):
 # --- Operator token sets -------------------------------------------------
 
 _REDIR: frozenset[str] = frozenset({">", ">>", "<"})
+# fd-qualified redirect operators produced by _coalesce_fd_redirects.
+_FD_REDIR_FILE: frozenset[str] = frozenset({
+    "1>", "2>", "0<", "1>>", "2>>", "&>",
+})
+_FD_REDIR_DUP: frozenset[str] = frozenset({
+    "2>&1", "1>&2", ">&2", ">&1", "2>&2", "1>&1", "&>",
+})
 _CONNECTORS: frozenset[str] = frozenset({";", "&&", "||"})
 _ALL_OPS: frozenset[str] = _REDIR | _CONNECTORS | frozenset({"|", "&"})
 
@@ -93,10 +100,23 @@ def _is_operator_like(tok: str) -> bool:
 
 @dataclass
 class Redirect:
-    """A single redirection attached to a command, e.g. ``> out.txt``."""
+    """A single redirection attached to a command, e.g. ``> out.txt``.
 
-    op: str  # one of '>', '>>', '<'
+    Beyond the plain file forms (``>`` ``>>`` ``<``) this now carries
+    fd-qualified redirects that are extremely common in attacker traffic:
+
+    * ``fd`` — the source descriptor (1 for stdout, 2 for stderr). Defaults to
+      1 for ``>``/``>>`` and 0 for ``<``.
+    * ``dup`` — set when the target is another descriptor rather than a file,
+      i.e. ``2>&1`` (dup=1) or ``>&2`` (dup=2). ``target`` is empty then.
+    * ``both`` — ``&>file`` / ``>&file``: redirect stdout *and* stderr to file.
+    """
+
+    op: str  # '>', '>>', '<'
     target: str
+    fd: int = 1
+    dup: int | None = None
+    both: bool = False
 
     @property
     def mode(self) -> str:
@@ -153,9 +173,46 @@ def _tokenize(line: str) -> list[str]:
     lexer.whitespace_split = True
     lexer.commenters = ""  # do not strip '#..' — keep attacker input verbatim
     try:
-        return list(lexer)
+        return _coalesce_fd_redirects(list(lexer))
     except ValueError as exc:  # unbalanced quote / dangling escape
         raise ParseError(str(exc)) from exc
+
+
+def _coalesce_fd_redirects(tokens: list[str]) -> list[str]:
+    """Merge shlex's fd-redirect fragments into single operator tokens.
+
+    shlex splits ``2>&1`` into ``['2', '>&', '1']`` and ``2>file`` into
+    ``['2', '>', 'file']``. Bash evaluates redirections before word-splitting,
+    so we stitch the fragments back into one recognisable operator the parser
+    can consume, covering the forms attackers actually use:
+
+        2>       2>>      1>      >&      &>      2>&1     1>&2     >&2
+
+    A leading fd digit only counts as a descriptor when it's glued to the
+    ``>``/``<`` with no space in the original — shlex represents that as a bare
+    ``'1'``/``'2'`` token immediately before the operator, which is exactly what
+    we match here. Everything else is passed through untouched.
+    """
+    out: list[str] = []
+    i, n = 0, len(tokens)
+    while i < n:
+        tok = tokens[i]
+        prev = out[-1] if out else None
+
+        # fd digit immediately followed by a redirect operator: "2" ">" ...
+        if tok in (">", ">>", "<", ">&") and prev in ("1", "2", "0"):
+            fd = out.pop()
+            tok = fd + tok  # e.g. "2>", "2>>", "2>&"
+
+        # ">&" / "2>&" followed by a digit target -> dup ("2>&1", ">&2")
+        if tok.endswith(">&") and i + 1 < n and tokens[i + 1] in ("0", "1", "2"):
+            out.append(tok + tokens[i + 1])  # "2>&1", ">&2", "1>&2"
+            i += 2
+            continue
+
+        out.append(tok)
+        i += 1
+    return out
 
 
 # --- Parser --------------------------------------------------------------
@@ -199,13 +256,42 @@ class _Parser:
         self._flush_pipeline(connector, background)
 
     def _redirect(self, op: str) -> None:
+        # Dup / combined forms need no filename target (2>&1, >&2, &>? — &> does
+        # take a file, handled below).
+        if op in ("2>&1", "1>&1", "2>&2"):
+            self.cur.redirects.append(Redirect(">", "", fd=int(op[0]),
+                                               dup=int(op[-1])))
+            self.i += 1
+            return
+        if op in ("1>&2", ">&2"):
+            self.cur.redirects.append(Redirect(">", "", fd=1, dup=2))
+            self.i += 1
+            return
+        if op == ">&1":
+            self.cur.redirects.append(Redirect(">", "", fd=1, dup=1))
+            self.i += 1
+            return
+
+        # File-target forms (including fd-qualified and &> both-streams).
         nxt = self.i + 1
         if nxt >= len(self.tokens):
             raise ParseError("syntax error near unexpected token `newline'")
         target = self.tokens[nxt]
-        if target in _ALL_OPS:
+        if target in _ALL_OPS or _is_operator_like(target):
             raise ParseError(f"syntax error near unexpected token `{target}'")
-        self.cur.redirects.append(Redirect(op, target))
+
+        both = op == "&>"
+        append = op.endswith(">>")
+        fd = 1
+        base_op = ">>" if append else ">"
+        if op and op[0] in "012" and not both:
+            fd = int(op[0])
+        if op in ("<", "0<"):
+            base_op = "<"
+            fd = 0
+        self.cur.redirects.append(
+            Redirect(base_op, target, fd=fd, both=both)
+        )
         self.i += 2
 
     # -- main loop --
@@ -215,7 +301,7 @@ class _Parser:
         while self.i < n:
             tok = self.tokens[self.i]
 
-            if tok in _REDIR:
+            if tok in _REDIR or tok in _FD_REDIR_FILE or tok in _FD_REDIR_DUP:
                 self._redirect(tok)
                 continue
 

@@ -124,6 +124,18 @@ def test_system_prompt_instructs_play_along_not_judge():
     assert "when unsure" in sys_msg  # succeed-by-default guidance
 
 
+def test_system_prompt_forbids_helpful_ai_tone():
+    """The cold-bash rules: the persona must explicitly forbid the explanatory,
+    helpful-assistant voice (e.g. qwen's "isn't installed, using apt-get
+    instead...") that is the biggest AI tell."""
+    sys_msg = PromptBuilder(_cfg()).build(["x"], "/root")[0]["content"].lower()
+    assert "cold" in sys_msg and "machine-like" in sys_msg
+    assert "never explains" in sys_msg or "never explain" in sys_msg
+    # the specific failure phrasing is called out as forbidden
+    assert "instead" in sys_msg
+    assert "biggest tell" in sys_msg
+
+
 def test_fewshot_includes_unknown_tool_success_examples():
     """A: the exemplars must demonstrate an unknown downloader/installer
     SUCCEEDING with fs_ops, and all 6 pairs must reach the message list."""

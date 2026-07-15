@@ -22,6 +22,10 @@ from honeyshell.backends.client import (
     OllamaClient,
     extract_json,
 )
+from honeyshell.backends.content_fetcher import (
+    ContentFetcher,
+    build_content_messages,
+)
 from honeyshell.backends.fs_applier import (
     ApplyReport,
     apply_fs_ops,
@@ -53,6 +57,8 @@ __all__ = [
     "CacheEntry",
     "ChainResolver",
     "Resolution",
+    "ContentFetcher",
+    "build_content_messages",
     "LLMCommand",
     "make_llm_command_factory",
     "apply_fs_ops",

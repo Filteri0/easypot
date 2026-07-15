@@ -23,13 +23,16 @@ SIEMSink 只要 subscribe 即可，發布端不動。
 
 from __future__ import annotations
 
+import json
 import logging
+import threading
 from dataclasses import dataclass, field
-from typing import Callable
+from pathlib import Path
+from typing import Callable, Optional, TextIO
 
 from .events import Event, EventType
 
-__all__ = ["Listener", "EventBus", "LoggingSink"]
+__all__ = ["Listener", "EventBus", "LoggingSink", "JSONLSink"]
 
 # listener 簽章：吃一個 Event，回傳忽略。
 Listener = Callable[[Event], None]
@@ -150,4 +153,79 @@ class LoggingSink:
                 f"tok_in={event.prompt_tokens} tok_out={event.response_tokens} "
                 f"lat={event.latency_ms}ms"
             )
+        if et is EventType.ERROR:
+            return (
+                f"[{sid}] error phase={event.phase} exc={event.exc_type} "
+                f"cmd={event.raw!r}"
+            )
         return f"[{sid}] event {et}"
+
+
+@dataclass
+class JSONLSink:
+    """把事件以 JSON Lines（每行一個 JSON 物件）落地到檔案。
+
+    為何是 JSONL 而非單一 JSON 陣列
+    --------------------------------
+    JSONL 可 append-only 寫入、逐行讀取、天然適合串流給 collector/分析端，
+    不必把整個檔案讀進記憶體或維護陣列括號。每行是一個 ``event.to_dict()``。
+
+    穩定性
+    ------
+    寫入包在 try 內：磁碟滿、權限錯等 IO 例外被吞掉並記到內部 logger，
+    絕不炸回 EventBus.emit（進而絕不影響蜜罐主流程）。這與 emit 的隔離
+    保證一致——稽核落地失敗，蜜罐照常運作、不露餡。
+
+    並行
+    ----
+    一把 threading.Lock 序列化寫入，讓多個 session 併發 emit 時每行完整、
+    不交錯。emit 本身同步且快，鎖持有時間極短。
+
+    掛法
+    ----
+        sink = JSONLSink("audit.jsonl")
+        bus.subscribe(sink)
+        ...
+        sink.close()   # 程式結束時關檔（或用 with）
+    """
+
+    path: str
+    _fh: Optional[TextIO] = field(default=None, init=False, repr=False)
+    _lock: threading.Lock = field(default_factory=threading.Lock, init=False,
+                                  repr=False)
+
+    def __post_init__(self) -> None:
+        # 確保父目錄存在；開檔失敗只記錄，不讓 sink 建構炸掉呼叫端。
+        try:
+            Path(self.path).parent.mkdir(parents=True, exist_ok=True)
+            self._fh = open(self.path, "a", encoding="utf-8")
+        except Exception:  # noqa: BLE001 — any open failure disables the sink
+            _logger.exception("JSONLSink: cannot open %s; sink disabled",
+                              self.path)
+            self._fh = None
+
+    def __call__(self, event: Event) -> None:
+        fh = self._fh
+        if fh is None:
+            return
+        try:
+            line = json.dumps(event.to_dict(), ensure_ascii=False)
+            with self._lock:
+                fh.write(line + "\n")
+                fh.flush()
+        except Exception:  # noqa: BLE001 — audit IO must never break the honeypot
+            _logger.exception("JSONLSink: write failed (event=%s)", event.type)
+
+    def close(self) -> None:
+        with self._lock:
+            if self._fh is not None:
+                try:
+                    self._fh.close()
+                finally:
+                    self._fh = None
+
+    def __enter__(self) -> "JSONLSink":
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.close()

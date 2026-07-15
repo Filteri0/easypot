@@ -234,3 +234,61 @@ def _run_standalone() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(_run_standalone())
+
+
+# --- defensive top-level exception guard (uncovered-edge safety) ----------
+
+
+def test_top_level_guard_catches_escaped_exception():
+    """若某層在 _execute_inner 之上逃逸一個非預期例外(未來 expand/算術 bug),
+    頂層兜底必須:不洩漏 traceback、回 1、不斷線、把它記成 ErrorEvent。
+    這修補的是「意外導致整個 session 無聲斷線」的指紋洞。"""
+    from honeyshell.core.event_bus import EventBus
+    from honeyshell.core.events import ErrorEvent
+
+    errors = []
+    bus = EventBus()
+    bus.subscribe(lambda e: errors.append(e), None)
+    ctx = _ctx()
+    ctx.event_bus = bus
+    ctx.session_id = "sess-guard"
+    interp, out, err = _sh(ctx)
+
+    async def _boom(_line):
+        raise ValueError("escaped past all inner handlers")
+
+    interp._execute_inner = _boom
+    code = asyncio.run(interp.execute("some-input"))
+
+    combined = out.getvalue() + err.getvalue()
+    assert code == 1
+    assert "internal error" in combined            # generic, bash-style
+    assert "Traceback" not in combined             # no python traceback leak
+    assert "ValueError" not in combined            # no exception class leak
+    errs = [e for e in errors if isinstance(e, ErrorEvent)]
+    assert len(errs) == 1
+    assert errs[0].phase == "execute"
+    assert errs[0].exc_type == "ValueError"
+    assert errs[0].session_id == "sess-guard"
+
+
+def test_command_dispatch_emits_command_event():
+    """每條命令都 emit CommandEvent,hit/miss 正確,帶 session_id。"""
+    from honeyshell.core.event_bus import EventBus
+    from honeyshell.core.events import CommandEvent
+
+    events = []
+    bus = EventBus()
+    bus.subscribe(lambda e: events.append(e), None)
+    ctx = _ctx()
+    ctx.event_bus = bus
+    ctx.session_id = "sess-cmd"
+    interp, _, _ = _sh(ctx)
+
+    asyncio.run(interp.execute("whoami"))           # hit
+    asyncio.run(interp.execute("nosuchtool x"))     # miss
+
+    cmds = [e for e in events if isinstance(e, CommandEvent)]
+    assert any(c.hit and c.resolved_name == "whoami" for c in cmds)
+    assert any((not c.hit) and c.resolved_name is None for c in cmds)
+    assert all(c.session_id == "sess-cmd" for c in cmds)

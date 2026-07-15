@@ -14,9 +14,10 @@ from .config import (
     Principles,
     SystemProfile,
 )
-from .event_bus import EventBus, Listener, LoggingSink
+from .event_bus import EventBus, JSONLSink, Listener, LoggingSink
 from .events import (
     CommandEvent,
+    ErrorEvent,
     DownloadEvent,
     Event,
     EventType,
@@ -36,6 +37,7 @@ __all__ = [
     "EventBus",
     "Listener",
     "LoggingSink",
+    "JSONLSink",
     # events
     "EventType",
     "Event",
@@ -43,6 +45,7 @@ __all__ = [
     "SessionEndEvent",
     "LoginEvent",
     "CommandEvent",
+    "ErrorEvent",
     "DownloadEvent",
     "LLMEvent",
 ]

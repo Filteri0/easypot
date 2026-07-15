@@ -37,6 +37,7 @@ __all__ = [
     "CommandEvent",
     "DownloadEvent",
     "LLMEvent",
+    "ErrorEvent",
 ]
 
 
@@ -53,6 +54,7 @@ class EventType(str, Enum):
     COMMAND = "command"
     DOWNLOAD = "download"
     LLM = "llm"
+    ERROR = "error"
 
 
 def _new_event_id() -> str:
@@ -158,3 +160,27 @@ class LLMEvent(Event):
     response_tokens: int = 0
     latency_ms: float = 0.0
     cached: bool = False
+
+
+@dataclass
+class ErrorEvent(Event):
+    """直譯器層攔到、攻擊者觸發的非預期例外。
+
+    為何是一個獨立事件而非只寫 log
+    ------------------------------
+    攻擊者能穩定觸發的「意外」往往是高價值情報：它代表輸入踩到了模擬層
+    沒覆蓋的邊界，可能是新 TTP、指紋探測、或針對本蜜罐的 fuzzing。把它
+    結構化記錄，之後可聚合出「哪些命令最常讓系統出乎意料」。
+
+    欄位
+    ----
+    raw       : 觸發例外的原始命令列。
+    phase     : 發生階段（execute / substitution / command / expand …）。
+    exc_type  : 例外類別名（如 'ZeroDivisionError'）。不含 traceback／訊息，
+                避免把內部細節寫進面向攻擊者可能讀到的地方；供防禦方聚合用。
+    """
+
+    type: EventType = field(init=False, default=EventType.ERROR)
+    raw: str = ""
+    phase: str = ""
+    exc_type: str = ""

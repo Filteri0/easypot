@@ -162,15 +162,38 @@ def test_redirect_within_pipeline():
 # --- deferred features degrade, do not crash -----------------------------
 
 
-def test_stderr_redirect_is_deferred_syntax_error():
-    # 2>&1 is deferred (highest-priority follow-up). Under the strict
-    # operator policy the '>&' fragment raises a bash-like syntax error
-    # rather than silently mangling argv.
-    assert _expect_error("run 2>&1")
+def test_stderr_redirect_2_to_1_is_parsed():
+    # 2>&1 is now implemented: parses to an fd-2 redirect duplicating fd 1,
+    # not a syntax error.
+    cl = parse("run 2>&1")
+    sc = cl.jobs[0].pipeline.commands[0]
+    assert sc.argv == ["run"]
+    assert len(sc.redirects) == 1
+    r = sc.redirects[0]
+    assert r.fd == 2 and r.dup == 1
 
 
-def test_ampersand_redirect_is_deferred_syntax_error():
-    assert _expect_error("run &> out")
+def test_ampersand_redirect_is_parsed():
+    cl = parse("run &> out")
+    sc = cl.jobs[0].pipeline.commands[0]
+    assert sc.argv == ["run"]
+    assert sc.redirects[0].both is True
+    assert sc.redirects[0].target == "out"
+
+
+def test_stderr_to_file_is_parsed():
+    cl = parse("run 2>/dev/null")
+    sc = cl.jobs[0].pipeline.commands[0]
+    assert sc.argv == ["run"]
+    assert sc.redirects[0].fd == 2
+    assert sc.redirects[0].target == "/dev/null"
+
+
+def test_stdout_to_stderr_is_parsed():
+    cl = parse("echo hi >&2")
+    sc = cl.jobs[0].pipeline.commands[0]
+    assert sc.argv == ["echo", "hi"]
+    assert sc.redirects[0].fd == 1 and sc.redirects[0].dup == 2
 
 
 def test_command_substitution_kept_opaque():

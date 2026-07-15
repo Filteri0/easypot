@@ -1,0 +1,84 @@
+# easypot single-host deployment: two honeypots + one log collector.
+#
+# Topology
+#   honeypot-a  (ssh on host :2201)  ─┐
+#                                     ├─►  shared "audit" volume  ─►  collector
+#   honeypot-b  (ssh on host :2202)  ─┘
+#
+# Each honeypot appends structured JSON-line events to its own file under the
+# shared volume (/data/audit/<name>.jsonl). The collector tails every file on
+# that volume and merges them into one stream, tagging each line with its
+# source honeypot. No persona/LLM yet — plain emulated shells (add --llm and a
+# custom --fs later per honeypot to differentiate).
+#
+# SECURITY: honeypots are meant to be attacked. In real use put these on an
+# isolated network segment and firewall outbound traffic. This compose exposes
+# the SSH ports on the host for convenience; harden before internet exposure.
+
+name: easypot
+
+services:
+  honeypot-a:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: easypot:latest
+    restart: unless-stopped
+    environment:
+      HONEYPOT_HOSTNAME: web01
+      # Per-honeypot audit file on the shared volume; the collector tails all.
+      EASYPOT_AUDIT_JSONL: /data/audit/honeypot-a.jsonl
+      HONEYPOT_HOST_KEY: /data/keys/honeypot-a_rsa_key
+    ports:
+      - "2201:2222"          # host:container — ssh -p 2201 user@<host>
+    volumes:
+      - audit:/data/audit
+      - keys-a:/data/keys
+    networks: [trap]
+
+  honeypot-b:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: easypot:latest        # reuse the image built by honeypot-a
+    restart: unless-stopped
+    depends_on: [honeypot-a]     # so the image is built once, then reused
+    environment:
+      HONEYPOT_HOSTNAME: db01
+      EASYPOT_AUDIT_JSONL: /data/audit/honeypot-b.jsonl
+      HONEYPOT_HOST_KEY: /data/keys/honeypot-b_rsa_key
+    ports:
+      - "2202:2222"
+    volumes:
+      - audit:/data/audit
+      - keys-b:/data/keys
+    networks: [trap]
+
+  collector:
+    build:
+      context: ..
+      dockerfile: deploy/collector/Dockerfile
+    image: easypot-collector:latest
+    restart: unless-stopped
+    depends_on: [honeypot-a, honeypot-b]
+    environment:
+      AUDIT_DIR: /data/audit
+      # Merged, source-tagged output the analyzer (later) will read.
+      MERGED_OUT: /data/audit/_merged.jsonl
+    volumes:
+      - audit:/data/audit
+    networks: [trap]
+
+networks:
+  trap:
+    driver: bridge
+
+volumes:
+  # Shared JSONL feed. Both the honeypot and collector images run as uid 10001
+  # (see deploy/Dockerfile and deploy/collector/Dockerfile) so this volume has a
+  # single, consistent owner no matter which container initialises it first —
+  # avoiding the "owned by 10002, unwritable by 10001" crash-loop. Do NOT give
+  # the two images different uids.
+  audit:      # honeypots write, collector reads + merges
+  keys-a:     # persisted host keys -> stable SSH fingerprints across restarts
+  keys-b:

@@ -199,5 +199,76 @@ def _run_standalone() -> int:
     return 1 if failed else 0
 
 
+def test_audit_jsonl_path_defaults_none():
+    # Standalone/bare runs stay quiet: no JSONL sink unless a path is set.
+    assert ServerConfig().audit_jsonl_path is None
+
+
+def test_audit_jsonl_path_configurable():
+    cfg = ServerConfig(audit_jsonl_path="/data/audit/events.jsonl")
+    assert cfg.audit_jsonl_path == "/data/audit/events.jsonl"
+
+
 if __name__ == "__main__":
     raise SystemExit(_run_standalone())
+
+
+# --- user provisioning consistency (demo-found tells) --------------------
+
+
+def test_provision_unknown_user_is_consistent():
+    """未知帳號登入:uid 唯一(非硬編 1000)、寫入 passwd、家目錄以該 uid 建立。
+    修的是 id / grep passwd / ls -l owner 互相矛盾的指紋。"""
+    config = ServerConfig()
+    out = FakeWriter()
+    sess = ShellSession(config, FakeReader([]), out, username="attacker")
+    ctx = sess.ctx
+    # uid must not be the old hardcoded 1000 (which collided with phil)
+    assert ctx.uid != 1000 and ctx.uid >= 1000
+    # passwd must now contain the account, matching id's uid
+    passwd = ctx.fs.readtext("/etc/passwd")
+    assert any(ln.startswith("attacker:") and f":{ctx.uid}:" in ln
+               for ln in passwd.splitlines())
+    # home exists and is owned by that uid
+    st = ctx.fs.stat("/home/attacker")
+    assert st.uid == ctx.uid
+
+
+def test_provision_known_user_reuses_passwd_uid():
+    """已在 passwd 的帳號(mchen=1002)登入應沿用該 uid,不另配。"""
+    config = ServerConfig()
+    out = FakeWriter()
+    sess = ShellSession(config, FakeReader([]), out, username="mchen")
+    assert sess.ctx.uid == 1002
+
+
+def test_session_clock_and_boot_time_wired():
+    """session 應注入模擬時鐘與 boot_time,讓 date/uptime 一致。"""
+    config = ServerConfig()
+    out = FakeWriter()
+    sess = ShellSession(config, FakeReader([]), out, username="root")
+    assert sess.ctx.clock is not None
+    assert sess.ctx.boot_time is not None
+    assert sess.ctx.now() > sess.ctx.boot_time
+
+
+def test_session_shifts_fs_timeline_to_present():
+    """載入後 fs 最新 mtime 應被平移到接近現在(不再停在 2024)。"""
+    import time
+    config = ServerConfig()
+    out = FakeWriter()
+    sess = ShellSession(config, FakeReader([]), out, username="root")
+    newest = sess.ctx.fs._max_mtime(sess.ctx.fs.root)
+    # newest file should be within the last ~30 days, not years ago
+    assert time.time() - newest < 30 * 86400
+
+
+def test_runtime_files_owned_by_login_user():
+    """user 建立的檔案 owner 應是 user,不是 root(demo-found bug)。"""
+    config = ServerConfig()
+    out = FakeWriter()
+    sess = ShellSession(config, FakeReader([]), out, username="alice")
+    uid = sess.ctx.uid
+    sess.ctx.fs.write_file("/home/alice/f.txt", "hi", "/home/alice")
+    st = sess.ctx.fs.stat("/home/alice/f.txt")
+    assert st.uid == uid and st.uid != 0

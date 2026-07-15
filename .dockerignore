@@ -1,0 +1,10 @@
+# Build context hygiene. NOTE: build context is the repo root (..), so we must
+# NOT exclude deploy/collector (the collector image copies collect.py from it).
+**/__pycache__/
+**/*.pyc
+**/*.egg-info/
+.pytest_cache/
+tests/
+.git/
+*.tar.gz
+data/fs.json.bak

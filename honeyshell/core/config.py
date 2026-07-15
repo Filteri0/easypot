@@ -55,8 +55,22 @@ class Principles:
     # downloader / installer 範例——它們是 command-not-found 修正的關鍵錨點，
     # 詳見 backends/prompt_builder.py 的 _FEWSHOT 註解）。
     few_shot_examples: int = 6
-    # 額外自由文字原則（逐條）。
-    extra_rules: list[str] = field(default_factory=list)
+    # 額外自由文字原則（逐條）。PromptBuilder 會把每條注入系統畫像。
+    # 預設帶「DB 主機人設」引導，讓 LLM 生成的 log/process/config 與 fs.json
+    # 的靜態 PostgreSQL/Redis 痕跡一致（cat 命中的靜態內容是 LLM 失效時的預設；
+    # LLM 在線時則朝同一方向生成，兩者不打架）。
+    extra_rules: list[str] = field(
+        default_factory=lambda: [
+            "This host is a production PostgreSQL 13 + Redis database server. "
+            "Running services include postgresql (port 5432), redis-server "
+            "(port 6379) and sshd (port 22). When emulating logs, process "
+            "listings, config files or command output, stay consistent with a "
+            "busy database host: reference postgres/redis processes, /var/lib/"
+            "postgresql/13/main, /var/log/postgresql/, connection activity and "
+            "backup jobs. Do NOT invent a web stack (nginx/apache/php) unless "
+            "the attacker explicitly creates it.",
+        ]
+    )
 
 
 @dataclass
@@ -68,14 +82,22 @@ class SystemProfile:
     """
 
     # --- 身分 / 軟體 ---
-    hostname: str = "svr04"
+    # 人設：一台在服役的 PostgreSQL/Redis 正式資料庫機（高價值誘捕目標）。
+    # services/open_ports 會被 PromptBuilder 注入系統畫像，引導 LLM 生成
+    # 與 DB 主機一致的輸出（log、process、config），與 data/fs.json 的靜態
+    # 痕跡對齊，避免「VFS 是 DB 機、LLM 卻生成 nginx」的兩層打架。
+    hostname: str = "happydog"
     os_name: str = "Debian GNU/Linux"
     os_version: str = "11 (bullseye)"
     kernel: str = "5.10.0-19-amd64"
     architecture: str = "x86_64"
     default_user: str = "root"
-    open_ports: list[int] = field(default_factory=lambda: [22, 80])
-    services: list[str] = field(default_factory=lambda: ["sshd", "nginx"])
+    open_ports: list[int] = field(
+        default_factory=lambda: [22, 5432, 6379]  # sshd / PostgreSQL / Redis
+    )
+    services: list[str] = field(
+        default_factory=lambda: ["sshd", "postgresql", "redis-server"]
+    )
 
     # --- 硬體（高階 GPU/CPU 可誘引特定攻擊者，論文 §3.3.2）---
     cpu_model: str = "Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz"

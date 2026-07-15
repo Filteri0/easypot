@@ -1,6 +1,0 @@
-pyproject.toml
-honeyshell.egg-info/PKG-INFO
-honeyshell.egg-info/SOURCES.txt
-honeyshell.egg-info/dependency_links.txt
-honeyshell.egg-info/requires.txt
-honeyshell.egg-info/top_level.txt

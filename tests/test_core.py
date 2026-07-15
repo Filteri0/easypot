@@ -17,9 +17,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from honeyshell.core import (  # noqa: E402
     CommandEvent,
+    ErrorEvent,
     EventBus,
     EventType,
     HoneypotConfig,
+    JSONLSink,
     LLMEvent,
     LoggingSink,
     LoginEvent,
@@ -165,6 +167,46 @@ def test_logging_sink_emits_lines(caplog=None):
     assert "session end" in records[5] and "commands=2" in records[5]
 
 
+def test_jsonl_sink_writes_parseable_lines():
+    """JSONLSink 每個事件寫一行可解析 JSON,含 to_dict 全欄位。"""
+    import json
+    import tempfile
+
+    path = tempfile.mktemp(suffix=".jsonl")
+    sink = JSONLSink(path)
+    bus = EventBus()
+    bus.subscribe(sink)
+    bus.emit(CommandEvent(session_id="s", raw="ls /etc", resolved_name="ls"))
+    bus.emit(CommandEvent(session_id="s", raw="xx", resolved_name=None,
+                          hit=False))
+    sink.close()
+
+    lines = [json.loads(ln) for ln in open(path, encoding="utf-8")]
+    os.unlink(path)
+    assert len(lines) == 2
+    assert lines[0]["type"] == "command" and lines[0]["hit"] is True
+    assert lines[0]["raw"] == "ls /etc" and lines[0]["session_id"] == "s"
+    assert lines[1]["hit"] is False  # miss recorded
+
+
+def test_jsonl_sink_bad_path_is_silent():
+    """開檔失敗的 sink 不得炸掉;emit 靜默 no-op(蜜罐穩定性)。"""
+    sink = JSONLSink("/nonexistent-dir-xyz/\x00bad/audit.jsonl")
+    bus = EventBus()
+    bus.subscribe(sink)
+    bus.emit(CommandEvent(session_id="s", raw="ls"))  # must not raise
+    sink.close()
+
+
+def test_error_event_roundtrips():
+    """ErrorEvent 序列化含 phase/exc_type/raw,不含 traceback 內文。"""
+    e = ErrorEvent(session_id="s", raw="$((1/0))", phase="execute",
+                   exc_type="ZeroDivisionError")
+    d = e.to_dict()
+    assert d["type"] == "error" and d["phase"] == "execute"
+    assert d["exc_type"] == "ZeroDivisionError" and d["raw"] == "$((1/0))"
+
+
 # --------------------------------------------------------------------------- #
 # config
 # --------------------------------------------------------------------------- #
@@ -174,7 +216,10 @@ def test_config_defaults():
     assert isinstance(cfg.principles, Principles)
     assert isinstance(cfg.system, SystemProfile)
     assert cfg.llm.temperature == 0.1 and cfg.llm.top_p == 0.95
-    assert cfg.system.hostname == "svr04"
+    # 預設人設為 DB 伺服器（happydog）：hostname、服務、開放埠皆反映之。
+    assert cfg.system.hostname == "happydog"
+    assert cfg.system.services == ["sshd", "postgresql", "redis-server"]
+    assert cfg.system.open_ports == [22, 5432, 6379]
     assert cfg.principles.require_json_output is True
 
 
