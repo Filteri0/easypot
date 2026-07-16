@@ -57,19 +57,56 @@ ss -tlnp | grep 11434
 ```bash
 # 若 systemd 管理 ollama：
 sudo systemctl edit ollama
-#   在編輯器貼入：
+#   在編輯器貼入（兩個變數一起設，見 2.1.1 說明 KEEP_ALIVE）：
 #   [Service]
 #   Environment="OLLAMA_HOST=0.0.0.0"
+#   Environment="OLLAMA_KEEP_ALIVE=-1"
 sudo systemctl daemon-reload
 sudo systemctl restart ollama
 
 # 若手動跑（注意：pkill 後常被自動重啟蓋掉，確認 pid 有換）：
 pkill -f "ollama"
-OLLAMA_HOST=0.0.0.0 nohup ollama serve > /tmp/ollama.log 2>&1 &
+OLLAMA_HOST=0.0.0.0 OLLAMA_KEEP_ALIVE=-1 nohup ollama serve > /tmp/ollama.log 2>&1 &
 
 # 驗證（要看到 *:11434 或 0.0.0.0，不是 127.0.0.1）
 ss -tlnp | grep 11434
 ```
+
+### 2.1.1 GPU 常駐與延遲（實驗前務必確認）
+
+**背景（實測結論，別再照舊假設走）**：qwen2.5:14b 在 RTX 4070 上**本來就跑在 GPU**，
+延遲由「LLM 生成多少 token」主導，不是 GPU 有沒有啟用、也不是模型大小。實測：
+
+| 情境 | 生成量 | 延遲 |
+|---|---|---|
+| 短回應（say hi）| ~8 token | 0.8s |
+| 蜜罐純輸出（帶 system prompt 約束）| ~40 token | **1.6s** |
+| 裸問無約束（LLM 自由解釋）| ~400 token | 14.5s |
+| idle unload 後第一次（冷啟動含載入 9.5GB）| — | ~9.6s |
+
+兩個要點：
+
+1. **設 `OLLAMA_KEEP_ALIVE=-1`（見 2.1）讓模型常駐**，消除 idle unload 後的冷啟動。
+   否則實驗中 miss 間隔一拉長，每次都要重載 9.5GB 進顯存 → 冒出 ~9.6s 的假延遲。
+2. 蜜罐的 system prompt 會強制「純 stdout、無解釋」→ 輸出天然很短 → 延遲穩定 1-2s。
+   裸 `ollama run` 測到的 14.5s **不是** bug，是沒帶那套約束、LLM 進了「助教模式」。
+
+```bash
+# 確認 GPU 有在跑、模型有常駐
+nvidia-smi                    # 生成當下 GPU-Util 應跳動、顯存吃到 ~9.5GB
+ollama ps                     # 應見 qwen2.5:14b、PROCESSOR=100% GPU、UNTIL=Forever
+                              #（設了 KEEP_ALIVE=-1 才會是 Forever）
+
+# 預熱一次，讓模型先駐留再開始實驗（避免第一個 session 吃到冷啟動）
+ollama run qwen2.5:14b "warmup"
+
+# 熱推論 + 蜜罐風格約束的延遲基準（應 ~1-2s）
+time ollama run qwen2.5:14b 'You are a Linux terminal. Output ONLY the raw stdout, no explanation, no markdown. Command: vmstat'
+```
+
+> ⚠️ 別看到 `nvidia-smi` 顯示 GPU-Util 0% 就以為沒用 GPU——模型 idle 被 unload 時本來就是 0%。
+> 要在**生成當下**看，或直接看 `ollama ps` 的 PROCESSOR 欄。真相以 `journalctl -u ollama | grep -i gpu`
+> 的 `offloaded N/N layers to GPU` 為準，不要看 `/tmp/ollama.log`（systemd 版那個檔是空的）。
 
 ### 2.2 模型已拉
 
