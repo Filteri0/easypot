@@ -13,6 +13,10 @@ dependencies = []
 # asyncssh is only needed once the transport module lands; keep the core
 # install light for now so `pip install -e .` doesn't pull in cryptography.
 transport = ["asyncssh>=2.14"]
+# httpx is the HTTP client the OllamaClient uses to reach the model. Required
+# whenever --llm / EASYPOT_LLM is enabled; kept optional so a rule-only
+# deployment stays dependency-light.
+llm = ["httpx>=0.24"]
 dev = ["pytest>=7"]
 
 [tool.setuptools.packages.find]

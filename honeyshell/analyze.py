@@ -69,7 +69,9 @@ from typing import Any, Iterable, Optional
 __all__ = [
     "load_events",
     "is_interactive_noise",
+    "is_credential_noise",
     "LlmEfficiency",
+    "LlmCost",
     "SessionSummary",
     "IntelSummary",
     "Report",
@@ -186,8 +188,55 @@ def _partition_noise(
 
 
 # --------------------------------------------------------------------------- #
-# 目標二：LLM 效率（規則命中 vs 走 LLM）
+# 憑證噪音過濾（見 report bug：passwd 提示/命令被誤當密碼捕獲）
 # --------------------------------------------------------------------------- #
+
+def is_credential_noise(username: str, password: str) -> bool:
+    """判斷一筆 login 事件的「密碼」是否其實是噪音，不是真憑證。
+
+    根因：Cowrie 資料集把 passwd 互動的**提示字串**和**後續命令**混進輸入流，
+    蜜罐把它們當成 LoginEvent 的 password 發出來，導致憑證統計被灌水
+    （如 ``Enter new UNIX password:``、整條 ``cat /proc/cpuinfo | ... | awk`` 命令）。
+
+    保守判定：password 命中以下任一即視為噪音——
+      1. 是已知的 passwd/su 互動提示（精確或前綴，重用 _INTERACTIVE_NOISE_*）；
+      2. 看起來是一整條命令而非密碼：含 shell metachar（``| ; & > <`` 反引號）、
+         或含多個空白分隔的 token 且長度偏長（真密碼極少長成這樣）。
+
+    真憑證（如 ``root:admin``、``root:123456``、``root:P@ssw0rd!``）不符任何條件 → 保留。
+    """
+    p = (password or "").strip()
+    if not p:
+        return True  # 空密碼無情報價值
+    # (1) passwd 互動提示
+    if p in _INTERACTIVE_NOISE_EXACT:
+        return True
+    if any(p.startswith(pre) for pre in _INTERACTIVE_NOISE_PREFIX):
+        return True
+    if p.startswith("Enter ") or p.endswith("password:") or p.endswith("UNIX password:"):
+        return True
+    # (2) 看起來是命令而非密碼
+    if any(ch in p for ch in "|;&<>`"):
+        return True
+    if p.count(" ") >= 3 and len(p) > 20:  # 多 token 長字串 = 命令，不是密碼
+        return True
+    return False
+
+
+def _partition_credentials(
+    logins: list[dict[str, Any]],
+) -> tuple[list[tuple[str, str, "Optional[str]"]], int]:
+    """把 login 事件分成 (真憑證, 被過濾的噪音筆數)。"""
+    creds: list[tuple[str, str, Optional[str]]] = []
+    noise = 0
+    for lg in logins:
+        user = lg.get("username", "")
+        pw = lg.get("password", "")
+        if is_credential_noise(user, pw):
+            noise += 1
+        else:
+            creds.append((user, pw, lg.get("_source")))
+    return creds, noise
 
 @dataclass
 class LlmEfficiency:
@@ -330,6 +379,8 @@ class IntelSummary:
     top_commands: list[tuple[str, int]] = field(default_factory=list)
     # 捕獲的憑證：(username, password, source)。蜜罐的高價值產出。
     credentials: list[tuple[str, str, Optional[str]]] = field(default_factory=list)
+    # 被過濾的假憑證數（passwd 提示/命令誤當密碼），已排除在 credentials 外。
+    credential_noise: int = 0
     # 每台蜜罐（_source）的命令量對比。
     per_source_commands: dict[str, int] = field(default_factory=dict)
     # 每台蜜罐的 miss 量（規則覆蓋缺口是否因人設而異）。
@@ -358,11 +409,7 @@ def _analyze_intel(events: list[dict[str, Any]], top_n: int = 15) -> IntelSummar
         if not c.get("hit"):
             per_src_miss[src] += 1
 
-    creds: list[tuple[str, str, Optional[str]]] = []
-    for lg in logins:
-        creds.append(
-            (lg.get("username", ""), lg.get("password", ""), lg.get("_source"))
-        )
+    creds, cred_noise = _partition_credentials(logins)
 
     err_types: Counter[str] = Counter()
     for er in errors:
@@ -371,10 +418,70 @@ def _analyze_intel(events: list[dict[str, Any]], top_n: int = 15) -> IntelSummar
     return IntelSummary(
         top_commands=cmd_tokens.most_common(top_n),
         credentials=creds,
+        credential_noise=cred_noise,
         per_source_commands=dict(per_src_cmd),
         per_source_misses=dict(per_src_miss),
         error_types=err_types.most_common(),
     )
+
+
+# --------------------------------------------------------------------------- #
+# LLM 成本（對照論文 §4.6：真打 LLM 率 / cache 命中率 / token / 延遲）
+# --------------------------------------------------------------------------- #
+
+@dataclass
+class LlmCost:
+    """從 LLMEvent 聚合真實成本。
+
+    關鍵區分（回答「為何 miss rate ≠ 論文 1.27%」）：
+      * miss rate（LlmEfficiency）= 規則沒接住的比例，**含 cache 命中**。
+      * 真打 LLM 率（這裡）= miss 中扣掉 cache、真的呼叫模型的比例。
+        這才對得上論文 §4.6 的 1.27%。
+
+    需要蜜罐端把 LLMEvent emit 進 audit（bus 接線）。若資料裡沒有 llm 事件
+    （舊資料 / 未接線），所有欄位為 0，報告會標「無 LLM 事件」。
+    """
+
+    llm_events: int = 0          # LLMEvent 總數（= miss 中進到 resolver 的）
+    live_calls: int = 0          # 真打 LLM（cached=False）
+    cache_hits: int = 0          # 走 cache（cached=True）
+    total_prompt_tokens: int = 0
+    total_response_tokens: int = 0
+    total_latency_ms: float = 0.0
+
+    @property
+    def cache_hit_rate(self) -> float:
+        return self.cache_hits / self.llm_events if self.llm_events else 0.0
+
+    @property
+    def avg_prompt_tokens(self) -> float:
+        return self.total_prompt_tokens / self.live_calls if self.live_calls else 0.0
+
+    @property
+    def avg_response_tokens(self) -> float:
+        return self.total_response_tokens / self.live_calls if self.live_calls else 0.0
+
+    @property
+    def avg_latency_ms(self) -> float:
+        return self.total_latency_ms / self.live_calls if self.live_calls else 0.0
+
+    def live_call_rate(self, total_commands: int) -> float:
+        """真打 LLM 佔「全部命令」的比例——對照論文 §4.6 的 1.27%。"""
+        return self.live_calls / total_commands if total_commands else 0.0
+
+
+def _analyze_llm_cost(events: list[dict[str, Any]]) -> LlmCost:
+    llm_events = _by_type(events, "llm")
+    c = LlmCost(llm_events=len(llm_events))
+    for e in llm_events:
+        if e.get("cached"):
+            c.cache_hits += 1
+        else:
+            c.live_calls += 1
+            c.total_prompt_tokens += int(e.get("prompt_tokens") or 0)
+            c.total_response_tokens += int(e.get("response_tokens") or 0)
+            c.total_latency_ms += float(e.get("latency_ms") or 0.0)
+    return c
 
 
 # --------------------------------------------------------------------------- #
@@ -386,6 +493,7 @@ class Report:
     llm: LlmEfficiency
     sessions: SessionSummary
     intel: IntelSummary
+    cost: LlmCost = field(default_factory=LlmCost)
     total_events: int = 0
     skipped_lines: int = 0
 
@@ -408,6 +516,17 @@ class Report:
                 "top_misses": self.llm.top_misses,
                 "interactive_noise_filtered": self.llm.interactive_noise,
             },
+            "llm_cost": {
+                "llm_events": self.cost.llm_events,
+                "live_calls": self.cost.live_calls,
+                "cache_hits": self.cost.cache_hits,
+                "cache_hit_rate": round(self.cost.cache_hit_rate, 4),
+                "live_call_rate": round(
+                    self.cost.live_call_rate(self.llm.total_commands), 4),
+                "avg_prompt_tokens": round(self.cost.avg_prompt_tokens, 1),
+                "avg_response_tokens": round(self.cost.avg_response_tokens, 1),
+                "avg_latency_ms": round(self.cost.avg_latency_ms, 1),
+            },
             "sessions": [
                 {
                     "session_id": s.session_id,
@@ -425,6 +544,7 @@ class Report:
                     {"username": u, "password": p, "source": s}
                     for (u, p, s) in self.intel.credentials
                 ],
+                "credential_noise_filtered": self.intel.credential_noise,
                 "per_source_commands": self.intel.per_source_commands,
                 "per_source_misses": self.intel.per_source_misses,
                 "error_types": self.intel.error_types,
@@ -440,6 +560,7 @@ def analyze(events: list[dict[str, Any]], skipped: int = 0,
         llm=_analyze_llm(commands, top_n=top_n),
         sessions=_analyze_sessions(events),
         intel=_analyze_intel(events, top_n=top_n),
+        cost=_analyze_llm_cost(events),
         total_events=len(events),
         skipped_lines=skipped,
     )
@@ -478,6 +599,24 @@ def render_console(report: Report) -> str:
         L.append("  最常走 LLM 的命令（= 覆蓋缺口）:")
         for name, n in e.top_misses[:10]:
             L.append(f"      {n:>4}  {name}")
+    # --- LLM 成本（對照論文 §4.6，需 audit 有 llm 事件）---
+    c = r.cost
+    if c.llm_events:
+        L.append("")
+        L.append("  ── LLM 實際成本（§4.6 對照）──")
+        L.append(f"  miss 進 resolver : {c.llm_events}")
+        L.append(f"  走 cache         : {c.cache_hits}  "
+                 f"({_pct(c.cache_hit_rate)})")
+        L.append(f"  真打 LLM         : {c.live_calls}  "
+                 f"(佔全部命令 {_pct(c.live_call_rate(e.total_commands))}"
+                 f" ← 對照論文 1.27%)")
+        if c.live_calls:
+            L.append(f"  平均 prompt token: {c.avg_prompt_tokens:.0f}"
+                     f"、response token: {c.avg_response_tokens:.0f}"
+                     f"、延遲: {c.avg_latency_ms:.0f}ms")
+    else:
+        L.append("  （無 LLM 事件：此資料未含 llm 事件，無法算真打 LLM 率；"
+                 "需蜜罐 emit LLMEvent）")
     L.append("")
 
     # --- 目標三：Session ---
@@ -510,6 +649,11 @@ def render_console(report: Report) -> str:
         for u, p, src in i.credentials[:15]:
             tag = f" @{src}" if src else ""
             L.append(f"      {u}:{p}{tag}")
+    elif i.credential_noise:
+        L.append("  捕獲憑證（0 組真憑證）")
+    if i.credential_noise:
+        L.append(f"  （已濾假憑證 : {i.credential_noise} 筆，"
+                 f"passwd 提示/命令被誤當密碼，不計入）")
     if i.per_source_commands:
         L.append("  各蜜罐命令量對比:")
         for src in sorted(i.per_source_commands):
@@ -579,6 +723,9 @@ def render_markdown(report: Report) -> str:
         for u, p, src in i.credentials[:15]:
             M.append(f"| `{u}` | `{p}` | {src or ''} |")
         M.append("")
+    if i.credential_noise:
+        M.append(f"> 已濾假憑證 **{i.credential_noise}** 筆（passwd 提示/命令"
+                 f"被誤當密碼，不計入）。\n")
     if i.per_source_commands:
         M.append("**各蜜罐對比：**\n")
         M.append("| 蜜罐 | 命令量 | miss |")

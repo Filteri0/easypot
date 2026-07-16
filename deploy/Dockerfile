@@ -13,11 +13,12 @@ RUN useradd --create-home --uid 10001 easypot
 
 WORKDIR /app
 
-# Install deps first (better layer caching). Only pyproject + the package are
-# needed to resolve the package and its [transport] extra.
+# Install deps first (better layer caching). transport = asyncssh (SSH server);
+# llm = httpx (OllamaClient's HTTP client, needed when EASYPOT_LLM=1). Both are
+# baked in so the same image works whether or not LLM is enabled at runtime.
 COPY pyproject.toml ./
 COPY honeyshell ./honeyshell
-RUN pip install --no-cache-dir '.[transport]'
+RUN pip install --no-cache-dir '.[transport,llm]'
 
 # Writable dirs for the persisted host key and the audit feed. Owned by the
 # runtime user; mounted over by compose volumes in the real deployment.

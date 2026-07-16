@@ -319,7 +319,11 @@ async def start_server(config: ServerConfig) -> asyncssh.SSHAcceptor:
         hp.llm.model = config.llm_model
         memory_settings = hp.memory
         client = OllamaClient(model=config.llm_model, base_url=config.llm_base_url)
-        resolver = ChainResolver(client=client, config=hp)
+        # Pass the audit bus so each LLM resolution emits an LLMEvent (cached vs
+        # live, tokens, latency) into the same JSONL feed — lets the analyzer
+        # separate true LLM calls from cache hits and reproduce paper §4.6 cost
+        # numbers, instead of only seeing command-level hit/miss.
+        resolver = ChainResolver(client=client, config=hp, bus=event_bus)
         # A second client with json_format OFF for the curl/wget content path:
         # we want a raw script/HTML body, not the JSON the command-simulation
         # path parses. Same model/URL; only the output constraint differs.

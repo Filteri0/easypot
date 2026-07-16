@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from honeyshell.analyze import (  # noqa: E402
     analyze,
+    is_credential_noise,
     is_interactive_noise,
     load_events,
     render_console,
@@ -291,6 +292,145 @@ def test_noise_count_surfaced_in_output():
     # console / md 都提到過濾（透明呈現，不藏）
     assert "噪音" in render_console(r)
     assert "噪音" in render_markdown(r)
+
+
+# --------------------------------------------------------------------------- #
+# 憑證噪音過濾（回歸測試：用初步報告實際跑出的假憑證當 fixture）
+# --------------------------------------------------------------------------- #
+
+def test_credential_noise_filters_passwd_prompts():
+    # 這些是初步報告實際被誤當密碼的 passwd 提示
+    assert is_credential_noise("root", "Enter new UNIX password:")
+    assert is_credential_noise("root", "New password:")
+    assert is_credential_noise("root", "Retype new UNIX password:")
+    assert is_credential_noise("root", "")           # 空密碼無價值
+    assert is_credential_noise("root", "   ")         # 純空白
+
+
+def test_credential_noise_filters_commands_mistaken_as_password():
+    # 初步報告把整條偵察命令當成密碼——這條是實際案例
+    assert is_credential_noise(
+        "root",
+        "cat /proc/cpuinfo | grep name | head -n 1 | awk '{print $4,$5,$6,$7,$8,$9;}'")
+    # 含 shell metachar 的都不是密碼
+    assert is_credential_noise("root", "echo x > /tmp/y")
+    assert is_credential_noise("root", "wget http://x; sh y")
+    assert is_credential_noise("root", "a && b")
+
+
+def test_credential_noise_keeps_real_passwords():
+    """關鍵：真憑證絕不被誤殺。"""
+    assert not is_credential_noise("root", "admin")
+    assert not is_credential_noise("root", "123456")
+    assert not is_credential_noise("root", "P@ssw0rd!")
+    assert not is_credential_noise("admin", "toor")
+    assert not is_credential_noise("root", "Qwerty2024")
+    # 有特殊字元但仍像密碼（無 shell metachar、不長、無多空格）
+    assert not is_credential_noise("root", "pass_word-123")
+
+
+def test_credentials_filtered_in_intel():
+    """假憑證排除在 credentials 外，真憑證保留，noise 另計。"""
+    lines = [
+        _line(type="login", session_id="s1", timestamp=1.0,
+              username="root", password="admin", _source="host1"),      # 真
+        _line(type="login", session_id="s1", timestamp=2.0,
+              username="root", password="Enter new UNIX password:",
+              _source="host1"),                                          # 噪音
+        _line(type="login", session_id="s2", timestamp=3.0,
+              username="root",
+              password="cat /proc/cpuinfo | grep name | awk '{print $4}'",
+              _source="host2"),                                          # 噪音
+        _line(type="login", session_id="s2", timestamp=4.0,
+              username="admin", password="123456", _source="host2"),     # 真
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    # 只留 2 組真憑證
+    assert len(r.intel.credentials) == 2
+    assert r.intel.credential_noise == 2
+    pws = {p for (_u, p, _s) in r.intel.credentials}
+    assert pws == {"admin", "123456"}
+    # 假憑證不出現
+    assert not any("password:" in p for (_u, p, _s) in r.intel.credentials)
+    assert not any("cpuinfo" in p for (_u, p, _s) in r.intel.credentials)
+
+
+def test_credential_noise_surfaced_in_output():
+    lines = [
+        _line(type="login", session_id="s1", timestamp=1.0,
+              username="root", password="New password:", _source="host1"),
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    assert r.to_dict()["intel"]["credential_noise_filtered"] == 1
+    assert "假憑證" in render_console(r)
+
+
+# --------------------------------------------------------------------------- #
+# LLM 成本（§4.6 對照：真打 LLM vs cache）
+# --------------------------------------------------------------------------- #
+
+def test_llm_cost_separates_live_and_cache():
+    lines = [
+        # 10 命令、8 hit、2 miss
+        *[_line(type="command", session_id="s1", timestamp=float(i),
+                raw="ls", resolved_name="ls", hit=True) for i in range(8)],
+        _line(type="command", session_id="s1", timestamp=8.0,
+              raw="awk x", resolved_name=None, hit=False),
+        _line(type="command", session_id="s1", timestamp=9.0,
+              raw="awk x", resolved_name=None, hit=False),
+        # 2 個 LLM 事件：1 真打、1 cache
+        _line(type="llm", session_id="s1", timestamp=8.1, model="qwen2.5:14b",
+              prompt_tokens=2000, response_tokens=300, latency_ms=1500.0,
+              cached=False),
+        _line(type="llm", session_id="s1", timestamp=9.1, model="qwen2.5:14b",
+              prompt_tokens=0, response_tokens=0, latency_ms=0.0, cached=True),
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    assert r.cost.llm_events == 2
+    assert r.cost.live_calls == 1
+    assert r.cost.cache_hits == 1
+    assert abs(r.cost.cache_hit_rate - 0.5) < 1e-9
+    # 真打 LLM 佔全部命令：1/10 = 10%（對照論文 1.27% 的算法）
+    assert abs(r.cost.live_call_rate(r.llm.total_commands) - 0.1) < 1e-9
+    # 平均 token / 延遲只算真打的那次
+    assert r.cost.avg_prompt_tokens == 2000
+    assert r.cost.avg_response_tokens == 300
+    assert r.cost.avg_latency_ms == 1500.0
+
+
+def test_llm_cost_absent_when_no_llm_events():
+    """舊資料（無 llm 事件）：cost 全 0，不炸。"""
+    lines = [
+        _line(type="command", session_id="s1", timestamp=1.0,
+              raw="ls", resolved_name="ls", hit=True),
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    assert r.cost.llm_events == 0
+    assert r.cost.live_calls == 0
+    assert r.cost.cache_hit_rate == 0.0
+    assert r.cost.live_call_rate(r.llm.total_commands) == 0.0
+    # console 應提示無 LLM 事件，不崩
+    assert "無 LLM 事件" in render_console(r)
+
+
+def test_llm_cost_in_json_and_console():
+    lines = [
+        _line(type="command", session_id="s1", timestamp=1.0,
+              raw="awk x", resolved_name=None, hit=False),
+        _line(type="llm", session_id="s1", timestamp=1.1, model="m",
+              prompt_tokens=1000, response_tokens=200, latency_ms=800.0,
+              cached=False),
+    ]
+    events, _ = load_events(lines)
+    r = analyze(events)
+    d = r.to_dict()
+    assert d["llm_cost"]["live_calls"] == 1
+    assert d["llm_cost"]["avg_prompt_tokens"] == 1000
+    assert "真打 LLM" in render_console(r)
 
 
 # --------------------------------------------------------------------------- #
