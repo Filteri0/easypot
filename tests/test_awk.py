@@ -1,11 +1,10 @@
-"""Tests for the awk builtin (#1 coverage gap, HANDOFF §28).
+"""awk 內建的測試（#1 覆蓋缺口，HANDOFF §28）。
 
-Covers the supported ``{print $N}`` subset (deterministic field extraction) and
-the DeferToLLM path for complex programs (patterns/BEGIN/arithmetic), including
-that a deferred awk is (a) audited as a miss, (b) routed to the miss_handler
-when an LLM is wired, and (c) falls back to whole-line output with no LLM.
+涵蓋支援的 ``{print $N}`` 子集（確定性欄位提取），以及複雜 program
+（樣式/BEGIN/算術）的 DeferToLLM 降級路徑，包含驗證降級的 awk：(a) 在 audit
+被記為 miss、(b) 有接 LLM 時轉交 miss_handler、(c) 無 LLM 時退回整行輸出。
 
-Runnable two ways:
+兩種跑法：
     python -m pytest tests/test_awk.py
     python tests/test_awk.py
 """
@@ -49,7 +48,7 @@ def _run(tail, stdin="", ctx=None):
 
 
 def _defers(tail, stdin=""):
-    """True if running awk with these args raises DeferToLLM."""
+    """以這組參數跑 awk 若 raise DeferToLLM 則回 True。"""
     ctx = _ctx()
     cls = resolve("awk")
     out, err = StringWriter(), StringWriter()
@@ -73,19 +72,19 @@ def test_awk_registered():
 
 
 def test_print_single_field():
-    # Real fixture idiom: cat /proc/cpuinfo | grep name | awk '{print $4}'
+    # 真實 fixture idiom：cat /proc/cpuinfo | grep name | awk '{print $4}'
     _, out, _ = _run(["{print $4}"], stdin="model name : Intel Core i7\n")
     assert out == "Intel\n"
 
 
 def test_print_multi_field_comma_spacing():
-    # Real fixture: awk '{print $2 ,$3, $4, $5, $6, $7}'
+    # 真實 fixture：awk '{print $2 ,$3, $4, $5, $6, $7}'
     _, out, _ = _run(["{print $2 ,$3, $4}"], stdin="a b c d e\n")
     assert out == "b c d\n"
 
 
 def test_print_trailing_semicolon():
-    # Real fixture: awk '{print $4,$5,$6,$7,$8,$9;}'
+    # 真實 fixture：awk '{print $4,$5,$6,$7,$8,$9;}'
     _, out, _ = _run(["{print $1,$2;}"], stdin="x y z\n")
     assert out == "x y\n"
 
@@ -121,13 +120,13 @@ def test_bare_print_is_dollar_zero():
 
 
 def test_out_of_range_field_empty():
-    # awk prints empty for a missing field, never an error.
+    # awk 對缺少的欄位印空字串，絕不報錯。
     _, out, _ = _run(["{print $9}"], stdin="a b\n")
     assert out == "\n"
 
 
 def test_default_split_collapses_whitespace():
-    # Default FS ignores leading and runs of whitespace (awk semantics).
+    # 預設 FS 忽略前導與連續空白（awk 語意）。
     _, out, _ = _run(["{print $1}"], stdin="   spaced    out   here\n")
     assert out == "spaced\n"
 
@@ -175,8 +174,7 @@ def test_defer_field_function():
 
 
 class _StubLLM(Command):
-    """Stands in for the LLM miss_handler: echoes a marker so tests can see it
-    was reached."""
+    """代替 LLM miss_handler：回顯一個標記，讓測試能看出它有被走到。"""
 
     async def run(self) -> int:
         self.line("<llm-generated>")
@@ -206,9 +204,9 @@ def test_deferred_awk_audited_as_miss_and_routed_to_llm():
                          miss_handler=miss_handler)
     code = asyncio.run(interp.execute("awk '/x/{print $1}'"))
 
-    # Routed to the LLM stub.
+    # 已轉交 LLM stub。
     assert "<llm-generated>" in out.getvalue()
-    # Audited as a genuine miss, not a hit.
+    # 在 audit 被記為真正的 miss，而非 hit。
     cmd_events = [e for e in events if isinstance(e, CommandEvent)]
     assert len(cmd_events) == 1
     assert cmd_events[0].hit is False
@@ -216,21 +214,20 @@ def test_deferred_awk_audited_as_miss_and_routed_to_llm():
 
 
 def test_deferred_awk_fallback_without_llm():
-    # No miss_handler wired: deferred awk must degrade to whole-line output
-    # (not "command not found" — the binary exists) and never crash.
+    # 沒接 miss_handler：降級的 awk 必須退回整行輸出（不是 "command not
+    # found"——執行檔存在）且絕不崩潰。
     ctx = _ctx()
     out, err = StringWriter(), StringWriter()
     interp = Interpreter(ctx, stdout=out, stderr=err)  # miss_handler=None
-    # Feed input via echo so the pipeline supplies stdin to awk.
+    # 用 echo 餵輸入，讓管線把 stdin 供給 awk。
     code = asyncio.run(interp.execute("echo 'a b c' | awk '/x/{print $2}'"))
     assert "command not found" not in err.getvalue()
-    # fallback echoes the whole line.
+    # fallback 整行回顯。
     assert out.getvalue() == "a b c\n"
 
 
 def test_simple_awk_still_hit_in_interpreter():
-    # A supported program must remain a normal hit (regression guard for the
-    # dispatch refactor).
+    # 支援的 program 必須維持正常 hit（dispatch 重構的回歸防線）。
     events, bus = _events_sink()
     ctx = _ctx()
     ctx.event_bus = bus

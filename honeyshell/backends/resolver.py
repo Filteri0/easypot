@@ -22,6 +22,7 @@ from __future__ import annotations
 import logging
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Any
 
 from honeyshell.backends.cache import CacheEntry, ResponseCache
@@ -35,7 +36,7 @@ from honeyshell.backends.prompt_builder import (
     looks_like_command_not_found,
     parse_result,
 )
-from honeyshell.core.config import HoneypotConfig
+from honeyshell.core.config import HoneypotConfig, BOOT_AGE_SECONDS
 from honeyshell.core.event_bus import EventBus
 from honeyshell.core.events import LLMEvent
 
@@ -78,6 +79,10 @@ class ChainResolver:
     bus: EventBus | None = None
     builder: PromptBuilder | None = None
     cache_max_impact: int = 1
+    #: 模擬時鐘的開機時間戳（epoch 秒）。預設為「現在往前推 BOOT_AGE_SECONDS」，
+    #: 與 session 層一致，讓 LLM 生成 ps/uptime/date 時有真實時間錨點，不再憑空
+    #: 亂編（否則 ps 的 START/TIME、date 的輸出會與模擬時鐘矛盾而露餡）。
+    boot_time: float = field(default_factory=lambda: time.time() - BOOT_AGE_SECONDS)
 
     def __post_init__(self) -> None:
         if self.builder is None:
@@ -102,8 +107,16 @@ class ChainResolver:
             return Resolution(hit.output, hit.state_change, hit.impact,
                               cached=True, fs_ops=list(hit.fs_ops))
 
+        # 計算模擬時鐘的「現在」與「開機時間」，餵給 builder 供 inject_time 用。
+        # 沒有這個，builder 的 now 一直是 None、inject_time 形同虛設，LLM 生成
+        # ps/uptime/date 時只能亂編時間 → 露餡。now 用真實牆鐘（模擬主機的時間就是
+        # 現在），boot_time 是固定 7 天前，兩者一致。
+        _now = datetime.now(timezone.utc)
+        _boot = datetime.fromtimestamp(self.boot_time, timezone.utc)
+        now_str = (f"{_now:%Y-%m-%d %H:%M:%S UTC} "
+                   f"(booted {_boot:%Y-%m-%d %H:%M:%S UTC})")
         messages = self.builder.build(
-            argv, cwd, username=username, sr=sr, history=history
+            argv, cwd, username=username, sr=sr, history=history, now=now_str
         )
         _logger.debug("querying LLM for %r (cwd=%s)", command, cwd)
         try:

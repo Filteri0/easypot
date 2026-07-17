@@ -1,43 +1,37 @@
-"""awk — pattern scanning and field extraction (common subset).
+"""awk —— 樣式掃描與欄位提取（常見子集）。
 
-Design lineage (HANDOFF §28, §32; "做法 B")
+設計血緣（HANDOFF §28、§32；「做法 B」）
 -------------------------------------------
-``awk`` is the single largest coverage gap in real replayed traffic (2497
-misses, the #1 top_miss). Almost every real invocation is the field-extraction
-idiom piped in from another command::
+``awk`` 是真實重放流量中**最大的覆蓋缺口**（2497 次 miss，top_miss 第一名）。
+幾乎每一次真實呼叫都是從其他命令用管線接進來的欄位提取 idiom：
 
     cat /proc/cpuinfo | grep name | awk '{print $4}'
     awk '{print $2 ,$3, $4, $5, $6, $7}'
     ifconfig | awk '{print $2}'
 
-These are deterministic and belong in a builtin (per the §4 hit/miss split):
-faking them is trivial and keeps output consistent across a session. What we
-deliberately do NOT emulate — patterns (``/re/{...}``), ``BEGIN``/``END``,
-arithmetic, ``NR``/``NF`` logic, string functions, assignments, multiple
-statements — is rare and better *generated* by the LLM than hand-rolled. For
-those the command raises :class:`DeferToLLM`, which the interpreter records as a
-genuine miss (hit=False) and routes to the model. This keeps the miss-rate
-metric honest (HANDOFF §21/§32): a deferred complex awk counts as a miss, not a
-hit, even though a class is registered.
+這些是確定性的，該由內建處理（依 §4 的 hit/miss 分工）：假造它們很容易、
+且能讓一個 session 內輸出保持一致。我們**刻意不模擬**的部分——樣式
+（``/re/{...}``）、``BEGIN``/``END``、算術、``NR``/``NF`` 邏輯、字串函式、
+賦值、多語句——罕見，且交給 LLM **生成**比手刻更好。遇到這些，命令會
+raise :class:`DeferToLLM`，interpreter 會把它記成**真正的 miss**（hit=False）
+並轉交給模型。這讓 miss rate 這個數字保持誠實（HANDOFF §21/§32）：一個被降級的
+複雜 awk 算 miss、不算 hit，即使它有註冊類別。
 
-Supported program grammar (everything else defers)
+支援的 program 文法（其餘一律降級）
 --------------------------------------------------
-* A single action block ``{ print ARGS }`` (surrounding/inner whitespace and a
-  trailing ``;`` tolerated). No leading pattern, no ``BEGIN``/``END``.
-* ARGS: comma-separated items, each either a field reference (``$1`` .. ``$N``,
-  ``$0`` whole line, ``$NF`` last field) or a double/single-quoted string
-  literal. Bare ``print`` with no args means ``print $0``.
-* ``-F SEP`` / ``-FSEP`` sets the field separator (default: runs of
-  whitespace, matching awk's default splitting — not a single space).
-* Output field separator (OFS) is a single space (awk default); a trailing
-  ``;`` in the record is not emulated.
+* 單一動作區塊 ``{ print ARGS }``（容忍內外空白與尾端 ``;``）。不含前置樣式、
+  不含 ``BEGIN``/``END``。
+* ARGS：以逗號分隔的項目，每項為欄位參照（``$1`` .. ``$N``、``$0`` 整行、
+  ``$NF`` 最後一欄）或單/雙引號字串字面。無參數的 bare ``print`` 等同 ``print $0``。
+* ``-F SEP`` / ``-FSEP`` 設定欄位分隔符（預設：連續空白，對齊 awk 預設切分——
+  非單一空格）。
+* 輸出欄位分隔符（OFS）為單一空格（awk 預設）；記錄中的尾端 ``;`` 不模擬。
 
-Field semantics match awk: with the default separator, leading/trailing
-whitespace is ignored and fields split on whitespace runs. With an explicit
-``-F`` the line is split on that literal separator (every occurrence).
+欄位語意對齊 awk：使用預設分隔符時，忽略前後空白、以連續空白切分。指定 ``-F``
+時，該行以該字面分隔符切分（每一次出現都切）。
 
-Reads file operands or stdin via :class:`_FileOrStdin`, so it composes in
-pipelines. Out-of-range ``$N`` yields empty (awk behaviour), never an error.
+透過 :class:`_FileOrStdin` 讀取檔案運算元或 stdin，因此可在管線中組合。越界的
+``$N`` 回空字串（awk 行為），絕不報錯。
 """
 
 from __future__ import annotations
@@ -50,20 +44,19 @@ from honeyshell.commands.impl._fileorstdin import _FileOrStdin
 
 __all__ = ["Awk"]
 
-# A field ref: $0, $1.., or $NF.
+# 欄位參照：$0、$1..、或 $NF。
 _FIELD_RE = re.compile(r"^\$(?:NF|\d+)$")
-# The only program shape we handle: optional space, {, print, args, optional
-# ;, }. We capture the args between "print" and the closing brace.
+# 我們唯一處理的 program 形狀：可選空白、{、print、args、可選 ;、}。
+# 擷取 "print" 與結尾大括號之間的 args。
 _PRINT_RE = re.compile(r"^\{\s*print\b(?P<args>.*?)\s*;?\s*\}$", re.DOTALL)
 
 
 def _split_print_args(raw: str) -> list[str] | None:
-    """Split a print argument list on top-level commas.
+    """以頂層逗號切分 print 的參數列。
 
-    Commas inside quoted string literals don't separate args. Returns the list
-    of trimmed argument tokens, or None if the syntax is something we don't
-    model (which triggers a defer). An empty/whitespace ``raw`` -> ``["$0"]``
-    (bare ``print``).
+    引號字串字面內的逗號不算分隔。回傳去除空白後的參數 token 串列；若語法不在
+    我們模擬範圍內則回 None（會觸發降級）。空白 ``raw`` -> ``["$0"]``（bare
+    ``print``）。
     """
     raw = raw.strip()
     if not raw:
@@ -86,14 +79,14 @@ def _split_print_args(raw: str) -> list[str] | None:
             cur = ""
             continue
         cur += ch
-    if quote:  # unterminated string literal -> not our grammar
+    if quote:  # 未閉合的字串字面 -> 不在我們的文法內
         return None
     args.append(cur.strip())
     return [a for a in args]
 
 
 def _is_supported_arg(arg: str) -> bool:
-    """A print arg we can emulate: a field ref or a quoted string literal."""
+    """我們能模擬的 print 參數：欄位參照或引號字串字面。"""
     if _FIELD_RE.match(arg):
         return True
     if len(arg) >= 2 and arg[0] == arg[-1] and arg[0] in ("'", '"'):
@@ -105,7 +98,7 @@ def _is_supported_arg(arg: str) -> bool:
 @register("gawk", "/usr/bin/gawk")
 class Awk(_FileOrStdin):
     async def run(self) -> int:
-        sep = None  # None => default whitespace splitting
+        sep = None  # None => 預設以空白切分
         program = None
         operands: list[str] = []
 
@@ -122,9 +115,9 @@ class Awk(_FileOrStdin):
                 i += 1
                 continue
             if a.startswith("-") and a != "-":
-                # -v, -f progfile, --posix, … : not modelled -> defer.
+                # -v、-f progfile、--posix… ：不模擬 -> 降級。
                 raise DeferToLLM
-            # First non-flag operand is the program; the rest are files.
+            # 第一個非旗標運算元是 program，其餘是檔案。
             if program is None:
                 program = a
                 i += 1
@@ -133,13 +126,12 @@ class Awk(_FileOrStdin):
             i += 1
 
         if program is None:
-            # ``awk`` with no program is a usage error in real awk, but that is
-            # a rare/degenerate case; hand it to the model rather than guess.
+            # 真實 awk 沒帶 program 是用法錯誤，但這是罕見/退化情況；
+            # 交給模型而非自行臆測。
             raise DeferToLLM
 
-        # Decide up front — BEFORE writing any output — whether this program is
-        # within our supported grammar. If not, defer cleanly (no partial
-        # output, so the interpreter's re-route to the LLM is not double-printed).
+        # 在**寫任何輸出之前**先判定此 program 是否在支援文法內。若否，乾淨降級
+        # （不留部分輸出，這樣 interpreter 轉交 LLM 時才不會重複列印）。
         m = _PRINT_RE.match(program.strip())
         if m is None:
             raise DeferToLLM
@@ -165,14 +157,14 @@ class Awk(_FileOrStdin):
         for arg in parsed:
             if _FIELD_RE.match(arg):
                 out.append(self._field_value(arg, line, fields))
-            else:  # quoted string literal
+            else:  # 引號字串字面
                 out.append(arg[1:-1])
-        return " ".join(out)  # OFS = single space
+        return " ".join(out)  # OFS = 單一空格
 
     @staticmethod
     def _fields(line: str, sep: str | None) -> list[str]:
         if sep is None or sep == "":
-            # Default: split on whitespace runs, ignoring leading/trailing.
+            # 預設：以連續空白切分，忽略前後空白。
             return line.split()
         return line.split(sep)
 
@@ -188,17 +180,15 @@ class Awk(_FileOrStdin):
         return fields[idx - 1] if 1 <= idx <= len(fields) else ""
 
     async def fallback(self) -> int:
-        """No-LLM degrade: echo whole lines (like ``print $0``).
+        """無 LLM 時的降級：整行回顯（類似 ``print $0``）。
 
-        When a complex awk deferred but there is no model to generate output,
-        emitting each input line verbatim is the least suspicious behaviour —
-        many attacker awk one-liners are ``print``-shaped and whole-line output
-        is a plausible (if imperfect) result, far better than a fabricated
-        error that fingerprints the honeypot. Only reached in no-LLM
-        deployments; with an LLM the miss_handler runs instead.
+        當複雜 awk 降級了、卻沒有模型可生成輸出時，逐行原樣輸出是最不可疑的
+        行為——許多攻擊者的 awk one-liner 本就是 ``print`` 形狀，整行輸出是合理
+        （雖不完美）的結果，遠勝於一個會暴露蜜罐的假造錯誤。只有在無 LLM 部署時
+        才會走到；有 LLM 時改由 miss_handler 處理。
         """
-        # Re-parse just far enough to find file operands: skip flags, treat the
-        # first bare token as the program, the rest as files.
+        # 只重新解析到足以找出檔案運算元：跳過旗標，第一個裸 token 當 program，
+        # 其餘當檔案。
         operands: list[str] = []
         seen_program = False
         i = 0

@@ -1,0 +1,479 @@
+### ground truth captured on: Linux 248-ollama-ehrd 6.8.12-5-pve #1 SMP PREEMPT_DYNAMIC PMX 6.8.12-5 (2024-12-03T10:26Z) x86_64 GNU/Linux
+### date: 西元2026年07月17日 (週五) 03時54分35秒 UTC
+
+===Q1===
+$ uname -a
+Linux 248-ollama-ehrd 6.8.12-5-pve #1 SMP PREEMPT_DYNAMIC PMX 6.8.12-5 (2024-12-03T10:26Z) x86_64 GNU/Linux
+===EXIT:0===
+
+===Q2===
+$ cat /proc/cpuinfo | head -30
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 165
+model name	: Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz
+stepping	: 5
+microcode	: 0xee
+cpu MHz		: 4602.594
+cache size	: 16384 KB
+physical id	: 0
+siblings	: 16
+core id		: 0
+cpu cores	: 8
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp vnmi pku ospke md_clear flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple shadow_vmcs pml ept_mode_based_exec
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit srbds mmio_stale_data retbleed eibrs_pbrsb gds bhi
+bogomips	: 5799.77
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+===EXIT:0===
+
+===Q3===
+$ cat /proc/cpuinfo | grep 'model name' | head -1 | awk '{print $4}'
+Intel(R)
+===EXIT:0===
+
+===Q4===
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            16Gi       9.8Gi       1.4Gi       224Ki       4.8Gi       6.2Gi
+Swap:             0B          0B          0B
+===EXIT:0===
+
+===Q5===
+$ ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: eth0@if20: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether bc:24:11:b8:eb:fd brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 192.168.11.248/24 brd 192.168.11.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::be24:11ff:feb8:ebfd/64 scope link 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 96:87:44:44:e0:7d brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::9487:44ff:fe44:e07d/64 scope link 
+       valid_lft forever preferred_lft forever
+542: br-d58f469b6009: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 7e:4e:00:75:f4:e5 brd ff:ff:ff:ff:ff:ff
+    inet 172.30.0.1/16 brd 172.30.255.255 scope global br-d58f469b6009
+       valid_lft forever preferred_lft forever
+    inet6 fe80::7c4e:ff:fe75:f4e5/64 scope link 
+       valid_lft forever preferred_lft forever
+543: br-ca12943b280f: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 0e:74:1c:99:1b:42 brd ff:ff:ff:ff:ff:ff
+    inet 172.21.0.1/16 brd 172.21.255.255 scope global br-ca12943b280f
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c74:1cff:fe99:1b42/64 scope link 
+       valid_lft forever preferred_lft forever
+===EXIT:0===
+
+===Q6===
+$ cat /etc/resolv.conf
+# --- BEGIN PVE ---
+search kh.elearn.com.tw
+nameserver 192.168.10.30
+# --- END PVE ---
+===EXIT:0===
+
+===Q7===
+$ ps aux | head -5
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0 168204 10112 ?        Ss    7月10   0:44 /sbin/init
+root          46  0.0  0.8 213364 135048 ?       Ss    7月10   0:22 /lib/systemd/systemd-journald
+systemd+      85  0.0  0.0  18044  6912 ?        Ss    7月10   0:10 /lib/systemd/systemd-networkd
+root         116  0.0  0.0   6616  1664 ?        Ss    7月10   0:00 /usr/sbin/cron -f
+===EXIT:0===
+
+===Q8===
+$ cat /nonexistent_probe_file_xyz
+cat: /nonexistent_probe_file_xyz: 沒有此一檔案或目錄
+===EXIT:1===
+
+===Q9===
+$ mount | head -10
+MX500-1TB/subvol-101-disk-0 on / type zfs (rw,relatime,xattr,posixacl,casesensitive)
+none on /dev type tmpfs (rw,relatime,size=492k,mode=755,inode64)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+proc on /proc/sys/net type proc (rw,nosuid,nodev,noexec,relatime)
+proc on /proc/sys type proc (ro,relatime)
+proc on /proc/sysrq-trigger type proc (ro,relatime)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+sysfs on /sys/devices/virtual/net type sysfs (rw,nosuid,nodev,noexec,relatime)
+fusectl on /sys/fs/fuse/connections type fusectl (rw,nosuid,nodev,noexec,relatime)
+udev on /dev/fuse type devtmpfs (rw,nosuid,relatime,size=65816388k,nr_inodes=16454097,mode=755,inode64)
+===EXIT:0===
+
+===Q10===
+$ date +%s; sleep 2; date +%s
+1784260475
+1784260477
+===EXIT:0===
+
+===Q11===
+$ id
+uid=0(root) gid=0(root) groups=0(root),994(ollama)
+===EXIT:0===
+
+===Q12===
+$ whoami
+root
+===EXIT:0===
+
+===Q13===
+$ cat /etc/passwd | head -5
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+===EXIT:0===
+
+===Q14===
+$ uptime
+ 11:54:37 up 7 days,  1:50,  0 user,  load average: 0.16, 0.27, 0.31
+===EXIT:0===
+
+===Q15===
+$ df -h
+檔案系統                     容量  已用  可用 已用% 掛載點
+MX500-1TB/subvol-101-disk-0  197G   51G  147G   26% /
+none                         492K  4.0K  488K    1% /dev
+udev                          63G     0   63G    0% /dev/dri
+tmpfs                         63G     0   63G    0% /dev/shm
+tmpfs                         26G  176K   26G    1% /run
+tmpfs                        5.0M     0  5.0M    0% /run/lock
+tmpfs                         13G   32K   13G    1% /run/user/0
+===EXIT:0===
+
+===Q16===
+$ lscpu
+Architecture:                         x86_64
+CPU op-mode(s):                       32-bit, 64-bit
+Address sizes:                        39 bits physical, 48 bits virtual
+Byte Order:                           Little Endian
+CPU(s):                               16
+On-line CPU(s) list:                  0-15
+Vendor ID:                            GenuineIntel
+BIOS Vendor ID:                       Intel(R) Corporation
+Model name:                           Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz
+BIOS Model name:                      Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz To Be Filled By O.E.M. CPU @ 3.1GHz
+BIOS CPU family:                      198
+CPU family:                           6
+Model:                                165
+Thread(s) per core:                   2
+Core(s) per socket:                   8
+Socket(s):                            1
+Stepping:                             5
+CPU(s) scaling MHz:                   91%
+CPU max MHz:                          4800.0000
+CPU min MHz:                          800.0000
+BogoMIPS:                             5799.77
+Flags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp vnmi pku ospke md_clear flush_l1d arch_capabilities
+Virtualization:                       VT-x
+L1d cache:                            256 KiB (8 instances)
+L1i cache:                            256 KiB (8 instances)
+L2 cache:                             2 MiB (8 instances)
+L3 cache:                             16 MiB (1 instance)
+NUMA node(s):                         1
+NUMA node0 CPU(s):                    0-15
+Vulnerability Gather data sampling:   Vulnerable: No microcode
+Vulnerability Itlb multihit:          KVM: Mitigation: Split huge pages
+Vulnerability L1tf:                   Not affected
+Vulnerability Mds:                    Not affected
+Vulnerability Meltdown:               Not affected
+Vulnerability Mmio stale data:        Vulnerable: Clear CPU buffers attempted, no microcode; SMT vulnerable
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Mitigation; Enhanced IBRS
+Vulnerability Spec rstack overflow:   Not affected
+Vulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                  Vulnerable: No microcode
+Vulnerability Tsx async abort:        Not affected
+===EXIT:0===
+
+===Q17===
+$ env
+SHELL=/bin/bash
+COLORTERM=truecolor
+VSCODE_DEBUGPY_ADAPTER_ENDPOINTS=/root/.vscode-server/extensions/ms-python.debugpy-2026.6.0-linux-x64/.noConfigDebugAdapterEndpoints/endpoint-8da39666f6eeef0e.txt
+TERM_PROGRAM_VERSION=1.128.1
+COPILOT_DEBUG_NONCE=e0e5aedabb061d9aff4025364636abe3
+PYDEVD_DISABLE_FILE_VALIDATION=1
+PWD=/root/easypot
+LOGNAME=root
+XDG_SESSION_TYPE=tty
+BUNDLED_DEBUGPY_PATH=/root/.vscode-server/extensions/ms-python.debugpy-2026.6.0-linux-x64/bundled/libs/debugpy
+VSCODE_GIT_ASKPASS_NODE=/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/node
+MOTD_SHOWN=pam
+HOME=/root
+LANG=zh_TW.UTF-8
+VIRTUAL_ENV=/root/HoneyPotVenv
+PYTHONSTARTUP=/root/.vscode-server/data/User/workspaceStorage/9386bebb19966bad3ff258566db82f2f-1/ms-python.python/pythonrc.py
+GIT_ASKPASS=/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/extensions/git/dist/askpass.sh
+SSH_CONNECTION=192.168.11.117 51446 192.168.11.248 22
+VSCODE_GIT_ASKPASS_EXTRA_ARGS=
+VSCODE_PYTHON_AUTOACTIVATE_GUARD=1
+XDG_SESSION_CLASS=user
+TERM=xterm-256color
+PYTHON_BASIC_REPL=1
+USER=root
+VSCODE_GIT_IPC_HANDLE=/run/user/0/vscode-git-e13c03009b.sock
+SHLVL=2
+XDG_SESSION_ID=15021
+VIRTUAL_ENV_PROMPT=(HoneyPotVenv) 
+LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:
+XDG_RUNTIME_DIR=/run/user/0
+SSH_CLIENT=192.168.11.117 51446 22
+VSCODE_GIT_ASKPASS_MAIN=/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/extensions/git/dist/askpass-main.js
+BROWSER=/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/bin/helpers/browser.sh
+PATH=/root/HoneyPotVenv/bin:/usr/bin:/root/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/root/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/bin/remote-cli:/usr/bin:/usr/local/cuda-12.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/sbin:/root/.vscode-server/extensions/ms-python.debugpy-2026.6.0-linux-x64/bundled/scripts/noConfigScripts:/usr/sbin
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus
+OLDPWD=/root/easypot/deploy
+TERM_PROGRAM=vscode
+VSCODE_IPC_HOOK_CLI=/run/user/0/vscode-ipc-443b0ab4-add6-4c05-85a0-b80184cbde6a.sock
+_=/usr/bin/env
+===EXIT:0===
+
+===Q18===
+$ netstat -tlnp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      494/master          
+tcp        0      0 127.0.0.1:43385         0.0.0.0:*               LISTEN      1367/code-fc3def677 
+tcp        0      0 127.0.0.1:43615         0.0.0.0:*               LISTEN      910571/code-5264f21 
+tcp        0      0 127.0.0.1:44407         0.0.0.0:*               LISTEN      913720/llama-server 
+tcp        0      0 127.0.0.1:39528         0.0.0.0:*               LISTEN      911169/node         
+tcp6       0      0 ::1:3350                :::*                    LISTEN      155/xrdp-sesman     
+tcp6       0      0 ::1:25                  :::*                    LISTEN      494/master          
+tcp6       0      0 :::3389                 :::*                    LISTEN      181/xrdp            
+tcp6       0      0 :::22                   :::*                    LISTEN      1/init              
+tcp6       0      0 :::11434                :::*                    LISTEN      913169/ollama       
+===EXIT:0===
+
+===Q19===
+$ crontab -l
+no crontab for root
+===EXIT:1===
+
+===Q20===
+$ cat /etc/os-release
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+VERSION_CODENAME=bookworm
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+===EXIT:0===
+
+===Q21===
+$ ls -la /root
+總用量 124
+drwx------ 16 root root    24  7月 17 10:36 .
+drwxr-xr-x 17 root root    31  7月 10 10:03 ..
+-rw-------  1 root root 16487  7月 17 10:36 .bash_history
+-rw-r--r--  1 root root   681  9月  3  2024 .bashrc
+drwx------  5 root root     5  6月 30 14:20 .cache
+drwx------  4 root root     4  7月  8 11:47 .config
+drwx------  4 root root     8  7月  1 13:46 .copilot
+drwxr-xr-x  6 root root     8  7月  8 11:04 CowireVenv
+drwx------  3 root root     6  7月 14 16:58 .docker
+drwxr-xr-x  3 root root     3  6月 30 14:28 .dotnet
+drwxr-xr-x  8 root root    18  7月 17 10:53 easypot
+-rw-r--r--  1 root root    81  7月  8 16:42 .gitconfig
+drwxr-xr-x  5 root root     7  7月  7 13:10 HoneyPotVenv
+-rw-------  1 root root    20  7月 16 08:50 .lesshst
+drwxr-xr-x  3 root root     3  6月 30 14:13 .local
+drwxr-xr-x  2 root root     5  7月 16 14:32 .ollama
+-rw-r--r--  1 root root   161  7月  9  2019 .profile
+drwxr-xr-x  3 root root     6  7月  9 10:57 .pytest_cache
+drwxr-xr-x  3 root root     3  7月 14 16:59 seclab
+drwx------  2 root root     5  7月 16 10:45 .ssh
+-rw-------  1 root root 11962  6月 30 13:22 .viminfo
+drwxr-x---  5 root root    13  7月 16 17:18 .vscode-server
+-rw-r--r--  1 root root   229  7月 15 09:41 .wget-hsts
+-rw-r--r--  1 root root    14  9月  3  2024 .xsession
+===EXIT:0===
+
+===Q22===
+$ dmesg | head -10
+[6206854.480080] br-d58f469b6009: port 2(veth1270333) entered disabled state
+[6206854.480123] veth7ae8fcc: renamed from eth0
+[6206854.518035] br-d58f469b6009: port 2(veth1270333) entered disabled state
+[6206854.518201] veth1270333 (unregistering): left allmulticast mode
+[6206854.518207] veth1270333 (unregistering): left promiscuous mode
+[6206854.518211] br-d58f469b6009: port 2(veth1270333) entered disabled state
+[6206914.534575] br-d58f469b6009: port 2(vethb776207) entered blocking state
+[6206914.534582] br-d58f469b6009: port 2(vethb776207) entered disabled state
+[6206914.534587] vethb776207: entered allmulticast mode
+[6206914.534612] vethb776207: entered promiscuous mode
+===EXIT:0===
+
+===Q23===
+$ cat /proc/meminfo | head -5
+MemTotal:       16777216 kB
+MemFree:         1488520 kB
+MemAvailable:    6469416 kB
+Buffers:               0 kB
+Cached:          4981000 kB
+===EXIT:0===
+
+===Q24===
+$ ls -la /tmp; touch /tmp/probe_marker; ls -la /tmp
+總用量 23130
+drwxrwxrwt 20 root root       27  7月 17 11:54 .
+drwxr-xr-x 17 root root       31  7月 10 10:03 ..
+-rw-r--r--  1 root root 58750790  7月 16 23:38 audit.jsonl
+-rw-r--r--  1 root root        0  7月 16 08:42 audit_old_0716_1727.jsonl
+-rw-r--r--  1 root root 14318792  7月 15 16:05 audit_partial.jsonl
+srwxr-xr-x  1 root root        0  7月 16 08:39 code-58241b71-e7a0-458d-8f65-265ca8b79bd7
+drwxrwxrwt  2 root root        2  7月 10 10:03 .font-unix
+-rw-r--r--  1 root root      375  7月 17 10:14 honey.log
+drwxrwxrwt  2 root root        2  7月 10 10:03 .ICE-unix
+drwx------  2 root root        2  7月 15 09:41 mcp-3yI8Yy
+drwx------  2 root root        2  7月 15 18:14 mcp-7Ms0pV
+drwx------  2 root root        2  7月 15 13:22 mcp-br5Vq0
+drwx------  2 root root        2  7月 14 16:58 mcp-CQKeIn
+drwx------  2 root root        2  7月 14 16:56 mcp-gnKUZJ
+drwx------  2 root root        3  7月 16 17:18 mcp-Gwtm8R
+drwx------  2 root root        2  7月 14 10:31 mcp-mBOH5w
+drwx------  2 root root        2  7月 14 18:01 mcp-NE3x8i
+drwx------  2 root root        2  7月 10 21:05 mcp-VGF3Fp
+drwx------  2 root root        2  7月 16 17:23 mcp-w9jHrM
+-rw-r--r--  1 root root 11802903  7月 16 13:03 merged.jsonl
+-rw-r--r--  1 root root       82  7月 16 08:47 ollama.log
+drwx------  2 root root        2  7月 17 10:36 pyright-911169-2Fb8y0ifqNfB
+drwxr-xr-x 11 root root       11  7月 16 17:18 python-languageserver-cancellation
+drwx------  3 root root        3  7月 10 10:03 systemd-private-e9f2405276f6470abffde4d6a57bd061-systemd-logind.service-skMoSx
+drwxr-xr-x  3 root root        4  7月 10 12:12 tracee
+drwxrwxrwt  2 root root        2  7月 10 10:03 .X11-unix
+drwxrwxrwt  2 root root        2  7月 10 10:03 .XIM-unix
+總用量 23130
+drwxrwxrwt 20 root root       28  7月 17 11:54 .
+drwxr-xr-x 17 root root       31  7月 10 10:03 ..
+-rw-r--r--  1 root root 58750790  7月 16 23:38 audit.jsonl
+-rw-r--r--  1 root root        0  7月 16 08:42 audit_old_0716_1727.jsonl
+-rw-r--r--  1 root root 14318792  7月 15 16:05 audit_partial.jsonl
+srwxr-xr-x  1 root root        0  7月 16 08:39 code-58241b71-e7a0-458d-8f65-265ca8b79bd7
+drwxrwxrwt  2 root root        2  7月 10 10:03 .font-unix
+-rw-r--r--  1 root root      375  7月 17 10:14 honey.log
+drwxrwxrwt  2 root root        2  7月 10 10:03 .ICE-unix
+drwx------  2 root root        2  7月 15 09:41 mcp-3yI8Yy
+drwx------  2 root root        2  7月 15 18:14 mcp-7Ms0pV
+drwx------  2 root root        2  7月 15 13:22 mcp-br5Vq0
+drwx------  2 root root        2  7月 14 16:58 mcp-CQKeIn
+drwx------  2 root root        2  7月 14 16:56 mcp-gnKUZJ
+drwx------  2 root root        3  7月 16 17:18 mcp-Gwtm8R
+drwx------  2 root root        2  7月 14 10:31 mcp-mBOH5w
+drwx------  2 root root        2  7月 14 18:01 mcp-NE3x8i
+drwx------  2 root root        2  7月 10 21:05 mcp-VGF3Fp
+drwx------  2 root root        2  7月 16 17:23 mcp-w9jHrM
+-rw-r--r--  1 root root 11802903  7月 16 13:03 merged.jsonl
+-rw-r--r--  1 root root       82  7月 16 08:47 ollama.log
+-rw-r--r--  1 root root        0  7月 17 11:54 probe_marker
+drwx------  2 root root        2  7月 17 10:36 pyright-911169-2Fb8y0ifqNfB
+drwxr-xr-x 11 root root       11  7月 16 17:18 python-languageserver-cancellation
+drwx------  3 root root        3  7月 10 10:03 systemd-private-e9f2405276f6470abffde4d6a57bd061-systemd-logind.service-skMoSx
+drwxr-xr-x  3 root root        4  7月 10 12:12 tracee
+drwxrwxrwt  2 root root        2  7月 10 10:03 .X11-unix
+drwxrwxrwt  2 root root        2  7月 10 10:03 .XIM-unix
+===EXIT:0===
+
+===Q25===
+$ hostname
+248-ollama-ehrd
+===EXIT:0===
+
+===Q26===
+$ cat /etc/shadow
+root:$y$j9T$XLCnKB3MUmxxFyaZXVST90$08ODluz2SbekuGRXsnsRTMdSIDFEvcsqXQbPd.3ZKs4:20634:0:99999:7:::
+daemon:*:19640:0:99999:7:::
+bin:*:19640:0:99999:7:::
+sys:*:19640:0:99999:7:::
+sync:*:19640:0:99999:7:::
+games:*:19640:0:99999:7:::
+man:*:19640:0:99999:7:::
+lp:*:19640:0:99999:7:::
+mail:*:19640:0:99999:7:::
+news:*:19640:0:99999:7:::
+uucp:*:19640:0:99999:7:::
+proxy:*:19640:0:99999:7:::
+www-data:*:19640:0:99999:7:::
+backup:*:19640:0:99999:7:::
+list:*:19640:0:99999:7:::
+irc:*:19640:0:99999:7:::
+_apt:*:19640:0:99999:7:::
+nobody:*:19640:0:99999:7:::
+postfix:!:19640::::::
+sshd:!:19640::::::
+systemd-network:!*:19640::::::
+systemd-timesync:!*:19640::::::
+messagebus:!:19640::::::
+puyuan:$y$j9T$b70LYao3xRgX3wlhWPP8G.$EMXVr2QnkVrUoa6vwJSEqyHuCs2GvZKqCtulNMtJmkC:19969:0:99999:7:::
+avahi:!:19969::::::
+pulse:!:19969::::::
+saned:!:19969::::::
+lightdm:!:19969::::::
+polkitd:!*:19969::::::
+rtkit:!:19969::::::
+colord:!:19969::::::
+xrdp:!:19969::::::
+ehrd:$y$j9T$FcZvouQltA6tcIkwAp5GD1$wDpBsuTVhOiW1E85VwdParZX5D.kWrgUSkxkMHmq9p0:19970:0:99999:7:::
+ollama:!:20634::::::
+cowrie:!:20635:0:99999:7:::
+===EXIT:0===
+
+===Q27===
+$ w
+ 11:54:37 up 7 days,  1:50,  0 user,  load average: 0.16, 0.27, 0.31
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+===EXIT:0===
+
+===Q28===
+$ last | head -5
+root     pts/3        192.168.12.105   Fri Jul 10 10:04 - 10:06  (00:01)
+reboot   system boot  6.8.12-5-pve     Fri Jul 10 10:03   still running
+root     pts/3        192.168.12.105   Fri Jul 10 10:00 - crash  (00:03)
+reboot   system boot  6.8.12-5-pve     Fri Jul 10 09:59   still running
+root     pts/11       192.168.12.105   Fri Jul 10 09:51 - crash  (00:08)
+===EXIT:0===
+
+===Q29===
+$ cat /proc/version
+Linux version 6.8.12-5-pve (build@proxmox) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP PREEMPT_DYNAMIC PMX 6.8.12-5 (2024-12-03T10:26Z)
+===EXIT:0===
+
+===Q30===
+$ sudo -l
+比較 root (248-ollama-ehrd 上) 的預設條目：
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin,
+    use_pty
+
+使用者 root 可以在 248-ollama-ehrd 上執行以下指令：
+    (ALL : ALL) ALL
+===EXIT:0===
+
+### done. 請把整份輸出回傳。

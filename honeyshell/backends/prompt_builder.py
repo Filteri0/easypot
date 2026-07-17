@@ -205,7 +205,14 @@ class PromptBuilder:
         if s.services:
             lines.append(f"- services: {', '.join(s.services)}")
         if p.inject_time and now:
-            lines.append(f"- current time: {now}")
+            lines.append(f"- current time / boot time: {now}")
+            lines.append(
+                "  Use THIS clock for any time-bearing output. ps/top START and "
+                "TIME must be consistent with a machine booted at the boot time "
+                "above (long-running daemons like init/systemd show accumulated "
+                "TIME and a START days ago, NOT 00:00 / just-now). date, uptime, "
+                "who, last must all agree with this same clock."
+            )
         for rule in p.extra_rules:
             lines.append(f"- {rule}")
 

@@ -375,67 +375,64 @@ class Interpreter:
         token = argv[0]
         cls = registry.resolve(token)
 
-        # A registered command runs first, but may *defer* (raise DeferToLLM)
-        # when it can only faithfully emulate a subset of its real behaviour
-        # (e.g. awk handles ``{print $N}`` but not ``BEGIN``/patterns). A defer
-        # re-classifies the command as a genuine miss so the audit stream stays
-        # honest (hit=False) — see commands/base.py::DeferToLLM. We therefore
-        # emit the CommandEvent *after* knowing whether a hit command deferred,
-        # not before, so the miss-rate metric reflects reality.
+        # 已註冊命令先執行，但可能**降級**（raise DeferToLLM）——當它只能忠實
+        # 模擬其真實行為的一個子集時（例如 awk 處理 ``{print $N}`` 但不處理
+        # ``BEGIN``/樣式）。降級會把命令重新分類為真正的 miss，讓 audit 流保持
+        # 誠實（hit=False）——見 commands/base.py::DeferToLLM。因此我們在**得知**
+        # hit 命令是否降級**之後**才發出 CommandEvent，而非之前，好讓 miss rate
+        # 反映真實情況。
         if cls is not None:
             cmd = cls(self.ctx, argv, stdin, stdout, cmd_stderr)
             try:
                 code = await cmd.run()
             except DeferToLLM:
-                # The builtin bowed out. Record it as a miss and route through
-                # the same LLM seam an unregistered command would take. If no
-                # backend is wired, fall back to the command's conservative
-                # output rather than a fingerprinting error.
+                # 內建棄權。把它記成 miss，並走與未註冊命令相同的 LLM 接縫。若
+                # 沒接後端，退回命令的保守輸出，而非會被指紋辨識的錯誤。
                 self._emit(CommandEvent(
                     raw=" ".join(argv), resolved_name=None, hit=False,
                 ))
                 return await self._miss(
                     argv, token, stdin, stdout, cmd_stderr, deferred=cmd
                 )
-            except Exception:  # noqa: BLE001 - never let a buggy command crash the session
+            except Exception:  # noqa: BLE001 - 絕不讓出錯的命令弄垮整個 session
                 self._emit(CommandEvent(
                     raw=" ".join(argv), resolved_name=token, hit=True,
                 ))
                 cmd_stderr.write(f"bash: {token}: internal error\n")
                 return 1
-            # Genuine hit.
+            # 真正的 hit。
             self._emit(CommandEvent(
                 raw=" ".join(argv), resolved_name=token, hit=True,
             ))
             return code if isinstance(code, int) else 0
 
-        # Unregistered token -> genuine miss.
+        # 未註冊的 token -> 真正的 miss。
         self._emit(CommandEvent(
             raw=" ".join(argv), resolved_name=None, hit=False,
         ))
         return await self._miss(argv, token, stdin, stdout, cmd_stderr)
 
     async def _miss(self, argv, token, stdin, stdout, cmd_stderr, deferred=None):
-        """Handle a miss: hand to the LLM backend, else degrade gracefully.
+        """處理 miss：交給 LLM 後端，否則優雅降級。
 
-        ``deferred`` is the builtin instance that raised DeferToLLM, if any; its
-        :meth:`fallback` supplies the conservative output when no LLM is wired.
-        For a truly unknown command we keep bash's ``command not found``.
+        ``deferred`` 是 raise 了 DeferToLLM 的內建實例（若有）；沒接 LLM 時由它的
+        :meth:`fallback` 提供保守輸出。對真正未知的命令，維持 bash 的
+        ``command not found``。
         """
         if self.miss_handler is not None:
-            # LLM seam: hand the command to the injected backend factory.
+            # LLM 接縫：把命令交給注入的後端工廠。
             cmd = self.miss_handler(self.ctx, argv, stdin, stdout, cmd_stderr)
             try:
                 code = await cmd.run()
-            except Exception:  # noqa: BLE001 — a backend error must not crash
+            except Exception:  # noqa: BLE001 — 後端錯誤不得導致崩潰
                 if deferred is not None:
                     return await self._safe_fallback(deferred, token, cmd_stderr)
                 cmd_stderr.write(f"bash: {token}: command not found\n")
                 return 127
             return code if isinstance(code, int) else 0
         if deferred is not None:
-            # Registered-but-deferred with no LLM: the binary exists, so a
-            # "command not found" would be a lie. Use its conservative output.
+            # 已註冊但降級、且無 LLM：執行檔存在，所以回 "command not found" 是說謊。
+            # 改用它的保守輸出。
             return await self._safe_fallback(deferred, token, cmd_stderr)
         cmd_stderr.write(f"bash: {token}: command not found\n")
         return 127
@@ -443,7 +440,7 @@ class Interpreter:
     async def _safe_fallback(self, deferred, token, cmd_stderr) -> int:
         try:
             code = await deferred.fallback()
-        except Exception:  # noqa: BLE001 — fallback must never crash the session
+        except Exception:  # noqa: BLE001 — fallback 絕不得弄垮 session
             cmd_stderr.write(f"bash: {token}: internal error\n")
             return 1
         return code if isinstance(code, int) else 0

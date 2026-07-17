@@ -47,10 +47,11 @@ class _Interrupt:
 #: Module-level singleton sentinel (compare with ``is``).
 INTERRUPT = _Interrupt()
 
-#: How long the emulated host has "been up" at login. A fixed, plausible span
-#: (~7 days) so `uptime`/`who` are stable and consistent with the emulated
-#: clock. boot_time = now - this.
-_BOOT_AGE_SECONDS = 7 * 86400 + 3 * 3600 + 14 * 60  # 7 days, 3:14
+#: How long the emulated host has "been up" at login. Shared with the LLM
+#: resolver via ``config.BOOT_AGE_SECONDS`` so the session clock (uptime/who)
+#: and the model-backed path (ps/date/uptime it generates) agree — otherwise
+#: a mismatched clock across the two paths fingerprints the honeypot.
+from honeyshell.core.config import BOOT_AGE_SECONDS as _BOOT_AGE_SECONDS
 
 
 class ShellSession:

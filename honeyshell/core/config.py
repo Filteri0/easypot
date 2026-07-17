@@ -33,7 +33,14 @@ __all__ = [
     "LLMSettings",
     "MemorySettings",
     "HoneypotConfig",
+    "BOOT_AGE_SECONDS",
 ]
+
+#: 模擬主機「已開機多久」的固定時長（約 7 天）。用作模擬時鐘的錨點：
+#: boot_time = now - BOOT_AGE_SECONDS。session 層（uptime/who）與 LLM 補盲路徑
+#: （resolver 注入給 LLM 的 current time / boot time）共用同一個值，避免兩條路徑
+#: 各自算時鐘而漂移、讓 ps/date/uptime 的時間互相矛盾而露餡。
+BOOT_AGE_SECONDS = 7 * 86400 + 3 * 3600 + 14 * 60  # 7 天 3:14
 
 
 @dataclass
