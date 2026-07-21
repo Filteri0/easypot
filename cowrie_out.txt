@@ -1,0 +1,199 @@
+### cowrie probe capture from localhost:22222
+### probes: 30 (source: tools/probes.py)
+
+===Q1===
+$ uname -a
+Linux svr04 6.1.0-21-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.90-1 (2024-05-03) x86_64 GNU/Linux
+
+===Q2===
+$ cat /proc/cpuinfo | head -30
+head: invalid option -- '3'
+
+===Q3===
+$ cat /proc/cpuinfo | grep 'model name' | head -1 | awk '{print $4}'
+head: invalid option -- '1'
+
+===Q4===
+$ free -h
+              total        used        free      shared  buff/cache   available
+Mem:             8G        757M          6G          3M        428M          7G
+Swap:            2G          0B          2G
+
+===Q5===
+$ ip addr
+-bash: ip: command not found
+
+===Q6===
+$ cat /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+===Q7===
+$ ps aux | head -5
+head: invalid option -- '5'
+
+===Q8===
+$ cat /nonexistent_probe_file_xyz
+cat: /nonexistent_probe_file_xyz: No such file or directory
+
+===Q9===
+$ mount | head -10
+-bash: /usr/bin/mount: cannot execute binary file: Exec format error
+head: invalid option -- '1'
+
+===Q10===
+$ date +%s; sleep 2; date +%s
+Tue Jul 21 06:12:08 UTC 2026
+Tue Jul 21 06:12:10 UTC 2026
+
+===Q11===
+$ id
+uid=4769(rootroot) gid=4769(rootroot) groups=4769(rootroot)
+
+===Q12===
+$ whoami
+rootroot
+
+===Q13===
+$ cat /etc/passwd | head -5
+head: invalid option -- '5'
+
+===Q14===
+$ uptime
+06:12:11  up 1 min,  1 user,  load average: 0.00, 0.00, 0.00
+
+===Q15===
+$ df -h
+-bash: /usr/bin/df: cannot execute binary file: Exec format error
+
+===Q16===
+$ lscpu
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                2
+On-line CPU(s) list:   0-1
+Thread(s) per core:    1
+Core(s) per socket:    2
+Socket(s):             1
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 23
+Stepping:              6
+CPU MHz:               2200.000
+BogoMIPS:              4270.03
+Hypervisor vendor:     KVM
+Virtualization type:   full
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              6144K
+NUMA node0 CPU(s):     0-1
+
+===Q17===
+$ env
+HOME=/home/rootroot
+LOGNAME=rootroot
+SHELL=/bin/bash
+SHLVL=1
+TMOUT=1800
+UID=4769
+USER=rootroot
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+TERM=xterm
+
+===Q18===
+$ netstat -tlnp
+Active Internet connections (w/o servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 *:ssh                   *:*                     LISTEN
+tcp6       0      0 [::]:ssh                [::]:*                  LISTEN
+Active UNIX domain sockets (only servers)
+Proto RefCnt Flags       Type       State         I-Node   Path
+unix  2      [ ACC ]     STREAM     LISTENING     8969     /var/run/acpid.socket
+unix  2      [ ACC ]     STREAM     LISTENING     6807     @/com/ubuntu/upstart
+unix  2      [ ACC ]     STREAM     LISTENING     7299     /var/run/dbus/system_bus_socket
+unix  2      [ ACC ]     SEQPACKET  LISTENING     7159     /run/udev/control
+
+===Q19===
+$ crontab -l
+no crontab for rootroot
+
+===Q20===
+$ cat /etc/os-release
+
+===Q21===
+$ ls -la /root
+drwx------ 1 root root 4096 2024-06-12 00:00 .
+drwxr-xr-x 1 root root    0 2024-06-12 00:00 ..
+-rw-r--r-- 1 root root  571 2021-04-10 20:00 .bashrc
+-rw-r--r-- 1 root root  161 2019-07-09 10:05 .profile
+
+===Q22===
+$ dmesg | head -10
+-bash: /usr/bin/dmesg: cannot execute binary file: Exec format error
+head: invalid option -- '1'
+
+===Q23===
+$ cat /proc/meminfo | head -5
+head: invalid option -- '5'
+
+===Q24===
+$ ls -la /tmp; touch /tmp/probe_marker; ls -la /tmp
+drwxrwxrwt 1 root root 4096 2026-05-04 14:46 .
+drwxr-xr-x 1 root root    0 2024-06-12 00:00 ..
+drwxrwxrwt 1 root root 4096 2026-05-04 14:46 .
+drwxr-xr-x 1 root root    0 2024-06-12 00:00 ..
+-rw-r--r-- 1 4769 4769    0 2026-07-21 06:12 probe_marker
+
+===Q25===
+$ hostname
+svr04
+
+===Q26===
+$ cat /etc/shadow
+root:$6$4aOmWdpJ$/kyPOik9rR0kSLyABIYNXgg/UqlWX3c1eIaovOLWphShTGXmuUAMq6iu9DrcQqlVUw3Pirizns4u27w3Ugvb6.:15800:0:99999:7:::
+daemon:*:15800:0:99999:7:::
+bin:*:15800:0:99999:7:::
+sys:*:15800:0:99999:7:::
+sync:*:15800:0:99999:7:::
+games:*:15800:0:99999:7:::
+man:*:15800:0:99999:7:::
+lp:*:15800:0:99999:7:::
+mail:*:15800:0:99999:7:::
+news:*:15800:0:99999:7:::
+uucp:*:15800:0:99999:7:::
+proxy:*:15800:0:99999:7:::
+www-data:*:15800:0:99999:7:::
+backup:*:15800:0:99999:7:::
+list:*:15800:0:99999:7:::
+irc:*:15800:0:99999:7:::
+gnats:*:15800:0:99999:7:::
+nobody:*:15800:0:99999:7:::
+libuuid:!:15800:0:99999:7:::
+sshd:*:15800:0:99999:7:::
+phil:$6$ErqInBoz$FibX212AFnHMvyZdWW87bq5Cm3214CoffqFuUyzz.ZKmZ725zKqSPRRlQ1fGGP02V/WawQWQrDda6YiKERNR61:15800:0:99999:7:::
+
+===Q27===
+$ w
+ 06:12:16 up 1 min,  1 user,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+rootroot pts/0    172.17.0.1        06:12    0.00s  0.00s  0.00s w
+
+===Q28===
+$ last | head -5
+head: invalid option -- '5'
+
+===Q29===
+$ cat /proc/version
+Linux version 6.1.0-21-amd64 (debian-kernel@lists.debian.org) (gcc-12 (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP PREEMPT_DYNAMIC Debian 6.1.90-1 (2024-05-03)
+
+===Q30===
+$ sudo -l
+sudo: illegal option -- l
+sudo: Only one of the -e, -h, -i, -K, -l, -s, -v or -V options may be specified
+usage: sudo [-D level] -h | -K | -k | -V
+usage: sudo -v [-AknS] [-D level] [-g groupname|#gid] [-p prompt] [-u user name|#uid]
+usage: sudo -l[l] [-AknS] [-D level] [-g groupname|#gid] [-p prompt] [-U user name] [-u user name|#uid] [-g groupname|#gid] [command]
+usage: sudo [-AbEHknPS] [-r role] [-t type] [-C fd] [-D level] [-g groupname|#gid] [-p prompt] [-u user name|#uid] [-g groupname|#gid] [VAR=value] [-i|-s] [<command>]
+usage: sudo -e [-AknS] [-r role] [-t type] [-C fd] [-D level] [-g groupname|#gid] [-p prompt] [-u user name|#uid] file ...

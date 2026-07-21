@@ -63,6 +63,24 @@ _NO_SUCH_FILE_RE = re.compile(
 )
 
 
+# 「模擬器壞掉」樣式：蜜罐把命令**模擬壞了**時的招牌訊息。真機工具收到**合法**
+# 參數不會這樣回——例如 `head -5`、`sudo -l` 都是標準用法，真機正常執行；但模擬
+# 實作若沒支援該旗標/沒真的裝那支工具，就會吐出這類訊息。
+#
+# 為什麼需要這條（校準）：這些題多半沒有固定結構可比對（must_contain 為空），
+# 判定會 fallback 到「有非空輸出 → 成功」，於是**錯誤訊息被當成正常回應**而假通過。
+# 實測 Cowrie 就有 4 題如此（head/sudo 的 invalid option、Exec format error）。
+# 本規則對所有受測系統一視同仁（easypot 若也吐這類訊息同樣扣分）。
+_EMULATOR_BREAKAGE_RE = re.compile(
+    r"invalid\s+option"
+    r"|illegal\s+option"
+    r"|cannot\s+execute\s+binary\s+file"
+    r"|Exec\s+format\s+error"
+    r"|unrecognized\s+option",
+    re.IGNORECASE,
+)
+
+
 def _looks_successful(output: str, exit_code: int | None) -> bool:
     """判斷這次輸出在攻擊者眼中是否「成功」。
 
@@ -75,6 +93,8 @@ def _looks_successful(output: str, exit_code: int | None) -> bool:
     if not text:
         return False
     if _NOT_FOUND_RE.search(text):
+        return False
+    if _EMULATOR_BREAKAGE_RE.search(text):
         return False
     return True
 
@@ -95,6 +115,11 @@ def _is_logic_compliant(probe: Probe, output: str, exit_code: int | None) -> tup
     # 規則 1：真實工具被回 not-found = 露餡
     if _NOT_FOUND_RE.search(text.strip()):
         return False, "被回成 command not found（真實工具不該如此）"
+
+    # 規則 1b：模擬器把合法命令做壞了（invalid option / Exec format error 等）
+    m = _EMULATOR_BREAKAGE_RE.search(text)
+    if m:
+        return False, f"模擬器壞掉樣式「{m.group(0)}」（真機對合法參數不該如此）"
 
     # 規則 2：通用負面檢查（LLM 生成雜訊 / 幻覺）
     bad, why = _detect_llm_artifacts(probe, text)

@@ -162,7 +162,46 @@ def render_table(rows: list[dict]) -> str:
     return "\n".join(lines)
 
 
-async def _easypot_trials(resolver, probe, repeat, verbose):
+async def hybrid_output(resolver, probe: Probe) -> tuple[str, int | None]:
+    """走**攻擊者實際路徑**拿 easypot 輸出：完整 Interpreter（hit→內建、miss→LLM）。
+
+    與 :func:`easypot_output` 的差別（這是報告解讀的關鍵）：
+
+    * ``easypot_output`` 直接呼叫 ``ChainResolver.resolve()``，而 resolve 內部只有
+      ``cache → LLM``、**不查 registry**，等於強制 30 題全走 LLM、繞過 61 個內建
+      命令。那是「假設全部 miss」的**最壞情況壓力測試**，是 easypot 的**下界**。
+    * 本函式建真的 ``Interpreter`` 並把 ``miss_handler`` 接上 LLM factory——與
+      ssh_server 的線上組裝方式一致。registry 有的走內建（毫秒級），沒有的才降級
+      到 LLM。這才是攻擊者連進來**實際體驗**到的東西。
+
+    兩個數字都要報：下界證明「就算規則全失效也還有多少」，實際路徑才是系統真實
+    擬真度。兩者的差距即「內建命令的貢獻」。
+
+    exit_code 照 easypot_output 的理由回 None（讓判定器用輸出結構推斷）。
+    """
+    from honeyshell.backends import make_llm_command_factory
+    from honeyshell.commands import ShellContext, StringWriter
+    from honeyshell.fs.build_sample_fs import build as build_sample_fs
+    from honeyshell.shell import Interpreter
+
+    ctx = ShellContext(
+        fs=build_sample_fs(hostname="svr04"), cwd="/root",
+        environ={"HOME": "/root", "USER": "root", "PATH": "/usr/bin:/bin"},
+        username="root",
+    )
+    out, err = StringWriter(), StringWriter()
+    interp = Interpreter(
+        ctx, out, err,
+        miss_handler=make_llm_command_factory(resolver) if resolver else None,
+    )
+    # 整條命令列交給 interpreter（含 pipeline / 分號），與真實 shell 行為一致：
+    # sleep、管線、跨命令狀態都由 interpreter 自己處理，不像 easypot_output 需要
+    # 人工拆分號——這正是要量測的「系統整體」行為。
+    await interp.execute(probe.command)
+    return (out.getvalue() + err.getvalue()), None
+
+
+async def _easypot_trials(resolver, probe, repeat, verbose, hybrid=False):
     """對一題跑 repeat 次 easypot，回 (通過次數, 各次 Judgement, 各次原始輸出)。
 
     多次重跑是為了消化 LLM 生成的隨機性：同一題不同次結果會變（實測 Q2 有時
@@ -180,7 +219,8 @@ async def _easypot_trials(resolver, probe, repeat, verbose):
     for i in range(repeat):
         import time as _t
         _start = _t.perf_counter()
-        out, ec = await easypot_output(resolver, probe)
+        _fn = hybrid_output if hybrid else easypot_output
+        out, ec = await _fn(resolver, probe)
         elapsed = _t.perf_counter() - _start
         latencies.append(elapsed)
         j = classify(probe, out, ec, "easypot")
@@ -322,7 +362,7 @@ async def main_async(args) -> int:
                 row["easypot"] = (int(j.passed), [j], [ra.output], [0.0])
         elif resolver is not None:
             row["easypot"] = await _easypot_trials(
-                resolver, probe, args.repeat, args.verbose)
+                resolver, probe, args.repeat, args.verbose, args.hybrid)
 
         ca = cowrie.get(probe.id)
         if ca:
@@ -355,6 +395,8 @@ def main() -> int:
                          "引用露餡案例）")
     ap.add_argument("--repeat", type=int, default=1,
                     help="每題重跑次數（消化 LLM 隨機性；建議 8-10）")
+    ap.add_argument("--hybrid", action="store_true",
+                    help="easypot 欄走**攻擊者實際路徑**（完整 Interpreter：hit→內建、miss→LLM），而非預設的 LLM-only 下界")
     ap.add_argument("--dry-run", action="store_true",
                     help="不連 LLM，用 real 輸出灌 easypot 欄，驗證判定管線")
     ap.add_argument("--verbose", action="store_true",

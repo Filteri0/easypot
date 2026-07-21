@@ -154,6 +154,45 @@ def test_q9_real_mount_passes():
     assert j.passed, "乾淨的真機 mount 應通過"
 
 
+def test_invalid_option_is_breakage():
+    """`head -5` 是真機合法用法；模擬器回 invalid option = 露餡。
+
+    校準來源：實測 Cowrie 對 head -5/-10/-30 全回 "head: invalid option"，
+    打爆 7 題。這類題 must_contain 多為空，若不特判會 fallback 成「有非空輸出
+    → SALC」而假通過。
+    """
+    j = classify(_p(28), "head: invalid option -- '5'", None, "cowrie")
+    assert not j.passed
+    assert j.predicted_class == FALNLC
+
+
+def test_illegal_option_is_breakage():
+    # sudo -l 是標準用法，真機不會回 illegal option
+    j = classify(_p(30), "sudo: illegal option -- l", None, "cowrie")
+    assert not j.passed
+
+
+def test_exec_format_error_is_breakage():
+    # 假檔案系統有檔案卻不能執行 = 模擬破綻
+    j = classify(
+        _p(22),
+        "-bash: /usr/bin/dmesg: cannot execute binary file: Exec format error",
+        None, "cowrie",
+    )
+    assert not j.passed
+
+
+def test_breakage_rule_does_not_hit_real_output():
+    """反向保護：真機正常輸出不該被新規則誤判。
+
+    真機 30/30 是校準地基，新增任何負面規則都必須先確認不誤傷（本規則加入時
+    real 維持 30/30）。這裡用含 'option' 字樣但正常的輸出當代表。
+    """
+    j = classify(_p(30), "User rootroot may run the following commands:\n"
+                         "    (ALL : ALL) ALL", None, "real")
+    assert j.passed
+
+
 def _standalone():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     failed = 0

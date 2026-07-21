@@ -327,3 +327,99 @@ def test_netstat_shows_attacker_own_ip():
     _, out, _ = _run("netstat", [], ctx=ctx)
     assert "185.220.101.47:51900" in out
     assert "10.0.0.9" not in out  # old hardcoded stranger gone
+
+
+# --- 擬真度探測抓到的破綻（回歸鎖定）-------------------------------------
+# 以下三條對應題庫 Q10 / Q7 / Q2 的失分修復。這些破綻都是「輸出看起來合理、
+# 但攻擊者一比對就露餡」的類型,單看程式碼不易察覺,靠 30 題探測才量出來。
+
+
+def test_sleep_advances_emulated_clock():
+    """Q10 (ATT&CK T1497 沙箱偵測):`date; sleep 2; date` 必須看到時間前進。
+
+    sleep 不真的阻塞(會被攻擊者拿來佔住 session,本身也是 timing tell),
+    但若時鐘完全不動,兩個時間戳會一模一樣 —— 真機不可能如此。
+    """
+    ctx = _ctx()
+    before = ctx.now()
+    _run("sleep", ["2"], ctx=ctx)
+    assert ctx.time_offset == 2.0
+    assert ctx.now() - before >= 2.0
+
+
+def test_sleep_accepts_units_and_multiple_operands():
+    ctx = _ctx()
+    _run("sleep", ["1m"], ctx=ctx)
+    assert ctx.time_offset == 60.0
+    ctx2 = _ctx()
+    _run("sleep", ["1", "2"], ctx=ctx2)   # GNU sleep 累加多個運算元
+    assert ctx2.time_offset == 3.0
+
+
+def test_sleep_rejects_bad_interval():
+    code, _, err = _run("sleep", ["abc"])
+    assert code != 0 and "invalid time interval" in err
+
+
+def test_ps_aux_uses_bsd_header_not_sysv():
+    """Q7:`ps aux` 是 BSD 格式,表頭必須有 COMMAND/STAT/RSS,不是 -ef 的 CMD/PPID。
+
+    先前實作把 aux 與 -ef 混為一談,`ps aux | head -5` 少了攻擊者會 grep 的
+    COMMAND 欄 —— ps aux 是最常見的偵察命令之一,錯了代價很高。
+    """
+    _, out, _ = _run("ps", ["aux"])
+    header = out.splitlines()[0]
+    for col in ("USER", "%CPU", "%MEM", "VSZ", "RSS", "STAT", "COMMAND"):
+        assert col in header, f"ps aux 表頭缺 {col}: {header}"
+    assert "PPID" not in header  # 那是 -ef 的欄位
+
+
+def test_ps_ef_keeps_sysv_header():
+    _, out, _ = _run("ps", ["-ef"])
+    header = out.splitlines()[0]
+    for col in ("UID", "PID", "PPID", "STIME", "CMD"):
+        assert col in header, f"ps -ef 表頭缺 {col}: {header}"
+
+
+def test_ps_processes_have_accumulated_cpu_time():
+    """全部行程 TIME 都是 0:00 也是破綻:真機長跑的 init/journald 會累積 CPU 時間。"""
+    _, out, _ = _run("ps", ["aux"])
+    times = [ln.split()[9] for ln in out.splitlines()[1:] if len(ln.split()) > 9]
+    assert any(t != "0:00" for t in times), f"所有 TIME 皆為 0:00: {times}"
+
+
+def test_cpuinfo_has_flags_field():
+    """Q2:攻擊者會 grep /proc/cpuinfo 的 flags(查 hypervisor/AES-NI/AVX)。"""
+    ctx = _ctx()
+    _, out, _ = _run("cat", ["/proc/cpuinfo"], ctx=ctx)
+    assert "flags" in out and "fpu" in out
+    for field in ("cpu family", "stepping", "bogomips", "cache size"):
+        assert field in out, f"/proc/cpuinfo 缺 {field}"
+
+
+def test_sudo_list_privileges():
+    """Q30:`sudo -l` 是標準權限枚舉(ATT&CK T1069),必須列出 sudoers 摘要。
+
+    先前 sudo 把 `-l` 當成「要用 root 執行的命令」,產出
+    `bash: -l: command not found` —— 真機不可能如此,是明顯破綻。
+    """
+    code, out, _ = _run("sudo", ["-l"])
+    assert code == 0
+    assert "may run the following commands" in out
+    assert "(ALL : ALL) ALL" in out
+    assert "command not found" not in out
+
+
+def test_sudo_flag_forms_do_not_execute_flags():
+    """-V/-h/-k 都不該被當成命令執行。"""
+    for flag in ("-V", "-h", "-k"):
+        code, out, err = _run("sudo", [flag])
+        assert "command not found" not in (out + err), flag
+    _, out, _ = _run("sudo", ["-V"])
+    assert "Sudo version" in out
+
+
+def test_sudo_still_runs_real_commands():
+    """回歸保護:修 flag 處理不能破壞 `sudo <cmd>` 的正常執行路徑。"""
+    code, out, _ = _run("sudo", ["whoami"])
+    assert "command not found" not in out

@@ -124,11 +124,20 @@ class ShellContext:
     #: stranger IP — an attacker expects to see their session in the list.
     src_ip: Optional[str] = None
     src_port: Optional[int] = None
+    #: Accumulated emulated time skew (seconds) added on top of ``clock``.
+    #: ``sleep`` advances this instead of really blocking: a honeypot that
+    #: returns instantly leaves the wall clock unmoved, so the classic sandbox
+    #: probe ``date +%s; sleep 2; date +%s`` (ATT&CK T1497) reads back two
+    #: identical timestamps — a dead giveaway that time is faked. Advancing the
+    #: offset keeps the session's clock self-consistent across commands while
+    #: still returning immediately (never block: blocking is both a timing tell
+    #: and a way for an attacker to tie up the session).
+    time_offset: float = 0.0
 
     def now(self) -> float:
-        """Current emulated time (epoch seconds)."""
+        """Current emulated time (epoch seconds), including ``time_offset``."""
         import time as _t
-        return (self.clock or _t.time)()
+        return (self.clock or _t.time)() + self.time_offset
 
     @property
     def uid(self) -> int:

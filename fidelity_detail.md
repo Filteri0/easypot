@@ -92,28 +92,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -127,28 +127,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -162,28 +162,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -197,28 +197,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -232,28 +232,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -267,28 +267,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -302,28 +302,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -337,28 +337,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -372,28 +372,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -407,28 +407,28 @@ cpu family	: 6
 model		: 62
 model name	: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 stepping	: 1
+microcode	: 0x70c
 cpu MHz		: 2399.998
-cache size	: 46080 KB
+cache size	: 45088 KB
 physical id	: 0
 siblings	: 4
 core id		: 0
-cpu cores	: 4
+cpu cores	: 16
 apicid		: 0
 initial apicid	: 0
 fpu		: yes
 fpu_exception	: yes
-cpuid level	: 26
+cpuid level	: 20
 wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb
-bogomips	: 4799.99
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 40 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_ctxsw xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp pku ospke md_clear flush_l1d
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit l1tf mds swapgs_itlb_smt racing_ts retbleed
+bogomips	: 4800.00
+cpu implementer	: 0x51
+(cpu architecture: 7)
+cpu variant		: 0x1
+cpu part		: 0xd0f
+cpu revision		: 0x2
+Hardware		: x86_64
 
 ```
 
@@ -519,7 +519,7 @@ Intel(R) Xeon(R) CPU E5-2680 v4
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -528,7 +528,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -537,7 +537,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -546,7 +546,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -555,7 +555,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -564,7 +564,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -573,7 +573,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -582,7 +582,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -591,7 +591,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -600,7 +600,7 @@ Swap:            0B          0B          0B
 
 ```
               total        used        free      shared  buff/cache   available
-Mem:           7.8G        1.2G        5.3G         60M        1.3G        6.2G
+Mem:           7.8G        2.3G        1.5G         96M        4.0G        4.4G
 Swap:            0B          0B          0B
 ```
 
@@ -621,10 +621,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -639,10 +639,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -657,10 +657,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -675,10 +675,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -693,10 +693,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -711,10 +711,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -729,10 +729,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -747,10 +747,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -765,10 +765,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -783,10 +783,10 @@ c       valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:0c:29:6d:8a:4f brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global ens33
+    link/ether 00:0c:29:4d:8b:67 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brdisc 192.168.56.2 scope global ens33
 c       valid_lft forever preferred_lft forever
-    inet6 fe80::20c:29ff:fe6d:8a4f/64 scope link 
+    inet6 fe80::20c:29ff:fe4d:8b67/64 scope link 
        valid_lft forever preferred_lft forever
 ```
 
@@ -800,7 +800,8 @@ c       valid_lft forever preferred_lft forever
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -808,7 +809,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -816,7 +818,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -824,7 +827,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -832,7 +836,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -840,7 +845,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -848,7 +854,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -856,7 +863,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -864,7 +872,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -872,7 +881,8 @@ search example.com
 判定：含全部必要結構且無缺漏
 
 ```
-nameserver 127.0.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4
 search example.com
 ```
 
@@ -887,9 +897,9 @@ search example.com
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 2 次 ✅ SALC
@@ -897,9 +907,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 3 次 ✅ SALC
@@ -907,9 +917,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 4 次 ✅ SALC
@@ -917,9 +927,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 5 次 ✅ SALC
@@ -927,9 +937,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 6 次 ✅ SALC
@@ -937,9 +947,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 7 次 ✅ SALC
@@ -947,9 +957,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 8 次 ✅ SALC
@@ -957,9 +967,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 9 次 ✅ SALC
@@ -967,9 +977,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 ### 第 10 次 ✅ SALC
@@ -977,9 +987,9 @@ root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
 
 ```
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.0  24768  3920 ?        Ss  Jul10   0:05 /sbin/init
-root       10  0.0  0.0      0     0 ?        S    Jul10   0:00 [kworker/0:0H]
-root       12  0.0  0.0      0     0 ?        I<   Jul10   0:00 [rcu_preempt]
+root         1  0.0  0.0  29848  3760 ?        Ss  Jul14   0:05 /sbin/init
+root       28  0.0  0.0      0     0 ?        S    Jul14   0:00 [kthreadd]
+root       36  0.0  0.0      0     0 ?        I<   Jul14   0:00 [rcu_gp]
 ```
 
 
@@ -1070,13 +1080,11 @@ cat: /nonexistent_probe_file_xyz: No such file or directory
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 2 次 ❌ SALNLC
@@ -1085,13 +1093,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 3 次 ❌ SALNLC
@@ -1100,13 +1106,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 4 次 ❌ SALNLC
@@ -1115,13 +1119,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 5 次 ❌ SALNLC
@@ -1130,13 +1132,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 6 次 ❌ SALNLC
@@ -1145,13 +1145,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 7 次 ❌ SALNLC
@@ -1160,13 +1158,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 8 次 ❌ SALNLC
@@ -1175,13 +1171,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 9 次 ❌ SALNLC
@@ -1190,13 +1184,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 ### 第 10 次 ❌ SALNLC
@@ -1205,13 +1197,11 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 ```
 sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
 systemd-1 on /proc/sys/kernel/config type configfs (rw,relatime)
-device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
+device-mapper on /dev/.mapper type autofs (rw,relatime,fd=28,pgrp=796,timeout=300,minproto=5,maxproto=5,direct,seclabel)
 bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=7000)
 proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
-systemd-1 on /run/systemd/resolve type autofs (rw,relatime,fd=29,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on / type ext4 (rw,relatime,seclabel,data=ordered)
-systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeout=300,minproto=5,maxproto=5,direct,seclabel)
-/dev/sda4 on /var/lib/docker/aufs type ext4 (rw,noexec,nosuid,nodev,relatime,seclabel,data=ordered)
+systemd-1 on /run/systemd/resolve type automount (rw,relatime,fallback=host,seclabel)
+systemd-1 on /run/systemd/sessions type automount (rw,relatime,fallback=tmpfs,seclabel)
 ```
 
 
@@ -1224,80 +1214,80 @@ systemd-1 on /run/systemd/journal type autofs (rw,relatime,fd=30,pgrp=967,timeou
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 2 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 3 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 4 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 5 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 6 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 7 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 8 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 9 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 ### 第 10 次 ❌ SALNLC
 判定：時間戳差 0s，非真機的 ~2s（狀態不一致）
 
 ```
-1726498394
-1726498394
+1795286071
+1795286071
 ```
 
 
@@ -1578,70 +1568,70 @@ sync:x:4:65534:sync:/bin:/bin/sync
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 2 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 3 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 4 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 5 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 6 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 7 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 8 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 9 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 ### 第 10 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:35  up 6 days, 23:40,  1 user,  load average: 0.08, 0.09, 0.09
+ 21:15  up 7 days, 3:16,  4 users,  load average: 0.08, 0.09, 0.08
 ```
 
 
@@ -1656,15 +1646,14 @@ sync:x:4:65534:sync:/bin:/bin/sync
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 2 次 ✅ SALC
@@ -1673,15 +1662,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 3 次 ✅ SALC
@@ -1690,15 +1678,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 4 次 ✅ SALC
@@ -1707,15 +1694,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 5 次 ✅ SALC
@@ -1724,15 +1710,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 6 次 ✅ SALC
@@ -1741,15 +1726,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 7 次 ✅ SALC
@@ -1758,15 +1742,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 8 次 ✅ SALC
@@ -1775,15 +1758,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 9 次 ✅ SALC
@@ -1792,15 +1774,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 ### 第 10 次 ✅ SALC
@@ -1809,15 +1790,14 @@ tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
 ```
 Filesystem      Size  Used Avail Use% Mounted on
 udev            3.9G     0  3.9G   0% /dev
-tmpfs           785M  1.2M  784M   1% /run
-/dev/sda3        60G   20G   40G  33% /
+tmpfs           785M  1.6M  784M   1% /run
+/dev/sda2        20G  4.1G   16G  21% /
 none            4.0K     0  4.0K   0% /sys/fs/cgroup
-tmpfs           3.9G  185M  3.7G   5% /tmp
-/dev/sda1       246M   32M  215M  13% /boot/efi
-tmpfs           785M     0  785M   0% /dev/shm
-tmpfs           512K     0  512K   0% /run/lock
-tmpfs           3.9G     0  3.9G   0% /sys/fs/bpf
-/dev/sda4       768M  152M  564M  22% /var/lib/docker
+tmpfs           3.9G  8.0K  3.9G   1% /tmp
+/dev/sda1       256M   72M  185M  28% /boot
+none            4.0K     0  4.0K   0% /run/lock
+none            3.9G     0  3.9G   0% /sys/fs/bpf
+tmpfs           785M     0  785M   0% /run/user/1000
 ```
 
 
@@ -1846,7 +1826,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -1874,7 +1854,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -1902,7 +1882,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -1930,7 +1910,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -1958,7 +1938,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -1986,7 +1966,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -2014,7 +1994,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -2042,7 +2022,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -2070,7 +2050,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -2098,7 +2078,7 @@ Stepping:	4
 CPU MHz:	2399.985
 BogoMIPS:	4799.97
 Hypervisor vendor:	KVM
-Virtualization type:	hardware
+Virtualization type:	kvm
 L1d cache:	32K
 L1i cache:	32K
 L2 cache:	256K
@@ -2286,7 +2266,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 2 次 ✅ SALC
@@ -2297,7 +2277,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 3 次 ✅ SALC
@@ -2308,7 +2288,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 4 次 ✅ SALC
@@ -2319,7 +2299,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 5 次 ✅ SALC
@@ -2330,7 +2310,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 6 次 ✅ SALC
@@ -2341,7 +2321,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 7 次 ✅ SALC
@@ -2352,7 +2332,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 8 次 ✅ SALC
@@ -2363,7 +2343,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 9 次 ✅ SALC
@@ -2374,7 +2354,7 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 ### 第 10 次 ✅ SALC
@@ -2385,13 +2365,13 @@ Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      1234/postgres
 tcp6       0      0 :::22                   :::*                    LISTEN      1235/sshd
-tcp6       0      0 :::6379                 :::*                    LISTEN      1236/redis-server
+
 ```
 
 
 ## Q19 crontab -l
 - ATT&CK：T1053 Scheduled Task/Job
-- 考點：列出 cron 條目，或空/無 crontab 訊息
+- 考點：列出 cron 條目（SALC），或空/無 crontab 訊息（FALC）
 - 通過：10/10
 
 ### 第 1 次 ✅ SALC
@@ -2399,8 +2379,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 2 次 ✅ SALC
@@ -2408,8 +2400,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 3 次 ✅ SALC
@@ -2417,8 +2421,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 4 次 ✅ SALC
@@ -2426,8 +2442,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 5 次 ✅ SALC
@@ -2435,8 +2463,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 6 次 ✅ SALC
@@ -2444,8 +2484,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 7 次 ✅ SALC
@@ -2453,8 +2505,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 8 次 ✅ SALC
@@ -2462,8 +2526,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 9 次 ✅ SALC
@@ -2471,8 +2547,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 ### 第 10 次 ✅ SALC
@@ -2480,8 +2568,20 @@ tcp6       0      0 :::6379                 :::*                    LISTEN      
 
 ```
 # For details see man 5 crontab
-# Unlike any other cron implementation, an empty line is NOT treated as a comment!
-30 6 * * * /usr/local/bin/miner > /dev/null 2>&1
+# Unlike any other cron implementation, there is no
+default limit on the number of jobs you can have in a
+crontab. If you are not root then you may only edit your
+own crontab, not the 'inetd' crontabs used by system
+administrators.
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+30 12 * * * /root/scripts/daily_backup.sh
 ```
 
 
@@ -2641,11 +2741,11 @@ BUG_REPORT_URL="https://bugs.debian.org/"
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 2 次 ✅ SALC
@@ -2653,11 +2753,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 3 次 ✅ SALC
@@ -2665,11 +2765,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 4 次 ✅ SALC
@@ -2677,11 +2777,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 5 次 ✅ SALC
@@ -2689,11 +2789,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 6 次 ✅ SALC
@@ -2701,11 +2801,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 7 次 ✅ SALC
@@ -2713,11 +2813,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 8 次 ✅ SALC
@@ -2725,11 +2825,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 9 次 ✅ SALC
@@ -2737,11 +2837,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 ### 第 10 次 ✅ SALC
@@ -2749,11 +2849,11 @@ drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
 
 ```
 total 16
-drwx------  4 root root 4096 Jul 17 06:13 .
-drwxr-xr-x 25 root root 4096 Jul 17 06:13 ..
--rw-------  1 root root    0 Jul 17 06:13 .bash_history
--rw-r--r--  1 root root  185 Mar 26  2020 .bashrc
--rw-r--r--  1 root root  149 Mar 26  2020 .profile
+drwx------  4 root root 4096 Jul 14 03:20 .
+drwxr-xr-x 15 root root 4096 Jul 14 03:20 ..
+-rw-------  1 root root    0 Jul 14 03:20 .bash_history
+-rw-r--r--  1 root root  229 Mar 15  2021 .bashrc
+-rw-r--r--  1 root root  807 Mar 15  2021 profile
 ```
 
 
@@ -2852,110 +2952,110 @@ dmesg: read kernel buffer failed: Operation not permitted
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 2 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 3 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 4 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 5 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 6 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 7 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 8 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 9 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 ### 第 10 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-MemTotal:       8367920 kB
-MemFree:        1456444 kB
-MemAvailable:   5953204 kB
-Buffers:          28444 kB
-Cached:         2334864 kB
+MemTotal:       8384200 kB
+MemFree:        1976244 kB
+MemAvailable:   5991120 kB
+Buffers:          26412 kB
+Cached:         1697564 kB
 ```
 
 
@@ -2969,13 +3069,15 @@ Cached:         2334864 kB
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 2 次 ✅ SALC
@@ -2983,13 +3085,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 3 次 ✅ SALC
@@ -2997,13 +3101,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 4 次 ✅ SALC
@@ -3011,13 +3117,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 5 次 ✅ SALC
@@ -3025,13 +3133,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 6 次 ✅ SALC
@@ -3039,13 +3149,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 7 次 ✅ SALC
@@ -3053,13 +3165,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 8 次 ✅ SALC
@@ -3067,13 +3181,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 9 次 ✅ SALC
@@ -3081,13 +3197,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 ### 第 10 次 ✅ SALC
@@ -3095,13 +3213,15 @@ drwx------  2 user user 4096 Jul 10 03:00 x
 
 ```
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 total 24
-drwxrwxrwt  3 root root 4096 Jul 17 06:14 .
-drwxr-xr-x 22 root root 4096 Jul 10 02:58 ..
-drwx------  2 user user 4096 Jul 10 03:00 x
+drwxrwxrwt  3 root root 4096 Jul 14 03:19 .
+drwxr-xr-x 22 root root 4096 Jul 14 03:19 ..
+drwx------ 2 user user 4096 Jul 14 03:19 x
+-rw-r--r-- 1 root root    0 Jul 21 06:35 testfile
 ```
 
 
@@ -3190,90 +3310,90 @@ happydog
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 2 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 3 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 4 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 5 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 6 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 7 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 8 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 9 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 ### 第 10 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
-root:$6$rounds=100000$/saltysalt$mysaltyhash:18729::::::
-bob:$6$rounds=5000$anothersalt$anotherhash::14329::::::
-user:$6$somesalt$moresaltyhash::::18729::::::
+root:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+user:$6$rounds=100000$/saltysalt$5l4d9tH32eWxvzrRjKJLpPqQnMmOoPpQqRrSsTtUuVvWwXxYyZzAaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890
+
 ```
 
 
@@ -3286,90 +3406,90 @@ user:$6$somesalt$moresaltyhash::::18729::::::
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 2 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 3 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 4 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 5 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 6 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 7 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 8 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 9 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 ### 第 10 次 ✅ SALC
 判定：含全部必要結構且無缺漏
 
 ```
- 17:42:30 up 6 days, 14:45,  1 user,  load average: 0.08, 0.09, 0.09
+ 14:35:53 up 7 days,  2:16,  1 user,  load average: 0.00, 0.01, 0.05
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
-root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
+root     pts/0    192.0.2.1        14:35    0.00s  0.06s  0.01s w
 ```
 
 
@@ -3382,100 +3502,100 @@ root     pts/0    1.2.3.4          17:42    0.00s  0.05s  0.01s w
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 2 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 3 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 4 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 5 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 6 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 7 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 8 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 9 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 ### 第 10 次 ✅ SALC
 判定：有非空輸出
 
 ```
-wtmp begins Thu Jul 10 02:58:31 UTC 2026
-user   pts/0        1.2.3.4    Mon Jul 14 12:34:56 2026 - still logged in
-  (unknown)      pts/1        1.2.3.4    Tue Jul 15 09:08:12 2026 -  07:23 (still logged in)
-user   pts/2        1.2.3.4    Wed Jul 16 18:45:32 2026 - still logged in
+wtmp begins Sun Jul 16 03:29:48 2026
+user   pts/0        1.2.3.4    Sat Jul 22 07:15 - 07:16  (00:01)
+root   pts/1        1.2.3.4    Fri Jul 21 18:30 - 19:30  (01:00)
+user   pts/0        1.2.3.4    Thu Jul 20 15:45 - 16:45  (01:00)
 ```
 
 
@@ -3578,7 +3698,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 2 次 ✅ SALC
@@ -3589,7 +3709,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 3 次 ✅ SALC
@@ -3600,7 +3720,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 4 次 ✅ SALC
@@ -3611,7 +3731,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 5 次 ✅ SALC
@@ -3622,7 +3742,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 6 次 ✅ SALC
@@ -3633,7 +3753,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 7 次 ✅ SALC
@@ -3644,7 +3764,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 8 次 ✅ SALC
@@ -3655,7 +3775,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 9 次 ✅ SALC
@@ -3666,7 +3786,7 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```
 
 ### 第 10 次 ✅ SALC
@@ -3677,5 +3797,5 @@ Matching Defaults entries for root on happydog:
     requiretty, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS COLLATE", env_keep+="SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION XAUTHORITY"
 
 User root may run the following commands on happydog:
-    (root) NOPASSWD: ALL
+    (ALL : ALL) ALL
 ```

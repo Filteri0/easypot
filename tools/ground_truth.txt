@@ -1,5 +1,5 @@
 ### ground truth captured on: Linux 248-ollama-ehrd 6.8.12-5-pve #1 SMP PREEMPT_DYNAMIC PMX 6.8.12-5 (2024-12-03T10:26Z) x86_64 GNU/Linux
-### date: Fri Jul 17 07:01:38 UTC 2026
+### date: Tue Jul 21 06:33:05 UTC 2026
 
 ===Q1===
 $ uname -a
@@ -15,7 +15,7 @@ model		: 165
 model name	: Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz
 stepping	: 5
 microcode	: 0xee
-cpu MHz		: 4688.720
+cpu MHz		: 4699.680
 cache size	: 16384 KB
 physical id	: 0
 siblings	: 16
@@ -48,7 +48,7 @@ Intel(R)
 ===Q4===
 $ free -h
                total        used        free      shared  buff/cache   available
-Mem:            16Gi       9.6Gi       1.7Gi       224Ki       4.8Gi       6.4Gi
+Mem:            16Gi       9.8Gi       1.5Gi       232Ki       4.8Gi       6.2Gi
 Swap:             0B          0B          0B
 ===EXIT:0===
 
@@ -97,10 +97,10 @@ nameserver 192.168.10.30
 ===Q7===
 $ ps aux | head -5
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root           1  0.0  0.0 168204 10112 ?        Ss   Jul10   0:44 /sbin/init
-root          46  0.0  0.8 213364 138120 ?       Ss   Jul10   0:22 /lib/systemd/systemd-journald
+root           1  0.0  0.0 168200 10112 ?        Ss   Jul10   0:45 /sbin/init
+root          46  0.0  0.8 221556 144136 ?       Ss   Jul10   0:23 /lib/systemd/systemd-journald
 systemd+      85  0.0  0.0  18044  6912 ?        Ss   Jul10   0:10 /lib/systemd/systemd-networkd
-root         116  0.0  0.0   6616  1664 ?        Ss   Jul10   0:00 /usr/sbin/cron -f
+root         116  0.0  0.0   6616  1664 ?        Ss   Jul10   0:01 /usr/sbin/cron -f
 ===EXIT:0===
 
 ===Q8===
@@ -124,8 +124,8 @@ udev on /dev/fuse type devtmpfs (rw,nosuid,relatime,size=65816388k,nr_inodes=164
 
 ===Q10===
 $ date +%s; sleep 2; date +%s
-1784271698
-1784271700
+1784615586
+1784615588
 ===EXIT:0===
 
 ===Q11===
@@ -149,7 +149,7 @@ sync:x:4:65534:sync:/bin:/bin/sync
 
 ===Q14===
 $ uptime
- 15:01:40 up 7 days,  4:57,  0 user,  load average: 0.12, 0.21, 0.25
+ 14:33:08 up 11 days,  4:29,  0 user,  load average: 0.48, 0.66, 0.60
 ===EXIT:0===
 
 ===Q15===
@@ -183,7 +183,7 @@ Thread(s) per core:                   2
 Core(s) per socket:                   8
 Socket(s):                            1
 Stepping:                             5
-CPU(s) scaling MHz:                   81%
+CPU(s) scaling MHz:                   96%
 CPU max MHz:                          4800.0000
 CPU min MHz:                          800.0000
 BogoMIPS:                             5799.77
@@ -249,9 +249,8 @@ VSCODE_GIT_ASKPASS_MAIN=/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7ae
 BROWSER=/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/bin/helpers/browser.sh
 PATH=/root/HoneyPotVenv/bin:/usr/bin:/root/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/root/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/root/.vscode-server/cli/servers/Stable-5264f2156cbcd7aea5fd004d29eaa10209155d66/server/bin/remote-cli:/usr/bin:/usr/local/cuda-12.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/sbin:/root/.vscode-server/extensions/ms-python.debugpy-2026.6.0-linux-x64/bundled/scripts/noConfigScripts:/usr/sbin
 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus
-OLDPWD=/root/easypot/deploy
 TERM_PROGRAM=vscode
-VSCODE_IPC_HOOK_CLI=/run/user/0/vscode-ipc-443b0ab4-add6-4c05-85a0-b80184cbde6a.sock
+VSCODE_IPC_HOOK_CLI=/run/user/0/vscode-ipc-3ab0442a-73e2-4494-a917-368ef348b259.sock
 _=/usr/bin/env
 ===EXIT:0===
 
@@ -264,6 +263,7 @@ tcp        0      0 127.0.0.1:43385         0.0.0.0:*               LISTEN      
 tcp        0      0 127.0.0.1:43615         0.0.0.0:*               LISTEN      910571/code-5264f21 
 tcp        0      0 127.0.0.1:44407         0.0.0.0:*               LISTEN      913720/llama-server 
 tcp        0      0 127.0.0.1:39528         0.0.0.0:*               LISTEN      911169/node         
+tcp        0      0 127.0.0.1:40075         0.0.0.0:*               LISTEN      1049529/llama-serve 
 tcp6       0      0 ::1:3350                :::*                    LISTEN      155/xrdp-sesman     
 tcp6       0      0 ::1:25                  :::*                    LISTEN      494/master          
 tcp6       0      0 :::3389                 :::*                    LISTEN      181/xrdp            
@@ -292,9 +292,9 @@ BUG_REPORT_URL="https://bugs.debian.org/"
 ===Q21===
 $ ls -la /root
 total 124
-drwx------ 16 root root    24 Jul 17 10:36 .
+drwx------ 15 root root    23 Jul 21 13:06 .
 drwxr-xr-x 17 root root    31 Jul 10 10:03 ..
--rw-------  1 root root 16487 Jul 17 10:36 .bash_history
+-rw-------  1 root root 18279 Jul 21 13:06 .bash_history
 -rw-r--r--  1 root root   681 Sep  3  2024 .bashrc
 drwx------  5 root root     5 Jun 30 14:20 .cache
 drwx------  4 root root     4 Jul  8 11:47 .config
@@ -314,8 +314,7 @@ drwxr-x---  5 root root    13 Jul 16 17:18 .vscode-server
 -rw-r--r--  1 root root    14 Sep  3  2024 .xsession
 drwxr-xr-x  6 root root     8 Jul  8 11:04 CowireVenv
 drwxr-xr-x  5 root root     7 Jul  7 13:10 HoneyPotVenv
-drwxr-xr-x  8 root root    18 Jul 17 15:01 easypot
-drwxr-xr-x  3 root root     3 Jul 14 16:59 seclab
+drwxr-xr-x  8 root root    24 Jul 21 14:31 easypot
 ===EXIT:0===
 
 ===Q22===
@@ -335,16 +334,16 @@ $ dmesg | head -10
 ===Q23===
 $ cat /proc/meminfo | head -5
 MemTotal:       16777216 kB
-MemFree:         1739776 kB
-MemAvailable:    6722552 kB
+MemFree:         1540356 kB
+MemAvailable:    6526376 kB
 Buffers:               0 kB
-Cached:          4982880 kB
+Cached:          4986104 kB
 ===EXIT:0===
 
 ===Q24===
 $ ls -la /tmp; touch /tmp/probe_marker; ls -la /tmp
 total 23130
-drwxrwxrwt 20 root root       28 Jul 17 15:01 .
+drwxrwxrwt 20 root root       28 Jul 21 14:31 .
 drwxr-xr-x 17 root root       31 Jul 10 10:03 ..
 drwxrwxrwt  2 root root        2 Jul 10 10:03 .ICE-unix
 drwxrwxrwt  2 root root        2 Jul 10 10:03 .X11-unix
@@ -367,13 +366,13 @@ drwx------  2 root root        2 Jul 14 10:31 mcp-mBOH5w
 drwx------  2 root root        2 Jul 16 17:23 mcp-w9jHrM
 -rw-r--r--  1 root root 11802903 Jul 16 13:03 merged.jsonl
 -rw-r--r--  1 root root       82 Jul 16 08:47 ollama.log
--rw-r--r--  1 root root        0 Jul 17 11:54 probe_marker
+-rw-r--r--  1 root root        0 Jul 21 14:04 probe_marker
 drwx------  2 root root        2 Jul 17 10:36 pyright-911169-2Fb8y0ifqNfB
 drwxr-xr-x 11 root root       11 Jul 16 17:18 python-languageserver-cancellation
 drwx------  3 root root        3 Jul 10 10:03 systemd-private-e9f2405276f6470abffde4d6a57bd061-systemd-logind.service-skMoSx
 drwxr-xr-x  3 root root        4 Jul 10 12:12 tracee
 total 23130
-drwxrwxrwt 20 root root       28 Jul 17 15:01 .
+drwxrwxrwt 20 root root       28 Jul 21 14:31 .
 drwxr-xr-x 17 root root       31 Jul 10 10:03 ..
 drwxrwxrwt  2 root root        2 Jul 10 10:03 .ICE-unix
 drwxrwxrwt  2 root root        2 Jul 10 10:03 .X11-unix
@@ -396,7 +395,7 @@ drwx------  2 root root        2 Jul 14 10:31 mcp-mBOH5w
 drwx------  2 root root        2 Jul 16 17:23 mcp-w9jHrM
 -rw-r--r--  1 root root 11802903 Jul 16 13:03 merged.jsonl
 -rw-r--r--  1 root root       82 Jul 16 08:47 ollama.log
--rw-r--r--  1 root root        0 Jul 17 15:01 probe_marker
+-rw-r--r--  1 root root        0 Jul 21 14:33 probe_marker
 drwx------  2 root root        2 Jul 17 10:36 pyright-911169-2Fb8y0ifqNfB
 drwxr-xr-x 11 root root       11 Jul 16 17:18 python-languageserver-cancellation
 drwx------  3 root root        3 Jul 10 10:03 systemd-private-e9f2405276f6470abffde4d6a57bd061-systemd-logind.service-skMoSx
@@ -449,7 +448,7 @@ cowrie:!:20635:0:99999:7:::
 
 ===Q27===
 $ w
- 15:01:40 up 7 days,  4:57,  0 user,  load average: 0.12, 0.21, 0.25
+ 14:33:08 up 11 days,  4:29,  0 user,  load average: 0.48, 0.66, 0.60
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
 ===EXIT:0===
 

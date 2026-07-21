@@ -477,14 +477,55 @@ _PG_LOG = (
     "2044.019 ms  statement: SELECT card_last4, amount FROM payments;\n"
 )
 
-_CPUINFO = (
-    "processor\t: 0\nvendor_id\t: GenuineIntel\n"
-    "model name\t: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz\n"
-    "cpu MHz\t\t: 2400.000\ncache size\t: 35840 KB\n"
-    "processor\t: 1\nvendor_id\t: GenuineIntel\n"
-    "model name\t: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz\n"
-    "cpu MHz\t\t: 2400.000\ncache size\t: 35840 KB\n"
-)
+def _cpuinfo_block(index: int) -> str:
+    """One realistic /proc/cpuinfo processor block.
+
+    Real /proc/cpuinfo carries ~25 fields per core — most importantly ``flags``,
+    the long CPU capability list. A stub with only model name/MHz/cache is an
+    instant tell: attackers grep this file for ``flags`` (to check for hypervisor
+    bits, AES-NI, AVX before dropping miners) and for ``processor`` counts. The
+    probe suite caught exactly this — the shipped stub failed the structural
+    check for ``flags``.
+    """
+    return (
+        f"processor\t: {index}\n"
+        "vendor_id\t: GenuineIntel\n"
+        "cpu family\t: 6\n"
+        "model\t\t: 79\n"
+        "model name\t: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz\n"
+        "stepping\t: 1\n"
+        "microcode\t: 0xb000038\n"
+        "cpu MHz\t\t: 2400.000\n"
+        "cache size\t: 35840 KB\n"
+        "physical id\t: 0\n"
+        "siblings\t: 2\n"
+        f"core id\t\t: {index}\n"
+        "cpu cores\t: 2\n"
+        f"apicid\t\t: {index}\n"
+        f"initial apicid\t: {index}\n"
+        "fpu\t\t: yes\n"
+        "fpu_exception\t: yes\n"
+        "cpuid level\t: 20\n"
+        "wp\t\t: yes\n"
+        "flags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca "
+        "cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb "
+        "rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid "
+        "tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic "
+        "movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor "
+        "lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase tsc_adjust bmi1 "
+        "hle avx2 smep bmi2 erms invpcid rtm rdseed adx smap xsaveopt arat\n"
+        "bugs\t\t: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf "
+        "mds swapgs itlb_multihit mmio_stale_data retbleed\n"
+        "bogomips\t: 4800.00\n"
+        "clflush size\t: 64\n"
+        "cache_alignment\t: 64\n"
+        "address sizes\t: 46 bits physical, 48 bits virtual\n"
+        "power management:\n"
+        "\n"
+    )
+
+
+_CPUINFO = "".join(_cpuinfo_block(i) for i in range(2))
 
 _MEMINFO = (
     "MemTotal:        8167848 kB\nMemFree:         5432100 kB\n"
